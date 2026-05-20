@@ -77,7 +77,7 @@ button { font-family: inherit; }
   background: white;
   color: var(--navy);
   text-align: center;
-  padding: 0.625rem 1rem;
+  padding: 0.75rem 1rem;
   font-size: 0.875rem;
   font-weight: 700;
   letter-spacing: 0.02em;
@@ -86,10 +86,12 @@ button { font-family: inherit; }
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.75rem;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.625rem;
   border-bottom: 1px solid var(--gray-200);
 }
 .sponsor-strip-text { color: var(--gray-700); }
+.sponsor-strip-tagline { color: var(--gray-700); font-weight: 600; font-style: italic; }
 .sponsor-strip-logo {
   display: inline-flex;
   align-items: center;
@@ -1740,6 +1742,7 @@ footer {
   <a href="https://www.redkeysolutions.com/" target="_blank" rel="noopener" class="sponsor-strip-logo">
     <img src="https://www.redkeysolutions.com/wp-content/uploads/2025/06/logo-update-2025-V1.webp" alt="Red Key" loading="lazy">
   </a>
+  <span class="sponsor-strip-tagline">— your technology &amp; AI partner</span>
 </div>
 
 <script>
