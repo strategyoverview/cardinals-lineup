@@ -2,198 +2,314 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cardinals — Game Day Lineup</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#C41E3A">
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="apple-touch-icon" href="logo.png">
+<title>Little Cardinals — Game Day</title>
 <style>
 :root {
   --cardinal-red: #C41E3A;
   --cardinal-red-dark: #8B0000;
-  --cardinal-red-light: #E8475F;
-  --navy: #1A2238;
-  --gold: #FFD700;
+  --cardinal-red-soft: #E8475F;
+  --navy: #1F2937;
+  --navy-dark: #111827;
+  --navy-soft: #374151;
+  --gold: #FFC93C;
   --cream: #FFF8F0;
-  --gray-100: #F5F5F5;
-  --gray-200: #E5E5E5;
-  --gray-300: #D4D4D4;
-  --gray-500: #737373;
-  --gray-700: #404040;
-  --gray-900: #171717;
+  --cream-warm: #FFEFD5;
+  --pink: #FF6B9D;
+  --pink-soft: #FFD9E8;
+  --pink-bg: #FFF0F5;
+  --mint: #B8E0D2;
+  --gray-50: #FAFAFA;
+  --gray-100: #F4F4F5;
+  --gray-200: #E4E4E7;
+  --gray-300: #D4D4D8;
+  --gray-400: #A1A1AA;
+  --gray-500: #71717A;
+  --gray-700: #3F3F46;
+  --gray-900: #18181B;
   --grass: #6BA84F;
-  --grass-dark: #558B36;
-  --dirt: #C9985F;
+  --grass-dark: #4A7C2E;
+  --dirt: #D4A570;
   --dirt-dark: #A87749;
   --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
-  --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
-  --shadow-lg: 0 12px 32px rgba(0,0,0,0.15);
+  --shadow-md: 0 6px 16px rgba(0,0,0,0.1);
+  --shadow-lg: 0 16px 40px rgba(0,0,0,0.14);
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+  --tap: 48px;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
-
-html { -webkit-tap-highlight-color: transparent; }
+html { -webkit-tap-highlight-color: transparent; -webkit-text-size-adjust: 100%; }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-  background: linear-gradient(135deg, var(--cream) 0%, #FFEFD5 100%);
-  color: var(--gray-900);
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', system-ui, sans-serif;
+  background: linear-gradient(160deg, var(--cream) 0%, var(--cream-warm) 50%, var(--pink-bg) 100%);
+  color: var(--navy);
   min-height: 100vh;
   line-height: 1.5;
+  font-size: 17px;
+  -webkit-font-smoothing: antialiased;
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
+@media (min-width: 768px) {
+  body { font-size: 18px; }
+}
+
+button { font-family: inherit; }
+
+/* ============ Sponsor strip ============ */
+.sponsor-strip {
+  background: linear-gradient(90deg, var(--pink) 0%, #FF8FAB 100%);
+  color: white;
+  text-align: center;
+  padding: 0.5rem 1rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  position: relative;
+  overflow: hidden;
+}
+.sponsor-strip a {
+  color: white;
+  text-decoration: none;
+  font-weight: 800;
+  border-bottom: 1.5px dashed rgba(255,255,255,0.6);
+  padding-bottom: 1px;
+}
+.sponsor-strip a:hover { border-bottom-style: solid; }
+.sponsor-strip .cone { display: inline-block; animation: bobble 3s ease-in-out infinite; }
+@keyframes bobble {
+  0%, 100% { transform: translateY(0) rotate(-5deg); }
+  50% { transform: translateY(-3px) rotate(5deg); }
+}
+
+/* ============ Header ============ */
 header {
   background: linear-gradient(135deg, var(--cardinal-red) 0%, var(--cardinal-red-dark) 100%);
   color: white;
-  padding: 2rem 1.5rem 2.25rem;
-  text-align: center;
+  padding: 1.5rem 1.25rem 1.75rem;
   box-shadow: var(--shadow-md);
   position: relative;
   overflow: hidden;
 }
-
 header::before {
   content: '';
   position: absolute;
   inset: 0;
   background-image:
-    radial-gradient(circle at 20% 30%, rgba(255, 215, 0, 0.12) 0%, transparent 50%),
-    radial-gradient(circle at 80% 70%, rgba(255, 215, 0, 0.08) 0%, transparent 50%);
+    radial-gradient(circle at 15% 20%, rgba(255, 201, 60, 0.15) 0%, transparent 45%),
+    radial-gradient(circle at 85% 80%, rgba(255, 201, 60, 0.1) 0%, transparent 45%);
   pointer-events: none;
 }
 
-.brand {
+.header-inner {
   position: relative;
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 0.875rem;
+  gap: 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-.brand-logo {
-  font-size: 2.75rem;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+.team-logo {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.12);
+  border: 3px solid rgba(255,255,255,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0;
+  background-size: cover;
+  background-position: center;
+  transition: transform 0.3s ease;
 }
-
-.brand-text {
-  text-align: left;
+.team-logo:hover { transform: scale(1.05); }
+.team-logo.spin { animation: spinLogo 0.8s ease-out; }
+@keyframes spinLogo {
+  0% { transform: rotate(0); }
+  100% { transform: rotate(360deg); }
 }
+.team-logo .logo-hint {
+  position: absolute;
+  bottom: -6px;
+  right: -6px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--gold);
+  color: var(--navy);
+  font-size: 0.7rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--cardinal-red);
+  font-weight: 800;
+}
+.team-logo.has-photo .logo-hint { opacity: 0; }
+.team-logo:hover .logo-hint { opacity: 1; }
 
+.brand-text { flex: 1; min-width: 0; }
 .brand-text h1 {
-  font-size: clamp(2rem, 5vw, 3rem);
+  font-size: clamp(1.875rem, 5vw, 2.75rem);
   font-weight: 900;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.08em;
   line-height: 1;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.25);
 }
-
 .brand-text .subtitle {
   font-size: 0.875rem;
   opacity: 0.92;
   font-weight: 600;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  margin-top: 0.25rem;
+  margin-top: 0.375rem;
 }
 
 .header-actions {
-  position: relative;
-  margin-top: 1rem;
   display: flex;
-  justify-content: center;
   gap: 0.5rem;
-  flex-wrap: wrap;
+  flex-shrink: 0;
 }
-
-.btn {
-  background: rgba(255, 255, 255, 0.18);
+.icon-btn {
+  background: rgba(255,255,255,0.18);
   color: white;
-  border: 1.5px solid rgba(255, 255, 255, 0.35);
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 0.8rem;
+  border: 1.5px solid rgba(255,255,255,0.3);
+  width: var(--tap);
+  height: var(--tap);
+  border-radius: 12px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
   transition: all 0.15s ease;
-  letter-spacing: 0.03em;
 }
+.icon-btn:hover { background: rgba(255,255,255,0.28); transform: translateY(-1px); }
+.icon-btn:active { transform: translateY(0); }
 
-.btn:hover { background: rgba(255, 255, 255, 0.28); border-color: white; }
-.btn:active { transform: translateY(1px); }
+/* Quote bubble */
+.coach-bubble {
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-20px);
+  background: white;
+  color: var(--navy);
+  padding: 0.75rem 1.25rem;
+  border-radius: 20px;
+  box-shadow: var(--shadow-lg);
+  font-weight: 700;
+  font-size: 1rem;
+  z-index: 100;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s ease;
+  max-width: 90%;
+  text-align: center;
+  border: 2px solid var(--cardinal-red);
+}
+.coach-bubble.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
+/* ============ Main ============ */
 main {
   max-width: 1100px;
   margin: 0 auto;
-  padding: 1.75rem 1.25rem 4rem;
+  padding: 1.25rem 1rem 4rem;
   display: grid;
   gap: 1.25rem;
+}
+@media (min-width: 768px) {
+  main { padding: 1.5rem 1.5rem 4rem; gap: 1.5rem; }
 }
 
 section {
   background: white;
-  border-radius: 14px;
-  padding: 1.25rem 1.25rem 1.5rem;
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
   box-shadow: var(--shadow-sm);
   border: 1px solid var(--gray-200);
 }
+@media (min-width: 768px) {
+  section { padding: 1.5rem 1.75rem; }
+}
 
 h2 {
-  font-size: 1rem;
+  font-size: 1.125rem;
   font-weight: 800;
-  color: var(--cardinal-red);
-  margin-bottom: 1rem;
+  color: var(--navy);
+  margin-bottom: 1.125rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   display: flex;
   align-items: center;
-  gap: 0.625rem;
+  gap: 0.75rem;
 }
-
+@media (min-width: 768px) {
+  h2 { font-size: 1.25rem; }
+}
 h2::before {
   content: '';
   display: block;
-  width: 4px;
-  height: 1.1rem;
-  background: var(--cardinal-red);
-  border-radius: 2px;
+  width: 5px;
+  height: 1.25rem;
+  background: linear-gradient(180deg, var(--cardinal-red), var(--cardinal-red-dark));
+  border-radius: 3px;
+}
+h2 .badge {
+  margin-left: auto;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  background: var(--cream-warm);
+  color: var(--cardinal-red);
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1.5px solid var(--cardinal-red-soft);
 }
 
-/* ========== Roster ========== */
+/* ============ Roster ============ */
 .roster-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(108px, 1fr));
-  gap: 0.625rem;
+  grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
+  gap: 0.75rem;
+}
+@media (min-width: 768px) {
+  .roster-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 1rem; }
 }
 
 .player-card {
-  background: var(--gray-100);
-  border: 2px solid var(--gray-200);
-  border-radius: 12px;
-  padding: 0.75rem 0.5rem 0.625rem;
+  background: var(--gray-50);
+  border: 2.5px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  padding: 0.875rem 0.625rem 0.75rem;
   text-align: center;
   cursor: pointer;
   transition: all 0.18s ease;
   position: relative;
   user-select: none;
+  min-height: var(--tap);
 }
-
-.player-card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-}
-
-.player-card.present {
-  background: white;
-  border-color: var(--cardinal-red);
-}
-
-.player-card.absent {
-  opacity: 0.45;
-}
-
-.player-card.absent .avatar {
-  filter: grayscale(0.9);
-}
+.player-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+.player-card.present { background: white; border-color: var(--cardinal-red); }
+.player-card.absent { opacity: 0.42; }
+.player-card.absent .avatar { filter: grayscale(0.9); }
 
 .avatar {
-  width: 54px;
-  height: 54px;
+  width: 64px;
+  height: 64px;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--cardinal-red) 0%, var(--cardinal-red-dark) 100%);
   color: white;
@@ -201,120 +317,55 @@ h2::before {
   align-items: center;
   justify-content: center;
   font-weight: 800;
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   margin: 0 auto 0.5rem;
   background-size: cover;
   background-position: center;
   border: 3px solid white;
   box-shadow: var(--shadow-sm);
-  letter-spacing: 0;
 }
-
+@media (min-width: 768px) {
+  .avatar { width: 76px; height: 76px; font-size: 1.75rem; }
+}
 .player-card .name {
-  font-weight: 700;
-  font-size: 0.85rem;
-  color: var(--gray-900);
+  font-weight: 800;
+  font-size: 1rem;
+  color: var(--navy);
+  letter-spacing: -0.01em;
+}
+@media (min-width: 768px) {
+  .player-card .name { font-size: 1.0625rem; }
 }
 
 .photo-btn {
   position: absolute;
-  top: 5px;
-  right: 5px;
-  width: 22px;
-  height: 22px;
+  top: 6px;
+  right: 6px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   background: var(--navy);
   color: white;
-  border: 1.5px solid white;
+  border: 2px solid white;
   cursor: pointer;
-  font-size: 0.7rem;
+  font-size: 0.8rem;
   display: flex;
   align-items: center;
   justify-content: center;
   opacity: 0;
   transition: opacity 0.15s ease;
   padding: 0;
-  line-height: 1;
+  box-shadow: var(--shadow-sm);
 }
-
 .player-card:hover .photo-btn { opacity: 1; }
-
 @media (hover: none) {
   .photo-btn { opacity: 0.85; }
 }
 
 .checkmark {
   position: absolute;
-  top: 5px;
-  left: 5px;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: var(--cardinal-red);
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.75rem;
-  font-weight: bold;
-  border: 1.5px solid white;
-}
-
-.player-card.absent .checkmark { display: none; }
-
-.roster-status {
-  margin-top: 1rem;
-  padding-top: 0.875rem;
-  border-top: 1px solid var(--gray-200);
-  font-size: 0.875rem;
-  color: var(--gray-700);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.roster-status strong {
-  color: var(--cardinal-red);
-  font-size: 1.125rem;
-}
-
-.link-btn {
-  background: none;
-  border: none;
-  color: var(--gray-500);
-  font-size: 0.8rem;
-  text-decoration: underline;
-  cursor: pointer;
-  padding: 0;
-}
-
-.link-btn:hover { color: var(--cardinal-red); }
-
-/* ========== Batting Order ========== */
-.batting-list {
-  list-style: none;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-  gap: 0.5rem;
-  counter-reset: bat;
-}
-
-.batting-list li {
-  display: flex;
-  align-items: center;
-  gap: 0.625rem;
-  padding: 0.5rem 0.75rem;
-  background: var(--gray-100);
-  border-radius: 10px;
-  font-weight: 600;
-  counter-increment: bat;
-  border-left: 3px solid var(--cardinal-red);
-}
-
-.batting-list li::before {
-  content: counter(bat);
+  top: 6px;
+  left: 6px;
   width: 26px;
   height: 26px;
   border-radius: 50%;
@@ -323,14 +374,145 @@ h2::before {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.8rem;
+  font-size: 0.95rem;
+  font-weight: bold;
+  border: 2.5px solid white;
+  box-shadow: var(--shadow-sm);
+}
+.player-card.absent .checkmark { display: none; }
+
+.roster-status {
+  margin-top: 1.125rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--gray-200);
+  font-size: 0.95rem;
+  color: var(--navy-soft);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.roster-status .count-display {
   font-weight: 800;
-  flex-shrink: 0;
+  font-size: 1.25rem;
+  color: var(--cardinal-red);
+}
+.roster-status .squad-label {
+  background: var(--gold);
+  color: var(--navy-dark);
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  margin-left: 0.5rem;
 }
 
-.mini-avatar {
-  width: 32px;
-  height: 32px;
+.link-btn {
+  background: none;
+  border: none;
+  color: var(--navy-soft);
+  font-size: 0.9rem;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 8px 4px;
+  font-weight: 600;
+}
+.link-btn:hover { color: var(--cardinal-red); }
+
+/* ============ View Toggle ============ */
+.view-toggle {
+  display: flex;
+  background: var(--gray-100);
+  padding: 5px;
+  border-radius: 999px;
+  position: relative;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.06);
+  max-width: 560px;
+  margin: 0 auto;
+}
+.view-toggle button {
+  flex: 1;
+  padding: 0.875rem 1.25rem;
+  background: transparent;
+  border: none;
+  border-radius: 999px;
+  font-weight: 800;
+  font-size: 1rem;
+  cursor: pointer;
+  color: var(--gray-500);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  letter-spacing: 0.04em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: var(--tap);
+}
+@media (min-width: 768px) {
+  .view-toggle button { font-size: 1.0625rem; padding: 1rem 1.5rem; }
+}
+.view-toggle button.active {
+  background: white;
+  color: var(--cardinal-red);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  transform: scale(1.02);
+}
+
+/* ============ Batting Order (list) ============ */
+.batting-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  counter-reset: bat;
+}
+
+.batting-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.875rem 1rem;
+  background: var(--gray-50);
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  counter-increment: bat;
+  transition: all 0.15s ease;
+  min-height: 68px;
+}
+@media (min-width: 768px) {
+  .batting-row { padding: 1rem 1.25rem; min-height: 76px; }
+}
+.batting-row:hover {
+  background: white;
+  border-color: var(--cardinal-red-soft);
+  transform: translateX(2px);
+}
+
+.batting-num {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--navy);
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  font-weight: 900;
+  flex-shrink: 0;
+  letter-spacing: -0.02em;
+  border: 2px solid var(--navy-dark);
+}
+@media (min-width: 768px) {
+  .batting-num { width: 48px; height: 48px; font-size: 1.375rem; }
+}
+
+.batting-avatar {
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--cardinal-red) 0%, var(--cardinal-red-dark) 100%);
   background-size: cover;
@@ -339,107 +521,140 @@ h2::before {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.78rem;
+  font-size: 1.05rem;
   font-weight: 800;
-  border: 2px solid white;
+  border: 2.5px solid white;
   box-shadow: var(--shadow-sm);
   flex-shrink: 0;
 }
+@media (min-width: 768px) {
+  .batting-avatar { width: 50px; height: 50px; font-size: 1.125rem; }
+}
 
-/* ========== Inning Tabs ========== */
+.batting-name {
+  font-size: 1.125rem;
+  font-weight: 800;
+  color: var(--navy);
+  letter-spacing: -0.01em;
+  flex: 1;
+}
+@media (min-width: 768px) {
+  .batting-name { font-size: 1.25rem; }
+}
+
+.batting-suffix {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-left: auto;
+  background: var(--gray-100);
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
+/* ============ Innings Tabs ============ */
 .inning-tabs {
   display: flex;
   gap: 0.375rem;
   margin-bottom: 1.25rem;
   flex-wrap: wrap;
 }
-
 .tab {
   flex: 1;
   min-width: 90px;
-  padding: 0.625rem 0.75rem;
+  min-height: var(--tap);
+  padding: 0.75rem 0.5rem;
   background: var(--gray-100);
-  border: 2px solid transparent;
-  border-radius: 10px;
-  font-weight: 700;
+  border: 2.5px solid transparent;
+  border-radius: 12px;
+  font-weight: 800;
   cursor: pointer;
   transition: all 0.15s ease;
-  font-size: 0.875rem;
+  font-size: 1rem;
   color: var(--gray-700);
+  letter-spacing: 0.02em;
 }
-
 .tab:hover { background: var(--gray-200); }
 .tab.active {
   background: var(--cardinal-red);
   color: white;
-  box-shadow: 0 2px 8px rgba(196, 30, 58, 0.3);
+  box-shadow: 0 3px 12px rgba(196, 30, 58, 0.35);
+  border-color: var(--cardinal-red-dark);
 }
 
-/* ========== Diamond ========== */
+/* ============ Diamond ============ */
 .diamond {
   position: relative;
   width: 100%;
-  max-width: 560px;
-  aspect-ratio: 1 / 0.95;
+  max-width: 640px;
+  aspect-ratio: 1 / 0.92;
   margin: 0 auto 1.25rem;
-  background: linear-gradient(180deg, var(--grass) 0%, var(--grass-dark) 100%);
-  border-radius: 16px;
+  background:
+    radial-gradient(ellipse at center top, var(--grass) 0%, var(--grass-dark) 100%);
+  border-radius: var(--radius-md);
   overflow: hidden;
   border: 1px solid var(--gray-300);
-  box-shadow: inset 0 2px 8px rgba(0,0,0,0.15);
+  box-shadow: inset 0 4px 12px rgba(0,0,0,0.2);
 }
-
 .diamond::before {
   content: '';
   position: absolute;
   top: 30%;
   left: 50%;
-  width: 52%;
-  height: 52%;
-  background: var(--dirt);
+  width: 54%;
+  height: 54%;
+  background: linear-gradient(135deg, var(--dirt) 0%, #C9985F 100%);
   transform: translateX(-50%) rotate(45deg);
   border: 2px solid var(--dirt-dark);
-  box-shadow: inset 0 0 20px rgba(0,0,0,0.1);
+  box-shadow: inset 0 0 24px rgba(0,0,0,0.15);
 }
-
 .diamond::after {
-  /* pitcher's mound */
   content: '';
   position: absolute;
   top: 56%;
   left: 50%;
-  width: 60px;
-  height: 60px;
-  background: radial-gradient(circle, var(--dirt-dark) 0%, var(--dirt) 80%);
+  width: 64px;
+  height: 64px;
+  background: radial-gradient(circle, var(--dirt-dark) 0%, var(--dirt) 75%);
   transform: translate(-50%, -50%);
   border-radius: 50%;
-  border: 1px solid var(--dirt-dark);
+  border: 2px solid var(--dirt-dark);
+  box-shadow: 0 0 0 4px rgba(0,0,0,0.04);
 }
 
 .diamond-position {
   position: absolute;
   transform: translate(-50%, -50%);
   text-align: center;
-  width: 84px;
+  width: 90px;
   z-index: 1;
+}
+@media (min-width: 768px) {
+  .diamond-position { width: 110px; }
 }
 
 .pos-label {
   display: inline-block;
   background: white;
-  color: var(--cardinal-red);
-  font-weight: 800;
-  font-size: 0.7rem;
-  padding: 2px 8px;
-  border-radius: 10px;
-  margin-bottom: 3px;
+  color: var(--navy);
+  font-weight: 900;
+  font-size: 0.75rem;
+  padding: 3px 9px;
+  border-radius: 12px;
+  margin-bottom: 4px;
   box-shadow: var(--shadow-sm);
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
+  border: 1.5px solid var(--gray-200);
+}
+@media (min-width: 768px) {
+  .pos-label { font-size: 0.85rem; padding: 4px 11px; }
 }
 
 .pos-avatar {
-  width: 50px;
-  height: 50px;
+  width: 54px;
+  height: 54px;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--cardinal-red) 0%, var(--cardinal-red-dark) 100%);
   background-size: cover;
@@ -449,24 +664,31 @@ h2::before {
   align-items: center;
   justify-content: center;
   font-weight: 800;
-  font-size: 1.05rem;
-  margin: 0 auto 3px;
+  font-size: 1.15rem;
+  margin: 0 auto 4px;
   border: 3px solid white;
   box-shadow: var(--shadow-md);
 }
+@media (min-width: 768px) {
+  .pos-avatar { width: 64px; height: 64px; font-size: 1.4rem; }
+}
 
 .pos-name {
-  background: rgba(26, 34, 56, 0.88);
+  background: var(--navy);
   color: white;
-  font-size: 0.72rem;
-  font-weight: 700;
-  padding: 1px 8px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  padding: 2px 9px;
   border-radius: 10px;
   display: inline-block;
   max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  letter-spacing: 0.01em;
+}
+@media (min-width: 768px) {
+  .pos-name { font-size: 0.9rem; padding: 3px 11px; }
 }
 
 .pos-LF { top: 18%; left: 14%; }
@@ -477,106 +699,134 @@ h2::before {
 .pos-2B { top: 39%; left: 62%; }
 .pos-1B { top: 44%; left: 78%; }
 .pos-P1 { top: 56%; left: 50%; }
-.pos-P2 { top: 85%; left: 50%; }
+.pos-P2 { top: 87%; left: 50%; }
 
-/* ========== Position list ========== */
+/* ============ Position list ============ */
 .position-table {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 0.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 0.625rem;
+}
+@media (min-width: 768px) {
+  .position-table { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem; }
 }
 
 .position-row {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 0.625rem;
-  background: var(--gray-100);
-  border-radius: 10px;
+  gap: 0.75rem;
+  padding: 0.75rem 0.875rem;
+  background: var(--gray-50);
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+  min-height: var(--tap);
 }
 
 .pos-tag {
-  background: var(--cardinal-red);
-  color: white;
-  font-weight: 800;
-  font-size: 0.72rem;
-  padding: 3px 7px;
-  border-radius: 6px;
-  min-width: 32px;
+  background: var(--navy);
+  color: var(--gold);
+  font-weight: 900;
+  font-size: 0.85rem;
+  padding: 5px 9px;
+  border-radius: 8px;
+  min-width: 38px;
   text-align: center;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.04em;
 }
 
 .position-row .mini-avatar {
-  width: 28px;
-  height: 28px;
-  font-size: 0.72rem;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--cardinal-red) 0%, var(--cardinal-red-dark) 100%);
+  background-size: cover;
+  background-position: center;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+  font-weight: 800;
+  border: 2px solid white;
+  box-shadow: var(--shadow-sm);
+  flex-shrink: 0;
 }
 
 .position-row .player-name {
-  font-weight: 700;
-  font-size: 0.875rem;
+  font-weight: 800;
+  font-size: 1.0625rem;
+  color: var(--navy);
 }
 
-/* ========== Stats ========== */
+/* ============ Stats ============ */
+.stats-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 .stats-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.85rem;
+  font-size: 0.95rem;
 }
 
 .stats-table th, .stats-table td {
-  padding: 0.55rem 0.625rem;
+  padding: 0.65rem 0.75rem;
   text-align: left;
   border-bottom: 1px solid var(--gray-200);
 }
-
 .stats-table th {
   font-weight: 800;
-  color: var(--cardinal-red);
-  font-size: 0.7rem;
+  color: var(--navy);
+  font-size: 0.78rem;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  background: var(--gray-100);
+  letter-spacing: 0.08em;
+  background: var(--gray-50);
+  white-space: nowrap;
 }
-
 .stats-table th:not(:first-child), .stats-table td:not(:first-child) {
   text-align: center;
 }
-
 .stats-table tr:last-child td { border-bottom: none; }
 
 .stats-table .player-cell {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  font-weight: 700;
+  gap: 0.625rem;
+  font-weight: 800;
+  font-size: 1rem;
+  color: var(--navy);
 }
-
 .stats-table .mini-avatar {
-  width: 26px;
-  height: 26px;
-  font-size: 0.7rem;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--cardinal-red) 0%, var(--cardinal-red-dark) 100%);
+  background-size: cover;
+  background-position: center;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 800;
+  border: 2px solid white;
+  box-shadow: var(--shadow-sm);
+  flex-shrink: 0;
 }
 
 .pos-pill {
   display: inline-block;
-  padding: 2px 8px;
-  border-radius: 8px;
+  padding: 4px 10px;
+  border-radius: 10px;
   background: var(--gray-100);
   color: var(--gray-700);
-  font-weight: 700;
-  font-size: 0.75rem;
-  min-width: 38px;
-  border: 1px solid var(--gray-200);
+  font-weight: 800;
+  font-size: 0.85rem;
+  min-width: 42px;
+  border: 1.5px solid var(--gray-200);
 }
-
 .pos-pill.premium {
-  background: #FDEAEE;
+  background: #FFE5EB;
   color: var(--cardinal-red);
-  border-color: var(--cardinal-red-light);
+  border-color: var(--cardinal-red-soft);
 }
-
 .pos-pill.outfield {
   background: #E8F4E0;
   color: var(--grass-dark);
@@ -584,55 +834,139 @@ h2::before {
 }
 
 .stats-legend {
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   color: var(--gray-500);
-  margin-top: 0.75rem;
+  margin-top: 1rem;
   display: flex;
-  gap: 1rem;
+  gap: 1.25rem;
   flex-wrap: wrap;
   align-items: center;
 }
+.stats-legend > span { display: inline-flex; align-items: center; gap: 0.4rem; }
 
-/* ========== Alerts ========== */
+/* ============ Alerts ============ */
 .alert {
   background: #FFF3CD;
-  border: 1px solid #FFE69C;
+  border: 1.5px solid #FFE69C;
   color: #664D03;
-  padding: 0.625rem 0.875rem;
-  border-radius: 8px;
+  padding: 0.875rem 1.125rem;
+  border-radius: var(--radius-sm);
   margin-bottom: 1rem;
-  font-size: 0.85rem;
-  font-weight: 500;
+  font-size: 0.95rem;
+  font-weight: 600;
 }
+.alert.danger { background: #F8D7DA; border-color: #F5C2C7; color: #842029; }
+.alert.info { background: #E7F1FF; border-color: #B6D4FE; color: #084298; }
 
-.alert.danger {
-  background: #F8D7DA;
-  border-color: #F5C2C7;
-  color: #842029;
-}
-
-.alert.info {
-  background: #E7F1FF;
-  border-color: #B6D4FE;
-  color: #084298;
-}
-
+/* ============ Footer ============ */
 .hidden-input { display: none; }
 
 footer {
   text-align: center;
-  color: var(--gray-500);
-  font-size: 0.8rem;
-  padding: 1rem;
-  font-style: italic;
-  letter-spacing: 0.05em;
+  padding: 2rem 1rem 2.5rem;
+  margin-top: 0.5rem;
 }
 
-footer .heart { color: var(--cardinal-red); font-style: normal; }
+.footer-quote {
+  font-size: 1rem;
+  color: var(--navy-soft);
+  font-style: italic;
+  font-weight: 600;
+  max-width: 540px;
+  margin: 0 auto 1.25rem;
+  transition: opacity 0.4s ease;
+  min-height: 2.5rem;
+}
 
-/* ========== Print ========== */
+.footer-brand {
+  font-size: 1.125rem;
+  color: var(--cardinal-red);
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.5rem;
+}
+.footer-brand .heart { color: var(--cardinal-red); font-style: normal; display: inline-block; }
+.footer-brand .heart:hover { animation: thump 0.5s ease; }
+@keyframes thump {
+  0%, 100% { transform: scale(1); }
+  30% { transform: scale(1.4); }
+  60% { transform: scale(0.95); }
+}
+
+.footer-sponsor {
+  margin-top: 1.5rem;
+  padding: 1.25rem 1.5rem;
+  background: linear-gradient(135deg, var(--pink-soft) 0%, var(--cream) 100%);
+  border-radius: var(--radius-md);
+  border: 2px dashed var(--pink);
+  max-width: 540px;
+  margin-left: auto;
+  margin-right: auto;
+  color: var(--navy);
+}
+.footer-sponsor .sponsor-title {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--pink);
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+}
+.footer-sponsor .sponsor-name {
+  font-size: 1.5rem;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  color: var(--navy-dark);
+  margin-bottom: 0.5rem;
+}
+.footer-sponsor .sponsor-name a {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 2px solid var(--pink);
+}
+.footer-sponsor .sponsor-name a:hover { color: var(--pink); }
+.footer-sponsor .sponsor-tagline {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--navy-soft);
+}
+.footer-sponsor .sponsor-locations {
+  margin-top: 0.625rem;
+  font-size: 0.8rem;
+  color: var(--gray-500);
+  font-weight: 600;
+}
+
+/* ============ Confetti ============ */
+.confetti {
+  position: fixed;
+  top: -40px;
+  font-size: 2rem;
+  pointer-events: none;
+  z-index: 9999;
+  animation: fall linear forwards;
+}
+@keyframes fall {
+  0% { transform: translateY(0) rotate(0); opacity: 1; }
+  100% { transform: translateY(110vh) rotate(720deg); opacity: 0.6; }
+}
+
+.sundae-mode {
+  --cardinal-red: #FF6B9D;
+  --cardinal-red-dark: #C2185B;
+  --cardinal-red-soft: #FF8FAB;
+}
+.sundae-mode .sponsor-strip { animation: rainbow 3s infinite; }
+@keyframes rainbow {
+  0%, 100% { background: linear-gradient(90deg, var(--pink), #FF8FAB); }
+  33% { background: linear-gradient(90deg, #FFC93C, #FF6B9D); }
+  66% { background: linear-gradient(90deg, #B8E0D2, #FFC93C); }
+}
+
+/* ============ Print ============ */
 @media print {
-  body { background: white; }
+  body { background: white; font-size: 12pt; }
+  .sponsor-strip { background: white !important; color: var(--pink) !important; border-bottom: 1px solid var(--gray-300); }
   header {
     background: white !important;
     color: var(--cardinal-red);
@@ -642,72 +976,103 @@ footer .heart { color: var(--cardinal-red); font-style: normal; }
   }
   header::before { display: none; }
   .brand-text h1, .brand-text .subtitle { color: var(--cardinal-red); text-shadow: none; }
-  .header-actions, .photo-btn, .link-btn { display: none !important; }
+  .header-actions, .photo-btn, .link-btn, .coach-bubble, .footer-quote { display: none !important; }
+  .view-toggle { display: none; }
   .tab { display: none; }
+  #battingView, #defenseView { display: block !important; }
   section { box-shadow: none; border: 1px solid #ccc; page-break-inside: avoid; }
-  .roster-grid { gap: 0.25rem; }
   .player-card.absent { display: none; }
-  main { padding: 1rem 0.5rem; gap: 0.75rem; max-width: 100%; }
-  .diamond { max-width: 380px; }
+  main { padding: 0.5rem; gap: 0.75rem; max-width: 100%; }
+  .diamond { max-width: 360px; }
+  .footer-sponsor { background: white !important; border: 1px solid var(--pink); }
 }
 
-/* ========== Responsive ========== */
-@media (max-width: 600px) {
-  main { padding: 1rem 0.75rem 2rem; gap: 1rem; }
-  section { padding: 1rem; }
-  header { padding: 1.25rem 0.75rem 1.5rem; }
-  .brand-logo { font-size: 2.25rem; }
-  .brand-text h1 { font-size: 2rem; }
-  .roster-grid { grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); }
-  .avatar { width: 46px; height: 46px; font-size: 1.05rem; }
-  .diamond { aspect-ratio: 1 / 1; max-width: 100%; }
-  .diamond-position { width: 64px; }
-  .pos-avatar { width: 38px; height: 38px; font-size: 0.85rem; }
-  .pos-label, .pos-name { font-size: 0.62rem; }
-  .stats-table { font-size: 0.75rem; }
-  .stats-table th, .stats-table td { padding: 0.4rem 0.35rem; }
+/* ============ Tablet & desktop ============ */
+@media (min-width: 1024px) {
+  body { font-size: 19px; }
+  header { padding: 1.75rem 2rem 2rem; }
+  .team-logo { width: 88px; height: 88px; font-size: 2.5rem; }
+  main { padding: 2rem 2rem 4rem; }
+  .diamond { max-width: 720px; }
+}
+
+@media (max-width: 380px) {
+  .header-inner { flex-wrap: wrap; }
+  .team-logo { width: 56px; height: 56px; font-size: 1.5rem; }
+  .brand-text h1 { font-size: 1.625rem; }
+  .header-actions { width: 100%; justify-content: flex-end; margin-top: 0.5rem; }
+  .roster-grid { grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); }
+  .avatar { width: 54px; height: 54px; font-size: 1.25rem; }
+  .diamond { aspect-ratio: 1 / 1; }
+  .diamond-position { width: 68px; }
+  .pos-avatar { width: 40px; height: 40px; font-size: 0.95rem; }
+  .pos-label, .pos-name { font-size: 0.66rem; }
 }
 </style>
 </head>
 <body>
+
+<div class="sponsor-strip" id="sponsorStrip">
+  <span class="cone">🍦</span>
+  Proudly sponsored by
+  <a href="https://www.tabithasicecream.com/" target="_blank" rel="noopener">TABITHA'S ICE CREAM</a>
+  · Win or lose, sundaes after the game 🏆
+</div>
+
 <header>
-  <div class="brand">
-    <span class="brand-logo">⚾</span>
-    <div class="brand-text">
-      <h1>CARDINALS</h1>
-      <div class="subtitle">Game Day Lineup</div>
+  <div class="header-inner">
+    <div class="team-logo" id="teamLogo" title="Click to upload team logo">
+      <span id="teamLogoFallback">⚾</span>
+      <span class="logo-hint">＋</span>
     </div>
-  </div>
-  <div class="header-actions">
-    <button class="btn" id="printBtn">🖨 Print</button>
-    <button class="btn" id="newGameBtn">↻ New Game (Reset Present)</button>
+    <div class="brand-text">
+      <h1>LITTLE CARDINALS</h1>
+      <div class="subtitle">Fairfield Little League Nationals</div>
+    </div>
+    <div class="header-actions">
+      <button class="icon-btn" id="printBtn" title="Print lineup">🖨</button>
+      <button class="icon-btn" id="newGameBtn" title="New game (reset present)">↻</button>
+    </div>
   </div>
 </header>
 
+<div class="coach-bubble" id="coachBubble"></div>
+
 <main>
   <section>
-    <h2>Today's Roster</h2>
+    <h2>Today's Roster <span class="badge" id="rosterBadge">9 ON 9</span></h2>
     <div class="roster-grid" id="rosterGrid"></div>
     <div class="roster-status">
-      <span><strong id="presentCount">9</strong> of <span id="totalCount">9</span> players present</span>
+      <span>
+        <span class="count-display" id="presentCount">9</span> / <span id="totalCount">9</span> present
+        <span class="squad-label" id="squadLabel" style="display: none;">FULL SQUAD ⚡</span>
+      </span>
       <button class="link-btn" id="markAllBtn">Mark all present</button>
     </div>
     <input type="file" id="photoInput" class="hidden-input" accept="image/*">
+    <input type="file" id="logoInput" class="hidden-input" accept="image/*">
   </section>
 
-  <section id="battingSection">
-    <h2>Batting Order</h2>
+  <section>
+    <div class="view-toggle" role="tablist">
+      <button class="active" data-view="batting" role="tab">🏏 Batting</button>
+      <button data-view="defense" role="tab">🧤 Defense</button>
+    </div>
+  </section>
+
+  <section id="battingView">
+    <h2>Batting Order <span class="badge">Same all game</span></h2>
     <ol class="batting-list" id="battingOrder"></ol>
   </section>
 
-  <section id="inningSection">
-    <h2>Field Rotation</h2>
+  <section id="defenseView" style="display: none;">
+    <h2>Field Rotation <span class="badge" id="defenseBadge">4 innings</span></h2>
     <div id="rotationNote"></div>
     <div class="inning-tabs" id="inningTabs"></div>
     <div id="inningContent"></div>
   </section>
 
-  <section id="statsSection">
+  <section>
     <h2>Position Summary</h2>
     <div id="statsContainer"></div>
     <div class="stats-legend">
@@ -719,7 +1084,15 @@ footer .heart { color: var(--cardinal-red); font-style: normal; }
 </main>
 
 <footer>
-  Go <span class="heart">♥</span> Cardinals
+  <div class="footer-quote" id="footerQuote">Loading wisdom…</div>
+  <div class="footer-brand">GO <span class="heart">♥</span> CARDINALS</div>
+
+  <div class="footer-sponsor">
+    <div class="sponsor-title">🍨 Today's game brought to you by 🍨</div>
+    <div class="sponsor-name"><a href="https://www.tabithasicecream.com/" target="_blank" rel="noopener">Tabitha's Ice Cream</a></div>
+    <div class="sponsor-tagline">Classic parlor feel · Made-with-love scoops · Treat the team</div>
+    <div class="sponsor-locations">Fairfield · Bridgeport, CT</div>
+  </div>
 </footer>
 
 <script>
@@ -736,13 +1109,46 @@ const STATIC_PLAN = [
   { P1: 'Leon', P2: 'Joel', '1B': 'Gabe', '2B': 'Hart', SS: 'Parker', '3B': 'Miles', LF: 'Hudson', CF: 'Julian', RF: 'Caleb' }
 ];
 
+const COACH_QUOTES = [
+  "Keep your eye on the ball… unless there's a butterfly.",
+  "Sunflower seeds are NOT lunch.",
+  "Cheering is mandatory, hitting is encouraged.",
+  "We don't lose — we just earn ice cream privileges.",
+  "Hustle now, sundae later. 🍦",
+  "If you don't run hard, you bat eighth tomorrow.",
+  "First rule of Cardinals: be a good teammate. Second rule: hit the ball.",
+  "Anyone caught making dirt angels in the outfield owes the coach a scoop.",
+  "Swing like Tabitha's is on the line.",
+  "Glove down, gum in, helmet on.",
+  "If a parent yells, just nod. Then run.",
+  "Catchers: it's a mask, not a snack.",
+  "Walks ARE as good as hits — but home runs are better than both.",
+  "We play loud, we cheer louder, we eat ice cream loudest.",
+  "When in doubt, throw to first."
+];
+
+const POP_QUIPS = [
+  "Let's go Cardinals! ⚾",
+  "Bring the thunder! ⚡",
+  "Sundae mode unlocked? 🍦",
+  "Coach says: hustle.",
+  "First pitch energy! 🔥",
+  "Tabitha's after the W 🏆🍦",
+  "Eyes up, kids!",
+  "Cardinals nation rise up.",
+  "Anyone seen the rosin bag?"
+];
+
 const state = {
   present: loadPresent(),
   photos: loadPhotos(),
+  teamLogo: localStorage.getItem('cardinals_logo') || null,
+  view: localStorage.getItem('cardinals_view') || 'batting',
   currentInning: 1,
   uploadTarget: null,
   rotation: [],
-  isStatic: true
+  isStatic: true,
+  sundae: false
 };
 
 function loadPresent() {
@@ -755,99 +1161,62 @@ function loadPresent() {
   } catch (e) {}
   return new Set(ROSTER);
 }
-
-function savePresent() {
-  localStorage.setItem('cardinals_present', JSON.stringify([...state.present]));
-}
-
+function savePresent() { localStorage.setItem('cardinals_present', JSON.stringify([...state.present])); }
 function loadPhotos() {
-  try {
-    return JSON.parse(localStorage.getItem('cardinals_photos') || '{}');
-  } catch (e) { return {}; }
+  try { return JSON.parse(localStorage.getItem('cardinals_photos') || '{}'); }
+  catch (e) { return {}; }
 }
-
 function savePhotos() {
-  try {
-    localStorage.setItem('cardinals_photos', JSON.stringify(state.photos));
-  } catch (e) {
-    alert('Could not save photo — storage limit reached. Try removing an older photo first.');
-  }
+  try { localStorage.setItem('cardinals_photos', JSON.stringify(state.photos)); }
+  catch (e) { alert('Storage full — try clearing some photos.'); }
 }
 
 function getInitial(name) { return name[0].toUpperCase(); }
-
 function getPhotoStyle(player) {
-  return state.photos[player]
-    ? ` style="background-image: url('${state.photos[player]}');"`
-    : '';
+  return state.photos[player] ? ` style="background-image: url('${state.photos[player]}');"` : '';
 }
-
 function avatarContent(player) {
   return state.photos[player] ? '' : getInitial(player);
 }
-
-function getPresentInRosterOrder() {
-  return ROSTER.filter(p => state.present.has(p));
-}
+function getPresentInRosterOrder() { return ROSTER.filter(p => state.present.has(p)); }
 
 function generateRotation(presentList) {
   const allPresent = presentList.length === ROSTER.length
     && presentList.every(p => ROSTER.includes(p));
-  if (allPresent) {
-    return { rotation: STATIC_PLAN, isStatic: true };
-  }
+  if (allPresent) return { rotation: STATIC_PLAN, isStatic: true };
 
   const N = presentList.length;
   if (N < 4) return { rotation: [], isStatic: false };
 
   const positions = POSITION_PRIORITY.slice(0, N);
   const numInnings = 4;
-
   const stats = {};
-  presentList.forEach(p => {
-    stats[p] = { positions: new Set(), premiumCount: 0, outfieldCount: 0 };
-  });
+  presentList.forEach(p => stats[p] = { positions: new Set(), premiumCount: 0, outfieldCount: 0 });
 
   const rotation = [];
-  for (let inning = 0; inning < numInnings; inning++) {
-    const assignment = {};
+  for (let i = 0; i < numInnings; i++) {
+    const assign = {};
     const used = new Set();
-
     for (const pos of positions) {
       const isPrem = PREMIUM.includes(pos);
       const isOut = OUTFIELD.includes(pos);
-
-      let eligible = presentList.filter(p =>
-        !used.has(p) && !stats[p].positions.has(pos)
-      );
-      if (eligible.length === 0) {
-        eligible = presentList.filter(p => !used.has(p));
-      }
-
+      let eligible = presentList.filter(p => !used.has(p) && !stats[p].positions.has(pos));
+      if (!eligible.length) eligible = presentList.filter(p => !used.has(p));
       eligible.sort((a, b) => {
-        if (isPrem && stats[a].premiumCount !== stats[b].premiumCount) {
-          return stats[a].premiumCount - stats[b].premiumCount;
-        }
-        if (isOut && stats[a].outfieldCount !== stats[b].outfieldCount) {
-          return stats[a].outfieldCount - stats[b].outfieldCount;
-        }
-        if (stats[a].positions.size !== stats[b].positions.size) {
-          return stats[a].positions.size - stats[b].positions.size;
-        }
+        if (isPrem && stats[a].premiumCount !== stats[b].premiumCount) return stats[a].premiumCount - stats[b].premiumCount;
+        if (isOut && stats[a].outfieldCount !== stats[b].outfieldCount) return stats[a].outfieldCount - stats[b].outfieldCount;
+        if (stats[a].positions.size !== stats[b].positions.size) return stats[a].positions.size - stats[b].positions.size;
         return ROSTER.indexOf(a) - ROSTER.indexOf(b);
       });
-
       const chosen = eligible[0];
-      assignment[pos] = chosen;
+      assign[pos] = chosen;
       used.add(chosen);
       stats[chosen].positions.add(pos);
       if (isPrem) stats[chosen].premiumCount++;
       if (isOut) stats[chosen].outfieldCount++;
     }
-
-    rotation.push(assignment);
+    rotation.push(assign);
   }
-
   return { rotation, isStatic: false };
 }
 
@@ -865,23 +1234,32 @@ function renderRoster() {
     `;
   }).join('');
 
-  document.getElementById('presentCount').textContent = state.present.size;
+  const cnt = state.present.size;
+  document.getElementById('presentCount').textContent = cnt;
   document.getElementById('totalCount').textContent = ROSTER.length;
+  document.getElementById('rosterBadge').textContent = `${cnt} ON ${ROSTER.length}`;
+  document.getElementById('squadLabel').style.display = cnt === ROSTER.length ? 'inline-block' : 'none';
 }
 
 function renderBatting() {
   const present = getPresentInRosterOrder();
   const list = document.getElementById('battingOrder');
   if (present.length === 0) {
-    list.innerHTML = '<li style="background: #F8D7DA; color: #842029; border-color: #842029;">No players present</li>';
+    list.innerHTML = '<li class="batting-row" style="background: #F8D7DA; color: #842029; border-color: #842029;">No players present — go find your team!</li>';
     return;
   }
-  list.innerHTML = present.map(player => `
-    <li>
-      <div class="mini-avatar"${getPhotoStyle(player)}>${avatarContent(player)}</div>
-      <span>${player}</span>
-    </li>
-  `).join('');
+  const suffixes = ['LEADOFF', '', '', 'CLEANUP', '', '', '', '', 'CLOSER'];
+  list.innerHTML = present.map((player, i) => {
+    const suffix = suffixes[i] || '';
+    return `
+      <li class="batting-row">
+        <div class="batting-num">${i + 1}</div>
+        <div class="batting-avatar"${getPhotoStyle(player)}>${avatarContent(player)}</div>
+        <span class="batting-name">${player}</span>
+        ${suffix ? `<span class="batting-suffix">${suffix}</span>` : ''}
+      </li>
+    `;
+  }).join('');
 }
 
 function renderInnings() {
@@ -912,7 +1290,6 @@ function renderInnings() {
   ).join('');
 
   const inning = result.rotation[state.currentInning - 1];
-  const positionsInInning = Object.keys(inning);
 
   let html = '<div class="diamond">';
   for (const pos of DIAMOND_ORDER) {
@@ -948,12 +1325,10 @@ function renderInnings() {
 function renderStats() {
   const present = getPresentInRosterOrder();
   const container = document.getElementById('statsContainer');
-
-  if (present.length === 0 || state.rotation.length === 0) {
-    container.innerHTML = '<p style="color: var(--gray-500); font-size: 0.875rem;">Not enough players to summarize.</p>';
+  if (!present.length || !state.rotation.length) {
+    container.innerHTML = '<p style="color: var(--gray-500); font-size: 0.95rem;">Not enough players to summarize.</p>';
     return;
   }
-
   const playerInnings = {};
   present.forEach(p => playerInnings[p] = []);
   state.rotation.forEach((inning, i) => {
@@ -963,10 +1338,9 @@ function renderStats() {
   });
 
   const numInnings = state.rotation.length;
-  let html = '<div style="overflow-x: auto;"><table class="stats-table"><thead><tr><th>Player</th>';
+  let html = '<div class="stats-wrap"><table class="stats-table"><thead><tr><th>Player</th>';
   for (let i = 1; i <= numInnings; i++) html += `<th>Inn ${i}</th>`;
   html += '<th>Premium</th></tr></thead><tbody>';
-
   for (const player of present) {
     const positions = playerInnings[player] || [];
     const premiumCount = positions.filter(p => PREMIUM.includes(p)).length;
@@ -977,27 +1351,70 @@ function renderStats() {
       </div></td>`;
     for (let i = 0; i < numInnings; i++) {
       const pos = positions[i];
-      if (!pos) {
-        html += '<td><span class="pos-pill">—</span></td>';
-      } else {
+      if (!pos) html += '<td><span class="pos-pill">—</span></td>';
+      else {
         const cls = PREMIUM.includes(pos) ? 'premium' : OUTFIELD.includes(pos) ? 'outfield' : '';
         html += `<td><span class="pos-pill ${cls}">${pos}</span></td>`;
       }
     }
-    html += `<td><strong style="color: ${premiumCount > 0 ? 'var(--cardinal-red)' : 'var(--gray-500)'};">${premiumCount}</strong></td>`;
+    html += `<td><strong style="color: ${premiumCount > 0 ? 'var(--cardinal-red)' : 'var(--gray-500)'}; font-size: 1.1rem;">${premiumCount}</strong></td>`;
     html += '</tr>';
   }
   html += '</tbody></table></div>';
   container.innerHTML = html;
 }
 
+function applyView() {
+  document.querySelectorAll('.view-toggle button').forEach(b => {
+    b.classList.toggle('active', b.dataset.view === state.view);
+  });
+  document.getElementById('battingView').style.display = state.view === 'batting' ? '' : 'none';
+  document.getElementById('defenseView').style.display = state.view === 'defense' ? '' : 'none';
+}
+
+function setTeamLogo(dataUrl) {
+  state.teamLogo = dataUrl;
+  if (dataUrl) {
+    try { localStorage.setItem('cardinals_logo', dataUrl); } catch (e) {}
+  } else {
+    localStorage.removeItem('cardinals_logo');
+  }
+  applyTeamLogo();
+}
+function applyTeamLogo() {
+  const el = document.getElementById('teamLogo');
+  const fb = document.getElementById('teamLogoFallback');
+  if (state.teamLogo) {
+    el.style.backgroundImage = `url('${state.teamLogo}')`;
+    el.classList.add('has-photo');
+    fb.style.display = 'none';
+    return;
+  }
+  // Fallback chain: try logo.png in same folder, else baseball emoji
+  const probe = new Image();
+  probe.onload = () => {
+    el.style.backgroundImage = "url('logo.png')";
+    el.classList.add('has-photo');
+    fb.style.display = 'none';
+  };
+  probe.onerror = () => {
+    el.style.backgroundImage = '';
+    el.classList.remove('has-photo');
+    fb.style.display = '';
+  };
+  probe.src = 'logo.png?v=' + Date.now();
+}
+
 function render() {
+  applyTeamLogo();
   renderRoster();
   renderBatting();
   renderInnings();
   renderStats();
+  applyView();
 }
 
+/* ============ Events ============ */
 document.addEventListener('click', (e) => {
   const photoBtn = e.target.closest('[data-photo-for]');
   if (photoBtn) {
@@ -1021,49 +1438,172 @@ document.addEventListener('click', (e) => {
   if (tab) {
     state.currentInning = parseInt(tab.dataset.inning, 10);
     renderInnings();
+    return;
+  }
+
+  const viewBtn = e.target.closest('.view-toggle button');
+  if (viewBtn) {
+    state.view = viewBtn.dataset.view;
+    localStorage.setItem('cardinals_view', state.view);
+    applyView();
+    return;
   }
 });
 
 document.getElementById('photoInput').addEventListener('change', (e) => {
   const file = e.target.files[0];
   if (!file || !state.uploadTarget) return;
-  const reader = new FileReader();
-  reader.onload = (ev) => {
-    const img = new Image();
-    img.onload = () => {
-      const canvas = document.createElement('canvas');
-      const size = 200;
-      canvas.width = size;
-      canvas.height = size;
-      const ctx = canvas.getContext('2d');
-      const minDim = Math.min(img.width, img.height);
-      const sx = (img.width - minDim) / 2;
-      const sy = (img.height - minDim) / 2;
-      ctx.drawImage(img, sx, sy, minDim, minDim, 0, 0, size, size);
-      state.photos[state.uploadTarget] = canvas.toDataURL('image/jpeg', 0.82);
-      savePhotos();
-      render();
-      state.uploadTarget = null;
-      e.target.value = '';
-    };
-    img.src = ev.target.result;
-  };
-  reader.readAsDataURL(file);
+  resizeImage(file, 200, (dataUrl) => {
+    state.photos[state.uploadTarget] = dataUrl;
+    savePhotos();
+    state.uploadTarget = null;
+    e.target.value = '';
+    render();
+  });
+});
+
+document.getElementById('logoInput').addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  resizeImage(file, 240, (dataUrl) => {
+    setTeamLogo(dataUrl);
+    e.target.value = '';
+  });
+});
+
+document.getElementById('teamLogo').addEventListener('click', () => {
+  // Logo behavior: spin + show quip; right-click / long-press to upload
+  const el = document.getElementById('teamLogo');
+  el.classList.remove('spin');
+  void el.offsetWidth;
+  el.classList.add('spin');
+  showBubble(POP_QUIPS[Math.floor(Math.random() * POP_QUIPS.length)]);
+});
+
+let logoTouchTimer = null;
+document.getElementById('teamLogo').addEventListener('contextmenu', (e) => {
+  e.preventDefault();
+  document.getElementById('logoInput').click();
+});
+document.getElementById('teamLogo').addEventListener('touchstart', () => {
+  logoTouchTimer = setTimeout(() => {
+    document.getElementById('logoInput').click();
+  }, 700);
+});
+document.getElementById('teamLogo').addEventListener('touchend', () => {
+  if (logoTouchTimer) { clearTimeout(logoTouchTimer); logoTouchTimer = null; }
 });
 
 document.getElementById('printBtn').addEventListener('click', () => window.print());
-
 document.getElementById('newGameBtn').addEventListener('click', () => {
   state.present = new Set(ROSTER);
   state.currentInning = 1;
   savePresent();
   render();
+  showBubble("Fresh game, fresh stats. Let's go! ⚾");
 });
-
 document.getElementById('markAllBtn').addEventListener('click', () => {
   state.present = new Set(ROSTER);
   savePresent();
   render();
+});
+
+function resizeImage(file, size, cb) {
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = size; canvas.height = size;
+      const ctx = canvas.getContext('2d');
+      const minDim = Math.min(img.width, img.height);
+      const sx = (img.width - minDim) / 2;
+      const sy = (img.height - minDim) / 2;
+      ctx.drawImage(img, sx, sy, minDim, minDim, 0, 0, size, size);
+      cb(canvas.toDataURL('image/jpeg', 0.82));
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+/* ============ Easter eggs ============ */
+function showBubble(text) {
+  const b = document.getElementById('coachBubble');
+  b.textContent = text;
+  b.classList.add('show');
+  clearTimeout(b._timer);
+  b._timer = setTimeout(() => b.classList.remove('show'), 2400);
+}
+
+// Rotating footer quote
+let quoteIdx = Math.floor(Math.random() * COACH_QUOTES.length);
+function rotateQuote() {
+  const q = document.getElementById('footerQuote');
+  q.style.opacity = '0';
+  setTimeout(() => {
+    q.textContent = '"' + COACH_QUOTES[quoteIdx] + '"';
+    q.style.opacity = '1';
+    quoteIdx = (quoteIdx + 1) % COACH_QUOTES.length;
+  }, 400);
+}
+rotateQuote();
+setInterval(rotateQuote, 9000);
+
+// Konami → sundae mode
+const KONAMI = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+let konamiBuf = [];
+document.addEventListener('keydown', (e) => {
+  konamiBuf.push(e.key);
+  if (konamiBuf.length > KONAMI.length) konamiBuf.shift();
+  if (KONAMI.every((k, i) => k.toLowerCase() === (konamiBuf[i] || '').toLowerCase())) {
+    activateSundae();
+    konamiBuf = [];
+  }
+});
+
+function activateSundae() {
+  if (state.sundae) return;
+  state.sundae = true;
+  document.body.classList.add('sundae-mode');
+  showBubble("🍦 SUNDAE MODE ACTIVATED 🍦");
+  iceCreamRain(50);
+}
+
+function iceCreamRain(count) {
+  const icons = ['🍦','🍨','🍒','⚾','🏆','🎉'];
+  for (let i = 0; i < count; i++) {
+    const c = document.createElement('div');
+    c.className = 'confetti';
+    c.textContent = icons[Math.floor(Math.random() * icons.length)];
+    c.style.left = Math.random() * 100 + 'vw';
+    c.style.animationDuration = (3 + Math.random() * 3) + 's';
+    c.style.animationDelay = (Math.random() * 1.5) + 's';
+    c.style.fontSize = (1.5 + Math.random() * 1.5) + 'rem';
+    document.body.appendChild(c);
+    setTimeout(() => c.remove(), 8000);
+  }
+}
+
+// Click heart in footer → sprinkles
+document.querySelector('.footer-brand .heart').addEventListener('click', () => {
+  iceCreamRain(15);
+  showBubble("Cardinals forever ♥");
+});
+
+// Click sponsor strip 3x → mini sundae shower
+let sponsorClicks = 0;
+let sponsorTimer = null;
+document.getElementById('sponsorStrip').addEventListener('click', (e) => {
+  if (e.target.tagName === 'A') return;
+  sponsorClicks++;
+  clearTimeout(sponsorTimer);
+  sponsorTimer = setTimeout(() => { sponsorClicks = 0; }, 1500);
+  if (sponsorClicks >= 3) {
+    iceCreamRain(20);
+    showBubble("Tabitha's sends their regards 🍦");
+    sponsorClicks = 0;
+  }
 });
 
 render();
