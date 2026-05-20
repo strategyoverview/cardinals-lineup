@@ -172,7 +172,7 @@ header::before {
   height: clamp(86px, 24vw, 200px);
   border-radius: 50%;
   background: white;
-  border: 3px dashed rgba(255, 255, 255, 0.75);
+  border: 4px solid rgba(255,255,255,0.75);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -180,19 +180,11 @@ header::before {
   cursor: pointer;
   position: relative;
   flex-shrink: 0;
-  background-size: contain;
-  background-repeat: no-repeat;
+  background-size: cover;
   background-position: center;
-  transition: transform 0.3s ease, filter 0.3s ease;
+  transition: transform 0.3s ease;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.32);
   color: var(--cardinal-red);
-}
-/* When an actual logo image is loaded, drop all container chrome so the
-   PNG renders exactly as designed — no white halo, no border ring. */
-.team-logo.has-photo {
-  background-color: transparent;
-  border: none;
-  border-radius: 0;
-  filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.22));
 }
 .team-logo:hover { transform: scale(1.04); }
 .team-logo.spin { animation: spinLogo 0.8s ease-out; }
@@ -1411,19 +1403,19 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
 .footer-logo {
   width: clamp(180px, 50vw, 280px);
   height: clamp(180px, 50vw, 280px);
-  background: transparent;
-  border: none;
+  border-radius: 50%;
+  background: white;
   margin: 1rem auto 1.5rem;
-  filter: drop-shadow(0 14px 28px rgba(196, 30, 58, 0.22));
-  background-size: contain;
-  background-repeat: no-repeat;
+  box-shadow: 0 14px 36px rgba(196, 30, 58, 0.22);
+  background-size: cover;
   background-position: center;
+  border: 4px solid #FFD7E1;
   cursor: pointer;
-  transition: transform 0.3s ease, filter 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 .footer-logo:hover {
   transform: rotate(-6deg) scale(1.06);
-  filter: drop-shadow(0 18px 36px rgba(196, 30, 58, 0.32));
+  box-shadow: 0 18px 44px rgba(196, 30, 58, 0.3);
 }
 
 .footer-thanks {
