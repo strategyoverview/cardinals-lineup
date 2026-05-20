@@ -55,7 +55,7 @@ html { -webkit-tap-highlight-color: transparent; -webkit-text-size-adjust: 100%;
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', system-ui, sans-serif;
   background:
-    radial-gradient(ellipse at top, #D9304C 0%, var(--cardinal-red) 35%, var(--cardinal-red-dark) 100%);
+    linear-gradient(180deg, #98effb 0%, #BFF4FB 35%, #98effb 75%, #7BD6E8 100%);
   background-attachment: fixed;
   color: var(--navy);
   min-height: 100vh;
@@ -109,9 +109,8 @@ button { font-family: inherit; }
 
 /* ============ Header ============ */
 header {
-  background: linear-gradient(135deg, var(--cardinal-red) 0%, var(--cardinal-red-dark) 100%);
-  color: white;
-  box-shadow: 0 6px 24px rgba(196, 30, 58, 0.25);
+  background: transparent;
+  color: var(--navy-dark);
   position: relative;
   overflow: hidden;
   width: 100%;
@@ -121,8 +120,8 @@ header::before {
   position: absolute;
   inset: 0;
   background-image:
-    radial-gradient(circle at 15% 20%, rgba(255, 201, 60, 0.18) 0%, transparent 45%),
-    radial-gradient(circle at 85% 80%, rgba(255, 201, 60, 0.12) 0%, transparent 45%);
+    radial-gradient(circle at 15% 20%, rgba(255, 255, 255, 0.3) 0%, transparent 45%),
+    radial-gradient(circle at 85% 80%, rgba(255, 255, 255, 0.18) 0%, transparent 45%);
   pointer-events: none;
 }
 
@@ -177,7 +176,8 @@ header::before {
   font-weight: 900;
   letter-spacing: 0.02em;
   line-height: 1;
-  text-shadow: 2px 3px 6px rgba(0,0,0,0.28);
+  color: var(--cardinal-red);
+  text-shadow: 0 2px 0 rgba(255,255,255,0.4);
   display: flex;
   flex-direction: column;
   gap: 0.1em;
@@ -185,7 +185,7 @@ header::before {
 .brand-text h1 span { display: block; }
 .brand-text .subtitle {
   font-size: clamp(0.85rem, 3.4vw, 1.5rem);
-  opacity: 0.95;
+  color: var(--navy-dark);
   font-weight: 800;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -195,7 +195,7 @@ header::before {
 .brand-text .header-sponsor {
   font-size: clamp(0.7rem, 2.8vw, 1.05rem);
   font-weight: 700;
-  opacity: 0.88;
+  color: var(--navy-soft);
   margin-top: 0.5rem;
   line-height: 1.2;
   font-style: italic;
@@ -611,14 +611,15 @@ h2 .badge {
 }
 
 .batting-name {
-  font-size: 1.125rem;
-  font-weight: 800;
+  font-size: 1.875rem;
+  font-weight: 900;
   color: var(--navy);
-  letter-spacing: -0.01em;
+  letter-spacing: -0.015em;
   flex: 1;
+  line-height: 1.1;
 }
 @media (min-width: 768px) {
-  .batting-name { font-size: 1.25rem; }
+  .batting-name { font-size: 2.25rem; }
 }
 
 .batting-suffix {
@@ -1033,9 +1034,17 @@ h2 .badge {
   display: flex;
   align-items: center;
   gap: 0.625rem;
-  font-weight: 800;
-  font-size: 1rem;
+  font-weight: 900;
+  font-size: 1.375rem;
   color: var(--navy);
+}
+.stats-table .player-name-cell {
+  font-weight: 900;
+  font-size: 1.375rem;
+  color: var(--navy);
+}
+@media (min-width: 768px) {
+  .stats-table .player-cell, .stats-table .player-name-cell { font-size: 1.5rem; }
 }
 .stats-table .mini-avatar {
   width: 32px;
@@ -1136,15 +1145,14 @@ footer {
 
 .footer-quote {
   font-size: 1rem;
-  color: rgba(255,255,255,0.92);
+  color: var(--navy-dark);
   font-style: italic;
-  font-weight: 600;
+  font-weight: 700;
   max-width: 540px;
   margin: 0 auto 1.25rem;
   transition: opacity 0.4s ease;
   min-height: 2.5rem;
   padding: 0 0.5rem;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.18);
 }
 
 .footer-logo {
@@ -1186,14 +1194,13 @@ footer {
   font-weight: 800;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: rgba(255,255,255,0.92);
+  color: var(--navy-dark);
   text-align: center;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.18);
 }
 .footer-made::before, .footer-made::after {
   content: '·';
   margin: 0 0.625rem;
-  color: var(--gold);
+  color: var(--cardinal-red);
 }
 @keyframes thump {
   0%, 100% { transform: scale(1); }
@@ -1627,7 +1634,6 @@ footer {
       Today's Roster
       <label class="roster-date-wrap" title="Pick game date">
         <span class="roster-date" id="rosterDateLabel">—</span>
-        <span class="roster-cal-icon" aria-hidden="true">📅</span>
         <input type="date" id="rosterDateInput" class="roster-date-input" />
       </label>
       <div class="h2-controls">
@@ -1641,7 +1647,6 @@ footer {
           <span class="count-display" id="presentCount">9</span> / <span id="totalCount">9</span> present
           <span class="squad-label" id="squadLabel" style="display: none;">FULL SQUAD ⚡</span>
         </span>
-        <button class="link-btn" id="markAllBtn">Mark all present</button>
       </div>
     </div>
     <input type="file" id="logoInput" class="hidden-input" accept="image/*">
@@ -1675,7 +1680,7 @@ footer {
   </section>
 
   <section id="battingView">
-    <h2>Batting Order <span class="badge">Same all game</span></h2>
+    <h2>Batting Order</h2>
     <ol class="batting-list" id="battingOrder"></ol>
   </section>
 
@@ -2236,11 +2241,7 @@ document.getElementById('teamLogo').addEventListener('touchend', () => {
   if (logoTouchTimer) { clearTimeout(logoTouchTimer); logoTouchTimer = null; }
 });
 
-document.getElementById('markAllBtn').addEventListener('click', () => {
-  state.present = new Set(ROSTER);
-  savePresent();
-  render();
-});
+// markAllBtn removed
 
 // Scorecard (per-player assists + outs)
 let scorecard = {};
