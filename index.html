@@ -15,6 +15,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer">
 <title>Little Cardinals — Game Day</title>
 <style>
 :root {
@@ -317,41 +318,51 @@ main {
 .page-nav .nav-icon { font-size: 1.15rem; line-height: 1; display: inline-flex; align-items: center; }
 .page-nav .nav-icon svg { width: 1.15em; height: 1.15em; display: block; }
 
-/* Mobile: bottom-fixed glass nav, only one page visible */
+/* Mobile: floating glass pill nav, only one page visible */
 @media (max-width: 768px) {
   .page-nav {
     position: fixed;
     top: auto;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    border-top: 1px solid rgba(255,255,255,0.65);
-    border-bottom: none;
-    box-shadow: 0 -6px 28px rgba(15, 23, 42, 0.1);
-    padding: 0.4rem 0.4rem;
-    padding-bottom: max(0.4rem, env(safe-area-inset-bottom));
-    gap: 0;
-    background: rgba(255, 255, 255, 0.72);
+    bottom: max(0.875rem, env(safe-area-inset-bottom));
+    left: 0.75rem;
+    right: 0.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    border-radius: 28px;
+    box-shadow:
+      0 16px 48px rgba(15, 23, 42, 0.18),
+      0 4px 14px rgba(15, 23, 42, 0.08),
+      inset 0 1px 0 rgba(255, 255, 255, 0.85);
+    padding: 0.375rem;
+    padding-bottom: 0.375rem;
+    gap: 0.25rem;
+    background: rgba(255, 255, 255, 0.62);
+    backdrop-filter: blur(38px) saturate(200%);
+    -webkit-backdrop-filter: blur(38px) saturate(200%);
     justify-content: space-around;
   }
   .page-nav button {
     flex: 1 1 0;
     flex-direction: column;
-    gap: 3px;
-    padding: 0.4rem 0.25rem;
-    border-radius: 12px;
-    font-size: 0.68rem;
+    gap: 2px;
+    padding: 0.5rem 0.25rem 0.4rem;
+    border-radius: 22px;
+    font-size: 0.66rem;
     text-transform: none;
-    letter-spacing: 0.01em;
-    min-height: 54px;
+    letter-spacing: 0;
+    min-height: 56px;
+    color: var(--gray-700);
+    font-weight: 700;
   }
   .page-nav button.active {
-    background: transparent;
+    background: rgba(255, 255, 255, 0.92);
     color: var(--cardinal-red);
-    box-shadow: none;
+    box-shadow:
+      0 2px 6px rgba(15, 23, 42, 0.06),
+      0 1px 2px rgba(15, 23, 42, 0.04),
+      inset 0 1px 0 rgba(255, 255, 255, 0.7);
   }
-  .page-nav button.active .nav-icon { transform: scale(1.18); }
-  .page-nav .nav-icon { font-size: 1.6rem; transition: transform 0.2s ease; }
+  .page-nav button.active .nav-icon { transform: scale(1.1); }
+  .page-nav .nav-icon { font-size: 1.35rem; transition: transform 0.2s ease; }
 
   main > section.page { display: none; animation: pageIn 0.3s ease-out; }
   main > section.page.active { display: block; }
@@ -359,7 +370,12 @@ main {
     from { opacity: 0; transform: translateY(8px); }
     to { opacity: 1; transform: translateY(0); }
   }
-  body { padding-bottom: calc(72px + env(safe-area-inset-bottom)); }
+  body { padding-bottom: calc(96px + env(safe-area-inset-bottom)); }
+
+  /* Hide the giant team-logo header on batting/fielding pages so the
+     content loads clean. Roster (and Score) still show it. */
+  body[data-page="batting"] header,
+  body[data-page="fielding"] header { display: none; }
 }
 
 /* Desktop: all pages visible, nav at top with anchor highlight */
@@ -1027,14 +1043,15 @@ h2 .badge {
   display: grid;
   grid-template-columns: 1fr auto;
   align-items: center;
-  gap: 0.875rem;
-  padding: 0.5rem 0.875rem;
+  gap: 0.75rem;
+  padding: 0.3rem 0.75rem;
   background: var(--gray-50);
   border: 2px solid var(--gray-200);
-  border-radius: 12px;
-  min-height: 56px;
+  border-radius: 10px;
+  min-height: 42px;
   transition: all 0.15s ease;
 }
+.defense-list { gap: 0.3rem !important; }
 .defense-row:hover { transform: translateX(2px); }
 .defense-row.premium {
   background: linear-gradient(95deg, #DCF6E4 0%, #EEFAF1 60%);
@@ -1066,12 +1083,12 @@ h2 .badge {
 }
 
 .defense-pos-emoji {
-  font-size: 1.65rem;
+  font-size: 1.2rem;
   line-height: 1;
   flex-shrink: 0;
 }
 @media (min-width: 768px) {
-  .defense-pos-emoji { font-size: 2rem; }
+  .defense-pos-emoji { font-size: 1.65rem; }
 }
 
 .defense-pos-text { min-width: 0; }
@@ -1083,26 +1100,26 @@ h2 .badge {
   flex-wrap: wrap;
 }
 .defense-pos-name {
-  font-size: 1.3125rem;
+  font-size: 1.0625rem;
   font-weight: 900;
   letter-spacing: -0.01em;
   color: var(--navy);
-  line-height: 1.1;
+  line-height: 1.05;
   text-transform: uppercase;
 }
 @media (min-width: 768px) {
-  .defense-pos-name { font-size: 1.875rem; }
+  .defense-pos-name { font-size: 1.625rem; }
 }
 
 .defense-pos-abbr {
-  font-size: 0.9rem;
+  font-size: 0.7rem;
   font-weight: 800;
   color: var(--gray-500);
-  letter-spacing: 0.1em;
-  padding: 2px 8px;
+  letter-spacing: 0.08em;
+  padding: 1px 6px;
   background: var(--gray-100);
   border-radius: 999px;
-  border: 1.5px solid var(--gray-200);
+  border: 1px solid var(--gray-200);
 }
 
 .defense-player-block {
@@ -1134,13 +1151,14 @@ h2 .badge {
 }
 
 .defense-player-name {
-  font-size: 1.3125rem;
+  font-size: 1.0625rem;
   font-weight: 900;
   color: var(--navy);
   letter-spacing: -0.015em;
+  line-height: 1.05;
 }
 @media (min-width: 768px) {
-  .defense-player-name { font-size: 1.875rem; }
+  .defense-player-name { font-size: 1.625rem; }
 }
 
 @media (max-width: 420px) {
@@ -1462,12 +1480,14 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
 /* iPhone and small phones — tightening that's separate from header sizing */
 @media (max-width: 600px) {
   main {
-    padding: 0.875rem 0.875rem 2rem;
-    padding-left: max(0.875rem, env(safe-area-inset-left));
-    padding-right: max(0.875rem, env(safe-area-inset-right));
-    gap: 0.875rem;
+    padding: 0.75rem 0.75rem 2rem;
+    padding-left: max(0.75rem, env(safe-area-inset-left));
+    padding-right: max(0.75rem, env(safe-area-inset-right));
+    gap: 0.625rem;
   }
-  section { padding: 1rem 0.875rem; border-radius: 14px; }
+  section { padding: 0.75rem 0.75rem; border-radius: 14px; }
+  h2 { margin-bottom: 0.625rem; }
+  .stacked-heading { margin-top: 1rem; }
   .diamond { aspect-ratio: 1 / 0.95; max-width: 100%; }
   .diamond-position { width: 76px; }
   .pos-avatar { width: 42px; height: 42px; font-size: 0.95rem; }
@@ -1788,33 +1808,19 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
 
 <nav class="page-nav" id="pageNav" aria-label="Sections">
   <button data-page="roster" class="active">
-    <span class="nav-icon" aria-hidden="true">👥</span>
+    <i class="nav-icon fa-solid fa-users" aria-hidden="true"></i>
     <span class="nav-label">Roster</span>
   </button>
   <button data-page="batting">
-    <span class="nav-icon" aria-hidden="true">
-      <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" fill="none">
-        <g transform="rotate(-38 16 16)">
-          <path d="M12 4 Q12 2 14 2 L18 2 Q20 2 20 4 L20 18 Q20 19 19 19 L13 19 Q12 19 12 18 Z" fill="currentColor"/>
-          <rect x="14" y="19" width="4" height="6" fill="currentColor"/>
-          <circle cx="16" cy="27" r="3" fill="currentColor"/>
-        </g>
-      </svg>
-    </span>
+    <i class="nav-icon fa-solid fa-baseball-bat-ball" aria-hidden="true"></i>
     <span class="nav-label">Batting</span>
   </button>
   <button data-page="fielding">
-    <span class="nav-icon" aria-hidden="true">
-      <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" fill="none">
-        <path d="M7 13 Q7 5 14 5 Q19 5 19 11 L19 14 L23 14 Q27 14 27 18 Q27 23 24 26 L24 28 Q24 29 23 29 L9 29 Q8 29 8 28 L8 26 Q5 23 5 18 Q5 13 7 13 Z" fill="currentColor"/>
-        <path d="M14 7 L14 15" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
-        <path d="M19 14 L19 19" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
-      </svg>
-    </span>
+    <i class="nav-icon fa-solid fa-mitten" aria-hidden="true"></i>
     <span class="nav-label">Fielding</span>
   </button>
   <button data-page="score">
-    <span class="nav-icon" aria-hidden="true">📊</span>
+    <i class="nav-icon fa-solid fa-chart-simple" aria-hidden="true"></i>
     <span class="nav-label">Score</span>
   </button>
 </nav>
@@ -1845,13 +1851,11 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
   </section>
 
   <section id="battingPage" class="page">
-    <div class="section-quote" id="battingQuote"></div>
     <h2>Batting Order</h2>
     <ol class="batting-list" id="battingOrder"></ol>
   </section>
 
   <section id="fieldingPage" class="page">
-    <div class="section-quote" id="fieldingQuote"></div>
     <h2>Field Rotation</h2>
     <div id="rotationNote"></div>
     <div class="inning-tabs" id="inningTabs"></div>
@@ -1981,6 +1985,7 @@ const state = {
 };
 // Clean up stale key from the old toggle days
 localStorage.removeItem('cardinals_view');
+document.body.dataset.page = state.page;
 
 function loadPresent() {
   try {
@@ -2288,6 +2293,7 @@ function showPage(page) {
   if (!VALID_PAGES.includes(page)) page = 'roster';
   state.page = page;
   localStorage.setItem('cardinals_page', page);
+  document.body.dataset.page = page;
   document.querySelectorAll('main > section.page').forEach(s => {
     s.classList.toggle('active', s.id === page + 'Page');
   });
@@ -2300,7 +2306,6 @@ function showPage(page) {
   } else {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
-  rotateSectionQuotes();
 }
 
 function rotateSectionQuotes() {
