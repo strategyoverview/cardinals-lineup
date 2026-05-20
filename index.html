@@ -1218,6 +1218,81 @@ footer {
   .outs-value { font-size: 2.25rem; }
 }
 
+/* ============ Scorecard ============ */
+.scorecard-header,
+.scorecard-row {
+  display: grid;
+  grid-template-columns: 1fr 116px 116px;
+  align-items: center;
+  gap: 0.5rem;
+}
+.scorecard-header {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--cardinal-red);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0 0.75rem 0.5rem;
+  border-bottom: 1.5px solid var(--gray-200);
+  margin-bottom: 0.5rem;
+}
+.scorecard-header span:not(:first-child) { text-align: center; }
+.scorecard-list { display: flex; flex-direction: column; gap: 0.375rem; }
+.scorecard-row {
+  background: var(--gray-50);
+  border: 1.5px solid var(--gray-200);
+  border-radius: 10px;
+  padding: 0.5rem 0.75rem;
+}
+.scorecard-name {
+  font-weight: 800;
+  font-size: 1.0625rem;
+  color: var(--navy);
+}
+.scorecard-metric {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  justify-content: center;
+}
+.sc-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--cardinal-red);
+  color: white;
+  border: none;
+  font-size: 1.15rem;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  padding: 0;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(196,30,58,0.25);
+}
+.sc-btn:active { transform: scale(0.92); }
+.sc-btn:disabled { opacity: 0.3; cursor: not-allowed; box-shadow: none; }
+.sc-value {
+  min-width: 1.5rem;
+  text-align: center;
+  font-size: 1.125rem;
+  font-weight: 800;
+  color: var(--navy);
+  font-variant-numeric: tabular-nums;
+}
+@media (max-width: 600px) {
+  .scorecard-header, .scorecard-row {
+    grid-template-columns: 1fr 104px 104px;
+    gap: 0.375rem;
+  }
+  .sc-btn { width: 30px; height: 30px; font-size: 1.05rem; }
+  .sc-value { font-size: 1.05rem; min-width: 1.25rem; }
+  .scorecard-name { font-size: 1rem; }
+}
+
 /* ============ Bench block ============ */
 .bench-block {
   margin-top: 1rem;
@@ -1330,6 +1405,16 @@ footer {
     <div id="rotationNote"></div>
     <div class="inning-tabs" id="inningTabs"></div>
     <div id="inningContent"></div>
+  </section>
+
+  <section>
+    <h2>Scorecard</h2>
+    <div class="scorecard-header">
+      <span></span>
+      <span>Assists</span>
+      <span>Outs</span>
+    </div>
+    <div class="scorecard-list" id="scorecardList"></div>
   </section>
 
   <section>
@@ -1707,10 +1792,7 @@ function renderStats() {
     const positions = playerInnings[player] || [];
     const premiumCount = positions.filter(p => PREMIUM.includes(p)).length;
     html += `<tr>
-      <td><div class="player-cell">
-        <div class="mini-avatar">${getInitial(player)}</div>
-        <span>${player}</span>
-      </div></td>`;
+      <td><span class="player-name-cell">${player}</span></td>`;
     for (let i = 0; i < numInnings; i++) {
       const pos = positions[i];
       const inning = state.rotation[i] || {};
@@ -1852,6 +1934,52 @@ document.getElementById('markAllBtn').addEventListener('click', () => {
   savePresent();
   render();
 });
+
+// Scorecard (per-player assists + outs)
+let scorecard = {};
+try { scorecard = JSON.parse(localStorage.getItem('cardinals_scorecard_v1') || '{}'); }
+catch (e) { scorecard = {}; }
+
+function getStat(player, metric) {
+  return (scorecard[player] && scorecard[player][metric]) || 0;
+}
+function setStat(player, metric, value) {
+  value = Math.max(0, value);
+  if (!scorecard[player]) scorecard[player] = {};
+  scorecard[player][metric] = value;
+  localStorage.setItem('cardinals_scorecard_v1', JSON.stringify(scorecard));
+}
+function renderScorecard() {
+  const container = document.getElementById('scorecardList');
+  container.innerHTML = ROSTER.map(player => `
+    <div class="scorecard-row" data-player="${player}">
+      <span class="scorecard-name">${player}</span>
+      <div class="scorecard-metric">
+        <button class="sc-btn" data-action="dec" data-metric="assists" ${getStat(player, 'assists') <= 0 ? 'disabled' : ''}>−</button>
+        <span class="sc-value">${getStat(player, 'assists')}</span>
+        <button class="sc-btn" data-action="inc" data-metric="assists">+</button>
+      </div>
+      <div class="scorecard-metric">
+        <button class="sc-btn" data-action="dec" data-metric="outs" ${getStat(player, 'outs') <= 0 ? 'disabled' : ''}>−</button>
+        <span class="sc-value">${getStat(player, 'outs')}</span>
+        <button class="sc-btn" data-action="inc" data-metric="outs">+</button>
+      </div>
+    </div>
+  `).join('');
+}
+document.getElementById('scorecardList').addEventListener('click', (e) => {
+  const btn = e.target.closest('.sc-btn');
+  if (!btn) return;
+  const row = btn.closest('.scorecard-row');
+  if (!row) return;
+  const player = row.dataset.player;
+  const metric = btn.dataset.metric;
+  const action = btn.dataset.action;
+  const current = getStat(player, metric);
+  setStat(player, metric, action === 'inc' ? current + 1 : current - 1);
+  renderScorecard();
+});
+renderScorecard();
 
 // Outs counter
 let outsCount = Math.max(0, Math.min(3, parseInt(localStorage.getItem('cardinals_outs') || '0', 10) || 0));
