@@ -1686,6 +1686,7 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
         <input type="date" id="rosterDateInput" class="roster-date-input" />
       </label>
       <div class="h2-controls">
+        <button class="collapse-btn" id="rosterPrintBtn" title="Print lineup" aria-label="Print lineup">🖨</button>
         <button class="collapse-btn" id="rosterCollapseBtn" title="Collapse / expand" aria-label="Collapse roster">▾</button>
       </div>
     </h2>
@@ -2305,10 +2306,29 @@ document.getElementById('teamLogo').addEventListener('touchend', () => {
 
 // markAllBtn removed
 
-// Scorecard (per-player assists + outs)
-let scorecard = {};
-try { scorecard = JSON.parse(localStorage.getItem('cardinals_scorecard_v1') || '{}'); }
-catch (e) { scorecard = {}; }
+// Scorecard (per-date, per-player assists + outs) — each game day gets its own bucket.
+function currentDateKey() {
+  return localStorage.getItem('cardinals_roster_date') || new Date().toISOString().slice(0, 10);
+}
+function scorecardStorageKey(dateKey) { return 'cardinals_scorecard_v2::' + dateKey; }
+function loadScorecardFor(dateKey) {
+  try {
+    const raw = localStorage.getItem(scorecardStorageKey(dateKey));
+    return raw ? JSON.parse(raw) : {};
+  } catch (e) { return {}; }
+}
+// One-time migration from the old global key to today's bucket so existing stats aren't lost.
+(function migrateScorecard() {
+  const old = localStorage.getItem('cardinals_scorecard_v1');
+  if (!old) return;
+  const today = new Date().toISOString().slice(0, 10);
+  if (!localStorage.getItem(scorecardStorageKey(today))) {
+    localStorage.setItem(scorecardStorageKey(today), old);
+  }
+  localStorage.removeItem('cardinals_scorecard_v1');
+})();
+
+let scorecard = loadScorecardFor(currentDateKey());
 
 function getStat(player, metric) {
   return (scorecard[player] && scorecard[player][metric]) || 0;
@@ -2317,7 +2337,7 @@ function setStat(player, metric, value) {
   value = Math.max(0, value);
   if (!scorecard[player]) scorecard[player] = {};
   scorecard[player][metric] = value;
-  localStorage.setItem('cardinals_scorecard_v1', JSON.stringify(scorecard));
+  localStorage.setItem(scorecardStorageKey(currentDateKey()), JSON.stringify(scorecard));
 }
 function renderScorecard() {
   const container = document.getElementById('scorecardList');
@@ -2392,6 +2412,9 @@ localStorage.removeItem('cardinals_outs');
     const d = new Date(input.value + 'T00:00:00');
     label.textContent = fmt(d);
     localStorage.setItem('cardinals_roster_date', input.value);
+    scorecard = loadScorecardFor(input.value);
+    renderScorecard();
+    showBubble('Loaded ' + fmt(d));
   });
 })();
 
@@ -2405,6 +2428,14 @@ document.getElementById('rosterCollapseBtn').addEventListener('click', (e) => {
   rosterSection.classList.toggle('collapsed');
   localStorage.setItem('cardinals_roster_collapsed',
     rosterSection.classList.contains('collapsed') ? '1' : '0');
+});
+
+// Print / PDF export — opens the browser's print sheet, which on iOS/Safari
+// lets you "Save to Files" as PDF. Print stylesheet at the top of the file
+// already drops controls/avatars and lays everything out cleanly.
+document.getElementById('rosterPrintBtn').addEventListener('click', (e) => {
+  e.stopPropagation();
+  window.print();
 });
 
 function resizeImage(file, size, cb) {
