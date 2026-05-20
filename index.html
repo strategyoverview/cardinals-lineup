@@ -235,6 +235,22 @@ section {
     0 1px 3px rgba(0,0,0,0.04),
     0 12px 32px rgba(15, 23, 42, 0.08);
   border: 1px solid rgba(15, 23, 42, 0.05);
+  animation: sectionRise 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+section:nth-of-type(2) { animation-delay: 0.06s; }
+section:nth-of-type(3) { animation-delay: 0.12s; }
+section:nth-of-type(4) { animation-delay: 0.18s; }
+section:nth-of-type(5) { animation-delay: 0.24s; }
+section:nth-of-type(6) { animation-delay: 0.30s; }
+@keyframes sectionRise {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+section:hover {
+  box-shadow:
+    0 2px 6px rgba(0,0,0,0.06),
+    0 20px 48px rgba(15, 23, 42, 0.12);
 }
 @media (min-width: 768px) {
   section {
@@ -244,28 +260,33 @@ section {
       0 18px 44px rgba(15, 23, 42, 0.1);
   }
 }
+@media (prefers-reduced-motion: reduce) {
+  section { animation: none; }
+}
 
 h2 {
-  font-size: 1.375rem;
+  font-size: 1.875rem;
   font-weight: 900;
   color: var(--navy);
   margin-bottom: 1.125rem;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  line-height: 1.05;
 }
 @media (min-width: 768px) {
-  h2 { font-size: 1.625rem; }
+  h2 { font-size: 2.375rem; letter-spacing: 0.05em; }
 }
 h2::before {
   content: '';
   display: block;
-  width: 6px;
-  height: 1.5rem;
+  width: 7px;
+  height: 1.875rem;
   background: linear-gradient(180deg, var(--cardinal-red), var(--cardinal-red-dark));
-  border-radius: 3px;
+  border-radius: 4px;
+  flex-shrink: 0;
 }
 h2 .badge {
   font-size: 0.75rem;
@@ -565,31 +586,39 @@ h2 .badge {
 /* ============ Innings Tabs ============ */
 .inning-tabs {
   display: flex;
-  gap: 0.375rem;
+  gap: 0.3rem;
   margin-bottom: 1.25rem;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
 }
+.inning-tabs::-webkit-scrollbar { display: none; }
 .tab {
-  flex: 1;
-  min-width: 90px;
-  min-height: var(--tap);
-  padding: 0.75rem 0.5rem;
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 52px;
+  padding: 0.625rem 0.25rem;
   background: var(--gray-100);
   border: 2.5px solid transparent;
   border-radius: 12px;
   font-weight: 800;
   cursor: pointer;
-  transition: all 0.15s ease;
-  font-size: 1rem;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 0.95rem;
   color: var(--gray-700);
   letter-spacing: 0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-.tab:hover { background: var(--gray-200); }
+.tab:hover { background: var(--gray-200); transform: translateY(-1px); }
+.tab:active { transform: scale(0.97); }
 .tab.active {
   background: var(--cardinal-red);
   color: white;
   box-shadow: 0 3px 12px rgba(196, 30, 58, 0.35);
   border-color: var(--cardinal-red-dark);
+  transform: scale(1.04);
 }
 
 /* ============ Diamond ============ */
@@ -981,16 +1010,38 @@ footer {
   padding: 0 0.5rem;
 }
 
-.footer-brand {
-  font-size: 1.125rem;
-  color: var(--cardinal-red);
-  font-weight: 900;
-  letter-spacing: 0.1em;
-  margin: 0 auto 0.5rem;
+.footer-logo {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  background: white;
+  margin: 0.5rem auto 1rem;
+  box-shadow: 0 8px 22px rgba(196, 30, 58, 0.18);
+  background-size: cover;
+  background-position: center;
+  border: 3px solid #FFD7E1;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.footer-logo:hover {
+  transform: rotate(-6deg) scale(1.06);
+  box-shadow: 0 14px 32px rgba(196, 30, 58, 0.28);
+}
+
+.footer-made {
+  margin-top: 1.5rem;
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gray-500);
   text-align: center;
 }
-.footer-brand .heart { color: var(--cardinal-red); font-style: normal; display: inline-block; }
-.footer-brand .heart:hover { animation: thump 0.5s ease; }
+.footer-made::before, .footer-made::after {
+  content: '·';
+  margin: 0 0.625rem;
+  color: var(--cardinal-red);
+}
 @keyframes thump {
   0%, 100% { transform: scale(1); }
   30% { transform: scale(1.4); }
@@ -1175,6 +1226,26 @@ footer {
 .outs-label {
   font-size: 0.85rem !important;
   letter-spacing: 0.15em !important;
+}
+.outs-section.outs-readonly {
+  padding: 1.25rem 1.5rem;
+  justify-content: center;
+}
+.outs-section.outs-readonly .outs-display { width: 100%; }
+.outs-sublabel {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--cardinal-red-dark);
+  opacity: 0.7;
+  margin-top: 0.25rem;
+}
+.outs-value.bumped { animation: bumpPulse 0.45s ease-out; }
+@keyframes bumpPulse {
+  0% { transform: scale(1); color: var(--navy); }
+  40% { transform: scale(1.22); color: var(--cardinal-red); }
+  100% { transform: scale(1); color: var(--navy); }
 }
 .outs-display {
   flex: 1;
@@ -1386,7 +1457,6 @@ footer {
     <h2>
       Today's Roster
       <div class="h2-controls">
-        <span class="badge" id="rosterBadge">9 ON 9</span>
         <button class="collapse-btn" id="rosterCollapseBtn" title="Collapse / expand" aria-label="Collapse roster">▾</button>
       </div>
     </h2>
@@ -1406,7 +1476,7 @@ footer {
   <section>
     <div class="view-toggle" role="tablist">
       <button class="active" data-view="batting" role="tab"><span class="toggle-icon">🏏</span> Batting</button>
-      <button data-view="defense" role="tab"><span class="toggle-icon">🧤</span> Defense</button>
+      <button data-view="defense" role="tab"><span class="toggle-icon">🧤</span> Fielding</button>
     </div>
   </section>
 
@@ -1430,13 +1500,12 @@ footer {
 
   <section>
     <h2>Scorecard</h2>
-    <div class="outs-section" id="outsSection">
-      <button class="outs-btn outs-minus" id="outsMinusBtn" aria-label="Subtract out">−</button>
+    <div class="outs-section outs-readonly" id="outsSection">
       <div class="outs-display">
         <div class="outs-label">Team Outs</div>
         <div class="outs-value" id="outsValue">0</div>
+        <div class="outs-sublabel">Sum of every player's outs</div>
       </div>
-      <button class="outs-btn outs-plus" id="outsPlusBtn" aria-label="Add out">+</button>
     </div>
     <div class="scorecard-header">
       <span></span>
@@ -1460,7 +1529,8 @@ footer {
 
 <footer>
   <div class="footer-quote" id="footerQuote">Loading wisdom…</div>
-  <div class="footer-brand">GO <span class="heart">♥</span> CARDINALS</div>
+
+  <div class="footer-logo" id="footerLogo" aria-hidden="true"></div>
 
   <div class="footer-sponsor">
     <div class="sponsor-title">🍨 Today's game brought to you by 🍨</div>
@@ -1468,6 +1538,8 @@ footer {
     <div class="sponsor-tagline">Classic parlor feel · Made-with-love scoops · Treat the team</div>
     <div class="sponsor-locations">Fairfield · Bridgeport, CT</div>
   </div>
+
+  <div class="footer-made">Made in Fairfield</div>
 </footer>
 
 <script>
@@ -1740,8 +1812,9 @@ function renderInnings() {
 
   if (state.currentInning > result.rotation.length) state.currentInning = 1;
 
+  const useShortLabels = result.rotation.length > 4;
   tabs.innerHTML = result.rotation.map((_, i) =>
-    `<button class="tab ${state.currentInning === i + 1 ? 'active' : ''}" data-inning="${i + 1}">Inning ${i + 1}</button>`
+    `<button class="tab ${state.currentInning === i + 1 ? 'active' : ''}" data-inning="${i + 1}">${useShortLabels ? (i + 1) : 'Inn ' + (i + 1)}</button>`
   ).join('');
 
   const inning = result.rotation[state.currentInning - 1];
@@ -1865,9 +1938,14 @@ function applyTeamLogo() {
     el.style.backgroundImage = `url('${state.teamLogo}')`;
     el.classList.add('has-photo');
     fb.style.display = 'none';
+    applyFooterLogo(state.teamLogo);
     return;
   }
   tryLoadLogo(['LittleCardinalsLogo.png', 'logo.png', 'logo.svg']);
+}
+function applyFooterLogo(src) {
+  const fl = document.getElementById('footerLogo');
+  if (fl) fl.style.backgroundImage = `url('${src}')`;
 }
 function tryLoadLogo(srcs, idx) {
   idx = idx || 0;
@@ -1884,6 +1962,7 @@ function tryLoadLogo(srcs, idx) {
     el.style.backgroundImage = `url('${srcs[idx]}')`;
     el.classList.add('has-photo');
     fb.style.display = 'none';
+    applyFooterLogo(srcs[idx]);
   };
   probe.onerror = () => tryLoadLogo(srcs, idx + 1);
   probe.src = srcs[idx];
@@ -1996,6 +2075,22 @@ function renderScorecard() {
       </div>
     </div>
   `).join('');
+  renderTeamOuts();
+}
+function computeTeamOuts() {
+  return ROSTER.reduce((sum, p) => sum + getStat(p, 'outs'), 0);
+}
+function renderTeamOuts() {
+  const el = document.getElementById('outsValue');
+  if (!el) return;
+  const prev = parseInt(el.textContent, 10) || 0;
+  const total = computeTeamOuts();
+  el.textContent = total;
+  if (total !== prev) {
+    el.classList.remove('bumped');
+    void el.offsetWidth;
+    el.classList.add('bumped');
+  }
 }
 document.getElementById('scorecardList').addEventListener('click', (e) => {
   const btn = e.target.closest('.sc-btn');
@@ -2008,6 +2103,9 @@ document.getElementById('scorecardList').addEventListener('click', (e) => {
   const current = getStat(player, metric);
   setStat(player, metric, action === 'inc' ? current + 1 : current - 1);
   renderScorecard();
+  if (metric === 'outs' && action === 'inc' && computeTeamOuts() % 3 === 0) {
+    showBubble("3 outs — switch sides! ⚾");
+  }
 });
 renderScorecard();
 
@@ -2025,31 +2123,9 @@ document.getElementById('inningDecBtn').addEventListener('click', () => setInnin
 document.getElementById('inningIncBtn').addEventListener('click', () => setInnings(gameInnings + 1));
 document.getElementById('inningCountLabel').textContent = gameInnings + (gameInnings === 1 ? ' inning' : ' innings');
 
-// Outs counter
-let outsCount = Math.max(0, Math.min(3, parseInt(localStorage.getItem('cardinals_outs') || '0', 10) || 0));
-function renderOuts() {
-  const v = document.getElementById('outsValue');
-  v.textContent = outsCount;
-  v.classList.toggle('three-outs', outsCount >= 3);
-  document.getElementById('outsMinusBtn').disabled = outsCount <= 0;
-  document.getElementById('outsPlusBtn').disabled = outsCount >= 3;
-}
-function setOuts(n) {
-  outsCount = Math.max(0, Math.min(3, n));
-  localStorage.setItem('cardinals_outs', String(outsCount));
-  renderOuts();
-  if (outsCount === 3) {
-    setTimeout(() => {
-      outsCount = 0;
-      localStorage.setItem('cardinals_outs', '0');
-      renderOuts();
-      showBubble("3 outs — next inning! ⚾");
-    }, 1600);
-  }
-}
-document.getElementById('outsPlusBtn').addEventListener('click', () => setOuts(outsCount + 1));
-document.getElementById('outsMinusBtn').addEventListener('click', () => setOuts(outsCount - 1));
-renderOuts();
+// Team Outs is computed from scorecard; the renderTeamOuts() call inside renderScorecard
+// keeps it in sync. Clean up any stale single-counter state.
+localStorage.removeItem('cardinals_outs');
 
 // Roster collapse
 const rosterSection = document.getElementById('rosterSection');
@@ -2140,11 +2216,7 @@ function iceCreamRain(count) {
   }
 }
 
-// Click heart in footer → sprinkles
-document.querySelector('.footer-brand .heart').addEventListener('click', () => {
-  iceCreamRain(15);
-  showBubble("Cardinals forever ♥");
-});
+// (footer heart removed — keeping no-op anchor here for ordering)
 
 // Click sponsor strip 3x → mini sundae shower
 let sponsorClicks = 0;
@@ -2160,6 +2232,86 @@ document.getElementById('sponsorStrip').addEventListener('click', (e) => {
     sponsorClicks = 0;
   }
 });
+
+// Footer logo: click for fly-around + cardinal-call
+const footerLogoEl = document.getElementById('footerLogo');
+if (footerLogoEl) {
+  footerLogoEl.addEventListener('click', () => {
+    footerLogoEl.animate(
+      [
+        { transform: 'rotate(0deg) scale(1)' },
+        { transform: 'rotate(-12deg) scale(1.18)' },
+        { transform: 'rotate(360deg) scale(1)' }
+      ],
+      { duration: 700, easing: 'cubic-bezier(0.2, 0.7, 0.2, 1)' }
+    );
+    showBubble(POP_QUIPS[Math.floor(Math.random() * POP_QUIPS.length)]);
+  });
+}
+
+// "Made in Fairfield" → hometown easter egg
+let madeClicks = 0, madeTimer = null;
+document.querySelector('.footer-made')?.addEventListener('click', () => {
+  madeClicks++;
+  clearTimeout(madeTimer);
+  madeTimer = setTimeout(() => madeClicks = 0, 2000);
+  if (madeClicks >= 3) {
+    showBubble("🏠 Hometown energy. Fairfield forever.");
+    iceCreamRain(10);
+    madeClicks = 0;
+  }
+});
+
+// "ICE" typed anywhere → ice cream shower
+let iceBuf = '';
+document.addEventListener('keydown', (e) => {
+  if (e.key.length !== 1) return;
+  iceBuf = (iceBuf + e.key.toLowerCase()).slice(-3);
+  if (iceBuf === 'ice') {
+    iceCreamRain(25);
+    showBubble("🍦 Did somebody say ice cream?");
+    iceBuf = '';
+  }
+});
+
+// Triple-tap any scorecard row → "RBI energy!" toast
+let scoreTapCount = 0, scoreTapPlayer = '', scoreTapTimer = null;
+document.getElementById('scorecardList').addEventListener('click', (e) => {
+  const name = e.target.closest('.scorecard-name');
+  if (!name) return;
+  const row = name.closest('.scorecard-row');
+  const player = row?.dataset.player;
+  if (!player) return;
+  if (scoreTapPlayer !== player) { scoreTapCount = 0; scoreTapPlayer = player; }
+  scoreTapCount++;
+  clearTimeout(scoreTapTimer);
+  scoreTapTimer = setTimeout(() => { scoreTapCount = 0; scoreTapPlayer = ''; }, 1500);
+  if (scoreTapCount >= 3) {
+    showBubble(`⭐ ${player} — that's a star!`);
+    name.animate(
+      [{ transform: 'scale(1)' }, { transform: 'scale(1.18)', color: 'var(--cardinal-red)' }, { transform: 'scale(1)' }],
+      { duration: 600 }
+    );
+    scoreTapCount = 0;
+  }
+});
+
+// Scorecard +/- click → flash the touched row briefly
+document.getElementById('scorecardList').addEventListener('click', (e) => {
+  const btn = e.target.closest('.sc-btn');
+  if (!btn) return;
+  const row = btn.closest('.scorecard-row');
+  if (!row) return;
+  row.animate(
+    [{ background: 'var(--gray-50)' }, { background: '#FFE0E8' }, { background: 'var(--gray-50)' }],
+    { duration: 380 }
+  );
+}, true);
+
+// First-visit subtle confetti welcome (once per session)
+if (!sessionStorage.getItem('cardinals_welcomed')) {
+  setTimeout(() => { iceCreamRain(8); sessionStorage.setItem('cardinals_welcomed', '1'); }, 600);
+}
 
 render();
 </script>
