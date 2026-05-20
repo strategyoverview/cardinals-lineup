@@ -1106,13 +1106,13 @@ h2 .badge {
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.05rem 0.5rem;
+  padding: 0.25rem 0.625rem;
   background: rgba(255, 255, 255, 0.6);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   border: 1.5px solid rgba(15, 23, 42, 0.05);
-  border-radius: 10px;
-  min-height: 26px;
+  border-radius: 12px;
+  min-height: 40px;
   transition: all 0.15s ease;
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5) inset;
   width: 100%;
@@ -1120,7 +1120,7 @@ h2 .badge {
   overflow: hidden;
   box-sizing: border-box;
 }
-.defense-list { gap: 0.15rem !important; }
+.defense-list { gap: 0.25rem !important; }
 .defense-pos-block, .defense-pos-text, .defense-player-block { min-width: 0; }
 .defense-pos-name, .defense-player-name {
   white-space: nowrap;
@@ -1159,12 +1159,12 @@ h2 .badge {
 }
 
 .defense-pos-emoji {
-  font-size: 1rem;
+  font-size: 1.2rem;
   line-height: 1;
   flex-shrink: 0;
 }
 @media (min-width: 768px) {
-  .defense-pos-emoji { font-size: 1.5rem; }
+  .defense-pos-emoji { font-size: 1.65rem; }
 }
 
 .defense-pos-text { min-width: 0; }
@@ -1176,11 +1176,11 @@ h2 .badge {
   flex-wrap: wrap;
 }
 .defense-pos-name {
-  font-size: 0.85rem;
+  font-size: 1rem;
   font-weight: 900;
   letter-spacing: -0.01em;
   color: var(--navy);
-  line-height: 1;
+  line-height: 1.05;
   text-transform: uppercase;
 }
 @media (min-width: 768px) {
@@ -1227,11 +1227,11 @@ h2 .badge {
 }
 
 .defense-player-name {
-  font-size: 0.85rem;
+  font-size: 1rem;
   font-weight: 900;
   color: var(--navy);
   letter-spacing: -0.015em;
-  line-height: 1;
+  line-height: 1.05;
 }
 @media (min-width: 768px) {
   .defense-player-name { font-size: 1.5rem; }
