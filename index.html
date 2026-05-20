@@ -9,8 +9,9 @@
 <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
 <meta name="googlebot" content="noindex, nofollow">
 <meta name="referrer" content="no-referrer">
-<link rel="icon" type="image/png" href="logo.png">
-<link rel="apple-touch-icon" href="logo.png">
+<link rel="icon" type="image/png" href="LittleCardinalsLogo.png">
+<link rel="icon" type="image/svg+xml" href="logo.svg">
+<link rel="apple-touch-icon" href="LittleCardinalsLogo.png">
 <title>Little Cardinals — Game Day</title>
 <style>
 :root {
@@ -272,7 +273,6 @@ h2::before {
   border-radius: 3px;
 }
 h2 .badge {
-  margin-left: auto;
   font-size: 0.75rem;
   font-weight: 800;
   letter-spacing: 0.05em;
@@ -282,6 +282,35 @@ h2 .badge {
   border-radius: 999px;
   border: 1.5px solid var(--cardinal-red-soft);
 }
+
+.h2-controls {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.collapse-btn {
+  background: var(--gray-100);
+  border: 1.5px solid var(--gray-200);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 1rem;
+  color: var(--navy);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  padding: 0;
+}
+.collapse-btn:hover { background: var(--gray-200); transform: scale(1.05); }
+.collapse-btn:active { transform: scale(0.95); }
+#rosterSection.collapsed .collapse-btn { transform: rotate(-90deg); }
+#rosterSection.collapsed .roster-body { display: none; }
+#rosterSection.collapsed { padding-bottom: 1.25rem; }
+#rosterSection.collapsed h2 { margin-bottom: 0; }
 
 /* ============ Roster ============ */
 .roster-grid {
@@ -428,38 +457,40 @@ h2 .badge {
 .view-toggle {
   display: flex;
   background: var(--gray-100);
-  padding: 5px;
+  padding: 6px;
   border-radius: 999px;
   position: relative;
-  box-shadow: inset 0 1px 3px rgba(0,0,0,0.06);
-  max-width: 560px;
+  box-shadow: inset 0 2px 5px rgba(0,0,0,0.08);
+  max-width: 640px;
   margin: 0 auto;
 }
 .view-toggle button {
   flex: 1;
-  padding: 0.875rem 1.25rem;
+  padding: 1.125rem 1.5rem;
   background: transparent;
   border: none;
   border-radius: 999px;
-  font-weight: 800;
-  font-size: 1rem;
+  font-weight: 900;
+  font-size: 1.125rem;
   cursor: pointer;
   color: var(--gray-500);
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  min-height: var(--tap);
+  gap: 0.625rem;
+  min-height: 64px;
 }
+.view-toggle button .toggle-icon { font-size: 1.4rem; line-height: 1; }
 @media (min-width: 768px) {
-  .view-toggle button { font-size: 1.0625rem; padding: 1rem 1.5rem; }
+  .view-toggle button { font-size: 1.3125rem; padding: 1.375rem 2rem; min-height: 76px; }
+  .view-toggle button .toggle-icon { font-size: 1.65rem; }
 }
 .view-toggle button.active {
   background: white;
   color: var(--cardinal-red);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  box-shadow: 0 4px 14px rgba(196, 30, 58, 0.18);
   transform: scale(1.02);
 }
 
@@ -704,42 +735,87 @@ h2 .badge {
 .pos-P1 { top: 56%; left: 50%; }
 .pos-P2 { top: 87%; left: 50%; }
 
-/* ============ Position list ============ */
-.position-table {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+/* ============ Defense list (single column, easy to read) ============ */
+.defense-list {
+  display: flex;
+  flex-direction: column;
   gap: 0.625rem;
 }
-@media (min-width: 768px) {
-  .position-table { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem; }
+
+.defense-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.875rem 1rem;
+  background: var(--gray-50);
+  border: 2px solid var(--gray-200);
+  border-radius: 14px;
+  min-height: 76px;
+  transition: all 0.15s ease;
+}
+.defense-row:hover { transform: translateX(2px); }
+.defense-row.premium {
+  background: #FFF5F7;
+  border-color: var(--cardinal-red-soft);
+}
+.defense-row.outfield {
+  background: #F4FBF0;
+  border-color: var(--grass);
 }
 
-.position-row {
+@media (min-width: 768px) {
+  .defense-row { padding: 1.125rem 1.375rem; min-height: 86px; }
+}
+
+.defense-pos-block {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.75rem 0.875rem;
-  background: var(--gray-50);
-  border: 1.5px solid var(--gray-200);
-  border-radius: var(--radius-sm);
-  min-height: var(--tap);
+  min-width: 0;
 }
 
-.pos-tag {
-  background: var(--navy);
-  color: var(--gold);
+.defense-pos-emoji {
+  font-size: 1.65rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+@media (min-width: 768px) {
+  .defense-pos-emoji { font-size: 2rem; }
+}
+
+.defense-pos-text { min-width: 0; }
+
+.defense-pos-name {
+  font-size: 1.25rem;
   font-weight: 900;
-  font-size: 0.85rem;
-  padding: 5px 9px;
-  border-radius: 8px;
-  min-width: 38px;
-  text-align: center;
-  letter-spacing: 0.04em;
+  letter-spacing: -0.01em;
+  color: var(--navy);
+  line-height: 1.15;
+  text-transform: uppercase;
+}
+@media (min-width: 768px) {
+  .defense-pos-name { font-size: 1.625rem; }
 }
 
-.position-row .mini-avatar {
-  width: 36px;
-  height: 36px;
+.defense-pos-abbr {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--gray-500);
+  letter-spacing: 0.1em;
+  margin-top: 2px;
+}
+
+.defense-player-block {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  flex-shrink: 0;
+}
+
+.defense-avatar {
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--cardinal-red) 0%, var(--cardinal-red-dark) 100%);
   background-size: cover;
@@ -748,17 +824,33 @@ h2 .badge {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.875rem;
+  font-size: 1.05rem;
   font-weight: 800;
-  border: 2px solid white;
+  border: 3px solid white;
   box-shadow: var(--shadow-sm);
   flex-shrink: 0;
 }
+@media (min-width: 768px) {
+  .defense-avatar { width: 56px; height: 56px; font-size: 1.25rem; }
+}
 
-.position-row .player-name {
-  font-weight: 800;
-  font-size: 1.0625rem;
+.defense-player-name {
+  font-size: 1.3125rem;
+  font-weight: 900;
   color: var(--navy);
+  letter-spacing: -0.01em;
+}
+@media (min-width: 768px) {
+  .defense-player-name { font-size: 1.625rem; }
+}
+
+@media (max-width: 420px) {
+  .defense-row { padding: 0.75rem 0.875rem; gap: 0.625rem; min-height: 68px; }
+  .defense-pos-emoji { font-size: 1.4rem; }
+  .defense-pos-name { font-size: 1.0625rem; }
+  .defense-pos-abbr { font-size: 0.65rem; }
+  .defense-avatar { width: 38px; height: 38px; font-size: 0.95rem; }
+  .defense-player-name { font-size: 1.0625rem; }
 }
 
 /* ============ Stats ============ */
@@ -999,17 +1091,51 @@ footer {
   .diamond { max-width: 720px; }
 }
 
+/* iPhone and small phones */
+@media (max-width: 600px) {
+  main { padding: 1rem 0.75rem 2rem; gap: 1rem; }
+  section { padding: 1.125rem 1rem; }
+  header { padding: 1.125rem 0.875rem 1.375rem; }
+  .team-logo { width: 60px; height: 60px; font-size: 1.5rem; }
+  .brand-text h1 { font-size: 1.625rem; letter-spacing: 0.05em; }
+  .brand-text .subtitle { font-size: 0.72rem; letter-spacing: 0.08em; margin-top: 0.25rem; }
+  .icon-btn { width: 44px; height: 44px; font-size: 1rem; }
+  .header-actions { gap: 0.375rem; }
+  .roster-grid { grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 0.5rem; }
+  .player-card { padding: 0.625rem 0.375rem 0.5rem; }
+  .avatar { width: 50px; height: 50px; font-size: 1.1rem; }
+  .player-card .name { font-size: 0.85rem; }
+  .diamond { aspect-ratio: 1 / 0.95; max-width: 100%; }
+  .diamond-position { width: 72px; }
+  .pos-avatar { width: 42px; height: 42px; font-size: 0.95rem; }
+  .pos-label, .pos-name { font-size: 0.66rem; padding: 1px 6px; }
+  .stats-table { font-size: 0.8rem; }
+  .stats-table th, .stats-table td { padding: 0.5rem 0.35rem; }
+  .view-toggle { padding: 5px; }
+  .view-toggle button { font-size: 1rem; padding: 0.95rem 0.625rem; min-height: 56px; gap: 0.4rem; }
+  .view-toggle button .toggle-icon { font-size: 1.3rem; }
+  .footer-sponsor { padding: 1rem 1.125rem; }
+  .footer-sponsor .sponsor-name { font-size: 1.3rem; }
+}
+
+/* Very small phones - iPhone SE etc */
 @media (max-width: 380px) {
+  .header-inner { gap: 0.625rem; }
+  .team-logo { width: 52px; height: 52px; font-size: 1.35rem; }
+  .brand-text h1 { font-size: 1.4rem; }
+  .brand-text .subtitle { font-size: 0.65rem; }
+  .icon-btn { width: 40px; height: 40px; font-size: 0.95rem; }
+  .roster-grid { grid-template-columns: repeat(auto-fill, minmax(86px, 1fr)); }
+  .avatar { width: 46px; height: 46px; font-size: 1rem; }
+  .diamond-position { width: 64px; }
+  .pos-avatar { width: 38px; height: 38px; font-size: 0.85rem; }
+  .pos-label, .pos-name { font-size: 0.6rem; }
+}
+
+/* Pocket - iPhone SE 1st gen 320px */
+@media (max-width: 340px) {
   .header-inner { flex-wrap: wrap; }
-  .team-logo { width: 56px; height: 56px; font-size: 1.5rem; }
-  .brand-text h1 { font-size: 1.625rem; }
-  .header-actions { width: 100%; justify-content: flex-end; margin-top: 0.5rem; }
-  .roster-grid { grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); }
-  .avatar { width: 54px; height: 54px; font-size: 1.25rem; }
-  .diamond { aspect-ratio: 1 / 1; }
-  .diamond-position { width: 68px; }
-  .pos-avatar { width: 40px; height: 40px; font-size: 0.95rem; }
-  .pos-label, .pos-name { font-size: 0.66rem; }
+  .header-actions { width: 100%; justify-content: flex-end; margin-top: 0.375rem; }
 }
 </style>
 </head>
@@ -1030,7 +1156,7 @@ footer {
     </div>
     <div class="brand-text">
       <h1>LITTLE CARDINALS</h1>
-      <div class="subtitle">Little League · Cardinals Forever</div>
+      <div class="subtitle">Fairfield Little League Nationals</div>
     </div>
     <div class="header-actions">
       <button class="icon-btn" id="printBtn" title="Print lineup">🖨</button>
@@ -1042,15 +1168,23 @@ footer {
 <div class="coach-bubble" id="coachBubble"></div>
 
 <main>
-  <section>
-    <h2>Today's Roster <span class="badge" id="rosterBadge">9 ON 9</span></h2>
-    <div class="roster-grid" id="rosterGrid"></div>
-    <div class="roster-status">
-      <span>
-        <span class="count-display" id="presentCount">9</span> / <span id="totalCount">9</span> present
-        <span class="squad-label" id="squadLabel" style="display: none;">FULL SQUAD ⚡</span>
-      </span>
-      <button class="link-btn" id="markAllBtn">Mark all present</button>
+  <section id="rosterSection">
+    <h2>
+      Today's Roster
+      <div class="h2-controls">
+        <span class="badge" id="rosterBadge">9 ON 9</span>
+        <button class="collapse-btn" id="rosterCollapseBtn" title="Collapse / expand" aria-label="Collapse roster">▾</button>
+      </div>
+    </h2>
+    <div class="roster-body" id="rosterBody">
+      <div class="roster-grid" id="rosterGrid"></div>
+      <div class="roster-status">
+        <span>
+          <span class="count-display" id="presentCount">9</span> / <span id="totalCount">9</span> present
+          <span class="squad-label" id="squadLabel" style="display: none;">FULL SQUAD ⚡</span>
+        </span>
+        <button class="link-btn" id="markAllBtn">Mark all present</button>
+      </div>
     </div>
     <input type="file" id="photoInput" class="hidden-input" accept="image/*">
     <input type="file" id="logoInput" class="hidden-input" accept="image/*">
@@ -1058,8 +1192,8 @@ footer {
 
   <section>
     <div class="view-toggle" role="tablist">
-      <button class="active" data-view="batting" role="tab">🏏 Batting</button>
-      <button data-view="defense" role="tab">🧤 Defense</button>
+      <button class="active" data-view="batting" role="tab"><span class="toggle-icon">🏏</span> Batting</button>
+      <button data-view="defense" role="tab"><span class="toggle-icon">🧤</span> Defense</button>
     </div>
   </section>
 
@@ -1102,6 +1236,16 @@ footer {
 const ROSTER = ['Parker', 'Caleb', 'Hudson', 'Miles', 'Hart', 'Julian', 'Leon', 'Joel', 'Gabe'];
 const POSITION_PRIORITY = ['P1', 'P2', '1B', 'SS', '2B', '3B', 'CF', 'LF', 'RF'];
 const DIAMOND_ORDER = ['LF', 'CF', 'RF', '3B', 'SS', '2B', '1B', 'P1', 'P2'];
+const DEFENSE_LIST_ORDER = ['P1', 'P2', '1B', '2B', '3B', 'SS', 'LF', 'CF', 'RF'];
+const POSITION_NAMES = {
+  P1: 'Pitcher', P2: 'Catcher',
+  '1B': 'First Base', '2B': 'Second Base', '3B': 'Third Base', SS: 'Shortstop',
+  LF: 'Left Field', CF: 'Center Field', RF: 'Right Field'
+};
+const POSITION_EMOJI = {
+  P1: '⚾', P2: '🥎', '1B': '🧤', '2B': '🧤', '3B': '🧤', SS: '⭐',
+  LF: '🌳', CF: '🌲', RF: '🌳'
+};
 const PREMIUM = ['P1', 'P2', 'SS', '1B'];
 const OUTFIELD = ['LF', 'CF', 'RF'];
 
@@ -1308,15 +1452,25 @@ function renderInnings() {
   }
   html += '</div>';
 
-  html += '<div class="position-table">';
-  for (const pos of POSITION_PRIORITY) {
+  html += '<div class="defense-list">';
+  for (const pos of DEFENSE_LIST_ORDER) {
     if (!inning[pos]) continue;
     const player = inning[pos];
+    const isPrem = PREMIUM.includes(pos);
+    const isOut = OUTFIELD.includes(pos);
     html += `
-      <div class="position-row">
-        <span class="pos-tag">${pos}</span>
-        <div class="mini-avatar"${getPhotoStyle(player)}>${avatarContent(player)}</div>
-        <span class="player-name">${player}</span>
+      <div class="defense-row ${isPrem ? 'premium' : isOut ? 'outfield' : 'infield'}">
+        <div class="defense-pos-block">
+          <span class="defense-pos-emoji" aria-hidden="true">${POSITION_EMOJI[pos]}</span>
+          <div class="defense-pos-text">
+            <div class="defense-pos-name">${POSITION_NAMES[pos]}</div>
+            <div class="defense-pos-abbr">${pos}</div>
+          </div>
+        </div>
+        <div class="defense-player-block">
+          <div class="defense-avatar"${getPhotoStyle(player)}>${avatarContent(player)}</div>
+          <div class="defense-player-name">${player}</div>
+        </div>
       </div>
     `;
   }
@@ -1393,19 +1547,26 @@ function applyTeamLogo() {
     fb.style.display = 'none';
     return;
   }
-  // Fallback chain: try logo.png in same folder, else baseball emoji
-  const probe = new Image();
-  probe.onload = () => {
-    el.style.backgroundImage = "url('logo.png')";
-    el.classList.add('has-photo');
-    fb.style.display = 'none';
-  };
-  probe.onerror = () => {
+  tryLoadLogo(['LittleCardinalsLogo.png', 'logo.png', 'logo.svg']);
+}
+function tryLoadLogo(srcs, idx) {
+  idx = idx || 0;
+  const el = document.getElementById('teamLogo');
+  const fb = document.getElementById('teamLogoFallback');
+  if (idx >= srcs.length) {
     el.style.backgroundImage = '';
     el.classList.remove('has-photo');
     fb.style.display = '';
+    return;
+  }
+  const probe = new Image();
+  probe.onload = () => {
+    el.style.backgroundImage = `url('${srcs[idx]}')`;
+    el.classList.add('has-photo');
+    fb.style.display = 'none';
   };
-  probe.src = 'logo.png?v=' + Date.now();
+  probe.onerror = () => tryLoadLogo(srcs, idx + 1);
+  probe.src = srcs[idx];
 }
 
 function render() {
@@ -1513,6 +1674,18 @@ document.getElementById('markAllBtn').addEventListener('click', () => {
   state.present = new Set(ROSTER);
   savePresent();
   render();
+});
+
+// Roster collapse
+const rosterSection = document.getElementById('rosterSection');
+if (localStorage.getItem('cardinals_roster_collapsed') === '1') {
+  rosterSection.classList.add('collapsed');
+}
+document.getElementById('rosterCollapseBtn').addEventListener('click', (e) => {
+  e.stopPropagation();
+  rosterSection.classList.toggle('collapsed');
+  localStorage.setItem('cardinals_roster_collapsed',
+    rosterSection.classList.contains('collapsed') ? '1' : '0');
 });
 
 function resizeImage(file, size, cb) {

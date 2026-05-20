@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Little Cardinals">
+  <defs>
+    <radialGradient id="ringShine" cx="50%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#E8475F"/>
+      <stop offset="100%" stop-color="#C41E3A"/>
+    </radialGradient>
+    <linearGradient id="batWood" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#E5BD8C"/>
+      <stop offset="100%" stop-color="#A87749"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Outer red ring -->
+  <circle cx="100" cy="100" r="98" fill="url(#ringShine)" stroke="#1F1F1F" stroke-width="2"/>
+  <circle cx="100" cy="100" r="90" fill="#FFFFFF"/>
+  <circle cx="100" cy="100" r="86" fill="none" stroke="#C41E3A" stroke-width="1.5" opacity="0.45"/>
+
+  <!-- Baseball stitches (two side arcs) -->
+  <path d="M 28 70 Q 18 100 28 130" stroke="#C41E3A" stroke-width="2.2" fill="none"
+        stroke-dasharray="2.5,4" stroke-linecap="round"/>
+  <path d="M 172 70 Q 182 100 172 130" stroke="#C41E3A" stroke-width="2.2" fill="none"
+        stroke-dasharray="2.5,4" stroke-linecap="round"/>
+
+  <!-- Bat under the bird -->
+  <g transform="translate(100 148) rotate(-14)">
+    <rect x="-52" y="-7" width="108" height="14" rx="6" fill="url(#batWood)" stroke="#7A5A2F" stroke-width="1.2"/>
+    <rect x="-60" y="-8" width="14" height="16" rx="3" fill="#8B6635" stroke="#5C3F1F" stroke-width="1"/>
+    <line x1="-45" y1="-2" x2="50" y2="-2" stroke="#7A5A2F" stroke-width="0.6" opacity="0.5"/>
+  </g>
+
+  <!-- Cardinal body group -->
+  <g stroke="#7A0717" stroke-width="1.5" stroke-linejoin="round">
+    <!-- Crest spikes -->
+    <path d="M 80 62 L 86 30 L 92 56 L 100 24 L 107 54 L 114 32 L 121 65 Z" fill="#C41E3A"/>
+    <!-- Head -->
+    <ellipse cx="100" cy="80" rx="22" ry="20" fill="#C41E3A"/>
+    <!-- Body -->
+    <path d="M 65 112 Q 72 92 100 88 Q 134 90 140 116 Q 142 142 110 148 Q 75 146 65 112 Z" fill="#C41E3A"/>
+    <!-- Tail feathers -->
+    <path d="M 70 130 L 48 156 L 62 146 L 46 170 L 68 152 L 60 178 L 80 152 Z" fill="#C41E3A"/>
+  </g>
+
+  <!-- Wing detail -->
+  <path d="M 86 108 Q 108 122 132 138 Q 110 124 84 112 Z" fill="#8B0F26" opacity="0.85"/>
+  <path d="M 90 100 Q 110 116 130 132" stroke="#7A0717" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.7"/>
+
+  <!-- Beak -->
+  <path d="M 122 76 L 150 80 L 122 84 Z" fill="#FFC93C" stroke="#B8860B" stroke-width="0.9" stroke-linejoin="round"/>
+
+  <!-- Eye mask (the cardinal's signature black face patch) -->
+  <ellipse cx="114" cy="74" rx="12" ry="7" fill="#1F1F1F" transform="rotate(-8 114 74)"/>
+
+  <!-- Eye -->
+  <ellipse cx="111" cy="71" rx="4" ry="3.2" fill="#FFFFFF"/>
+  <circle cx="112" cy="71" r="1.9" fill="#000"/>
+  <circle cx="112.6" cy="70.4" r="0.7" fill="#FFFFFF" opacity="0.9"/>
+
+  <!-- Bottom feet on bat -->
+  <path d="M 92 144 L 90 152 L 94 148 L 96 154 L 98 148 Z" fill="#FFC93C" stroke="#B8860B" stroke-width="0.5"/>
+  <path d="M 106 144 L 104 152 L 108 148 L 110 154 L 112 148 Z" fill="#FFC93C" stroke="#B8860B" stroke-width="0.5"/>
+</svg>
