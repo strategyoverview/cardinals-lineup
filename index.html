@@ -2833,12 +2833,30 @@ document.getElementById('teamLogo').addEventListener('click', () => {
   el.classList.remove('spin');
   void el.offsetWidth;
   el.classList.add('spin');
-  showBubble(POP_QUIPS[Math.floor(Math.random() * POP_QUIPS.length)]);
-  playCardinalCall();
+  showBubble("🏆 ALL I DO IS WIN 🏆");
+  playWinSong();
 });
 
+// "All I Do Is Win" by DJ Khaled — plays the hook from YouTube on logo click.
+// A hidden iframe is created lazily, then its src is reset and rewritten so
+// repeat-clicks restart the song from the hook.
+let winSongIframe = null;
+function playWinSong() {
+  if (!winSongIframe) {
+    winSongIframe = document.createElement('iframe');
+    winSongIframe.title = 'All I Do Is Win';
+    winSongIframe.style.cssText = 'position:fixed;bottom:0;left:0;width:1px;height:1px;opacity:0;pointer-events:none;border:0;z-index:-1;';
+    winSongIframe.allow = 'autoplay; encrypted-media';
+    document.body.appendChild(winSongIframe);
+  }
+  winSongIframe.src = '';
+  setTimeout(() => {
+    winSongIframe.src = 'https://www.youtube.com/embed/GGXzlRoNtHU?autoplay=1&start=18&rel=0';
+  }, 40);
+}
+
 // Cardinal "cheer cheer cheer" synthesized with Web Audio so we don't have
-// to bundle an audio file. Triggered on team logo click.
+// to bundle an audio file. (Kept around in case we want to bring it back.)
 let audioCtx = null;
 function playCardinalCall() {
   try {
