@@ -1,0 +1,18 @@
+# Office lock files
+~$*
+
+# Local Claude settings
+.claude/settings.local.json
+
+# Build / render artifacts
+dist/
+build/
+out/
+.cache/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
