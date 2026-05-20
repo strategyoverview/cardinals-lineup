@@ -12,6 +12,9 @@
 <link rel="icon" type="image/png" href="LittleCardinalsLogo.png">
 <link rel="icon" type="image/svg+xml" href="logo.svg">
 <link rel="apple-touch-icon" href="LittleCardinalsLogo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap" rel="stylesheet">
 <title>Little Cardinals — Game Day</title>
 <style>
 :root {
@@ -75,38 +78,45 @@ button { font-family: inherit; }
 /* ============ Sponsor strip ============ */
 .sponsor-strip {
   background: white;
-  color: var(--navy);
+  color: black;
   text-align: center;
-  padding: 0.75rem 1rem;
-  font-size: 0.875rem;
+  padding: 0.75rem 0.875rem;
+  padding-left: max(0.875rem, env(safe-area-inset-left));
+  padding-right: max(0.875rem, env(safe-area-inset-right));
+  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  font-size: 0.78rem;
   font-weight: 700;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
   position: relative;
-  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-wrap: wrap;
-  gap: 0.5rem 0.625rem;
-  border-bottom: 1px solid var(--gray-200);
+  flex-wrap: nowrap;
+  gap: 0.4rem;
+  width: 100%;
+  box-sizing: border-box;
+  white-space: nowrap;
+  overflow: hidden;
 }
-.sponsor-strip-text { color: var(--gray-700); }
-.sponsor-strip-tagline { color: var(--gray-700); font-weight: 600; font-style: italic; }
+.sponsor-strip-text { color: black; font-weight: 700; }
+.sponsor-strip-tagline { color: black; font-weight: 600; font-style: normal; }
+@media (min-width: 600px) {
+  .sponsor-strip { font-size: 1rem; padding-top: 0.875rem; padding-bottom: 0.875rem; gap: 0.5rem; }
+}
 .sponsor-strip-logo {
   display: inline-flex;
   align-items: center;
   line-height: 0;
 }
 .sponsor-strip-logo img {
-  height: 26px;
+  height: 18px;
   width: auto;
   display: block;
   transition: transform 0.2s ease;
 }
 .sponsor-strip-logo:hover img { transform: scale(1.06); }
 @media (min-width: 600px) {
-  .sponsor-strip { font-size: 1rem; padding: 0.75rem 1rem; }
-  .sponsor-strip-logo img { height: 32px; }
+  .sponsor-strip-logo img { height: 26px; }
 }
 
 /* ============ Header ============ */
@@ -249,8 +259,12 @@ main {
   max-width: 1100px;
   margin: 0 auto;
   padding: 1.25rem 1rem 4rem;
+  padding-left: max(1rem, env(safe-area-inset-left));
+  padding-right: max(1rem, env(safe-area-inset-right));
   display: grid;
   gap: 1.25rem;
+  box-sizing: border-box;
+  width: 100%;
 }
 @media (min-width: 768px) {
   main { padding: 1.5rem 1.5rem 4rem; gap: 1.5rem; }
@@ -294,19 +308,40 @@ section:hover {
 }
 
 h2 {
-  font-size: 2.25rem;
+  font-size: 2.625rem;
   font-weight: 900;
   color: var(--navy);
   margin-bottom: 1.25rem;
   text-transform: uppercase;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.02em;
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  line-height: 1.05;
+  line-height: 1.02;
 }
 @media (min-width: 768px) {
-  h2 { font-size: 2.625rem; letter-spacing: 0.04em; }
+  h2 { font-size: 3rem; letter-spacing: 0.04em; }
+}
+
+/* Inspirational quote at top of each view */
+.section-quote {
+  font-style: italic;
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--navy-soft);
+  background: var(--gray-50);
+  border-left: 4px solid var(--cardinal-red);
+  padding: 0.75rem 0.875rem;
+  border-radius: 8px;
+  margin-bottom: 1.125rem;
+  line-height: 1.4;
+  opacity: 1;
+  transition: opacity 0.35s ease;
+}
+.section-quote.fade { opacity: 0; }
+.section-quote:empty { display: none; }
+@media (min-width: 768px) {
+  .section-quote { font-size: 1.125rem; padding: 0.875rem 1rem; }
 }
 h2 .badge {
   font-size: 0.75rem;
@@ -894,25 +929,20 @@ h2 .badge {
 }
 .defense-row:hover { transform: translateX(2px); }
 .defense-row.premium {
-  background: linear-gradient(95deg, #FFE0E8 0%, #FFEFF3 60%);
-  border-color: var(--cardinal-red);
-  border-left: 8px solid var(--cardinal-red);
+  background: linear-gradient(95deg, #DCF6E4 0%, #EEFAF1 60%);
+  border-color: #1F9B4D;
+  border-left: 8px solid #1F9B4D;
   padding-left: calc(1rem - 6px);
 }
-.defense-row.premium .defense-pos-name::after {
-  content: ' ⭐';
-  margin-left: 0.2rem;
-  font-size: 0.95rem;
-  vertical-align: middle;
-}
 .defense-row.premium .defense-pos-abbr {
-  color: var(--cardinal-red);
-  font-weight: 900;
+  color: #135E2C;
+  background: #C6EFD3;
+  border-color: #1F9B4D;
 }
 .defense-row.outfield {
-  background: #F4FBF0;
-  border-color: var(--grass);
-  border-left: 8px solid var(--grass);
+  background: white;
+  border-color: var(--gray-300);
+  border-left: 8px solid var(--gray-300);
   padding-left: calc(1rem - 6px);
 }
 
@@ -938,24 +968,33 @@ h2 .badge {
 
 .defense-pos-text { min-width: 0; }
 
+.defense-pos-text {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
 .defense-pos-name {
-  font-size: 1.5rem;
+  font-size: 1.875rem;
   font-weight: 900;
   letter-spacing: -0.01em;
   color: var(--navy);
-  line-height: 1.15;
+  line-height: 1.1;
   text-transform: uppercase;
 }
 @media (min-width: 768px) {
-  .defense-pos-name { font-size: 1.875rem; }
+  .defense-pos-name { font-size: 2.25rem; }
 }
 
 .defense-pos-abbr {
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   font-weight: 800;
   color: var(--gray-500);
   letter-spacing: 0.1em;
-  margin-top: 3px;
+  padding: 2px 8px;
+  background: var(--gray-100);
+  border-radius: 999px;
+  border: 1.5px solid var(--gray-200);
 }
 
 .defense-player-block {
@@ -987,13 +1026,13 @@ h2 .badge {
 }
 
 .defense-player-name {
-  font-size: 1.625rem;
+  font-size: 1.875rem;
   font-weight: 900;
   color: var(--navy);
-  letter-spacing: -0.01em;
+  letter-spacing: -0.015em;
 }
 @media (min-width: 768px) {
-  .defense-player-name { font-size: 1.875rem; }
+  .defense-player-name { font-size: 2.25rem; }
 }
 
 @media (max-width: 420px) {
@@ -1093,19 +1132,20 @@ h2 .badge {
   border: 1.5px solid var(--gray-200);
 }
 .premium-count.has {
-  background: linear-gradient(135deg, #FFE0E8 0%, #FFEFF3 100%);
-  color: var(--cardinal-red);
-  border-color: var(--cardinal-red-soft);
+  background: linear-gradient(135deg, #C6EFD3 0%, #EEFAF1 100%);
+  color: #135E2C;
+  border-color: #1F9B4D;
 }
 .pos-pill.premium {
-  background: #FFE5EB;
-  color: var(--cardinal-red);
-  border-color: var(--cardinal-red-soft);
+  background: #C6EFD3;
+  color: #135E2C;
+  border-color: #1F9B4D;
+  font-weight: 900;
 }
 .pos-pill.outfield {
-  background: #E8F4E0;
-  color: var(--grass-dark);
-  border-color: var(--grass);
+  background: white;
+  color: var(--gray-700);
+  border-color: var(--gray-300);
 }
 
 .stats-legend {
@@ -1138,12 +1178,14 @@ h2 .badge {
 
 footer {
   text-align: center;
-  padding: 2rem 0.875rem 2.5rem;
+  padding: 2rem 1rem 2.5rem;
+  padding-left: max(1rem, env(safe-area-inset-left));
+  padding-right: max(1rem, env(safe-area-inset-right));
   margin: 0.5rem auto 0;
-  max-width: 720px;
   width: 100%;
   box-sizing: border-box;
 }
+footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
 
 .footer-quote {
   font-size: 1rem;
@@ -1310,7 +1352,12 @@ footer {
 
 /* iPhone and small phones — tightening that's separate from header sizing */
 @media (max-width: 600px) {
-  main { padding: 0.875rem 0.625rem 2rem; gap: 0.875rem; }
+  main {
+    padding: 0.875rem 0.875rem 2rem;
+    padding-left: max(0.875rem, env(safe-area-inset-left));
+    padding-right: max(0.875rem, env(safe-area-inset-right));
+    gap: 0.875rem;
+  }
   section { padding: 1rem 0.875rem; border-radius: 14px; }
   .diamond { aspect-ratio: 1 / 0.95; max-width: 100%; }
   .diamond-position { width: 76px; }
@@ -1682,11 +1729,13 @@ footer {
   </section>
 
   <section id="battingView">
+    <div class="section-quote" id="battingQuote"></div>
     <h2>Batting Order</h2>
     <ol class="batting-list" id="battingOrder"></ol>
   </section>
 
   <section id="defenseView" style="display: none;">
+    <div class="section-quote" id="defenseQuote"></div>
     <h2>Field Rotation</h2>
     <div id="rotationNote"></div>
     <div class="inning-tabs" id="inningTabs"></div>
@@ -1714,10 +1763,8 @@ footer {
     <h2>Position Summary</h2>
     <div id="statsContainer"></div>
     <div class="stats-legend">
-      <span><span class="pos-pill premium">2B</span> Premium (Pitcher / 1st / 2nd / 3rd Base)</span>
+      <span><span class="pos-pill premium">SS</span> Premium (Pitcher / Infield / Shortstop)</span>
       <span><span class="pos-pill outfield">LF</span> Outfield</span>
-      <span><span class="pos-pill">2B</span> Standard infield</span>
-      <span><span class="pos-pill bench">—</span> Bench</span>
     </div>
   </section>
 </main>
@@ -1763,7 +1810,7 @@ const POSITION_EMOJI = {
   '1B': '1️⃣', '2B': '2️⃣', '3B': '3️⃣', SS: '⭐',
   LF: '🌳', LCF: '🌳', CF: '🌲', RF: '🌳'
 };
-const PREMIUM = ['P1', 'P2', '1B', '2B', '3B'];
+const PREMIUM = ['P1', 'P2', '1B', 'SS', '2B', '3B'];
 const OUTFIELD = ['LF', 'LCF', 'CF', 'RF'];
 
 // Per-player constraints — e.g. allowedPositions limits where a kid can play.
@@ -2033,8 +2080,8 @@ function renderInnings() {
         <div class="defense-pos-block">
           <span class="defense-pos-emoji" aria-hidden="true">${POSITION_EMOJI[pos]}</span>
           <div class="defense-pos-text">
-            <div class="defense-pos-name">${POSITION_NAMES[pos]}</div>
-            <div class="defense-pos-abbr">${pos}</div>
+            <span class="defense-pos-name">${POSITION_NAMES[pos]}</span>
+            <span class="defense-pos-abbr">${pos}</span>
           </div>
         </div>
         <div class="defense-player-block">
@@ -2128,6 +2175,17 @@ function applyView() {
   document.getElementById('defenseView').style.display = state.view === 'defense' ? '' : 'none';
 }
 
+function rotateSectionQuotes() {
+  const quote = '"' + COACH_QUOTES[Math.floor(Math.random() * COACH_QUOTES.length)] + '"';
+  document.querySelectorAll('.section-quote').forEach(el => {
+    el.classList.add('fade');
+    setTimeout(() => {
+      el.textContent = quote;
+      el.classList.remove('fade');
+    }, 200);
+  });
+}
+
 function setTeamLogo(dataUrl) {
   state.teamLogo = dataUrl;
   if (dataUrl) {
@@ -2207,6 +2265,7 @@ document.addEventListener('click', (e) => {
     state.view = viewBtn.dataset.view;
     localStorage.setItem('cardinals_view', state.view);
     applyView();
+    rotateSectionQuotes();
     return;
   }
 });
@@ -2522,6 +2581,7 @@ if (!sessionStorage.getItem('cardinals_welcomed')) {
   setTimeout(() => { iceCreamRain(8); sessionStorage.setItem('cardinals_welcomed', '1'); }, 600);
 }
 
+rotateSectionQuotes();
 render();
 </script>
 </body>
