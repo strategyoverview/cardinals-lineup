@@ -100,8 +100,8 @@ button { font-family: inherit; }
   display: inline-block;
   vertical-align: middle;
 }
-.sponsor-strip-text { color: black; font-weight: 700; margin-right: 0.3rem; }
-.sponsor-strip-tagline { color: black; font-weight: 600; font-style: normal; margin-left: 0.3rem; }
+.sponsor-strip-text { color: black; font-weight: 700; margin-right: 0.3rem; font-style: normal; }
+.sponsor-strip-tagline { color: black; font-weight: 700; font-style: normal; margin-left: 0.3rem; }
 @media (min-width: 600px) {
   .sponsor-strip { font-size: 1rem; padding-top: 0.875rem; padding-bottom: 0.875rem; }
   .sponsor-strip-text { margin-right: 0.5rem; }
@@ -328,43 +328,56 @@ main {
     right: max(0.875rem, env(safe-area-inset-right));
     width: auto;
     box-sizing: border-box;
-    border: 1px solid rgba(255, 255, 255, 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.7);
     border-radius: 999px;
     box-shadow:
-      0 18px 50px rgba(15, 23, 42, 0.22),
-      0 6px 18px rgba(15, 23, 42, 0.1),
+      0 18px 50px rgba(15, 23, 42, 0.18),
+      0 6px 18px rgba(15, 23, 42, 0.08),
       inset 0 1px 0 rgba(255, 255, 255, 0.9),
       inset 0 -1px 0 rgba(15, 23, 42, 0.04);
     padding: 0.3rem;
     gap: 0.2rem;
-    background: rgba(255, 255, 255, 0.55);
-    backdrop-filter: blur(42px) saturate(220%);
-    -webkit-backdrop-filter: blur(42px) saturate(220%);
+    background: rgba(232, 244, 250, 0.78);
+    backdrop-filter: blur(30px) saturate(180%);
+    -webkit-backdrop-filter: blur(30px) saturate(180%);
     justify-content: space-around;
+    height: 60px;
   }
   .page-nav button {
     flex: 1 1 0;
+    width: 0;
     flex-direction: column;
-    gap: 3px;
-    padding: 0.45rem 0.25rem 0.4rem;
+    gap: 2px;
+    padding: 0.4rem 0.1rem;
     border-radius: 999px;
     font-size: 0.64rem;
     text-transform: none;
     letter-spacing: 0;
-    min-height: 52px;
+    height: 100%;
+    min-height: 0;
     color: var(--gray-700);
     font-weight: 700;
+    overflow: hidden;
   }
   .page-nav button.active {
-    background: rgba(255, 255, 255, 0.94);
+    background: rgba(255, 255, 255, 0.96);
     color: #000;
     box-shadow:
-      0 2px 6px rgba(15, 23, 42, 0.06),
+      0 2px 6px rgba(15, 23, 42, 0.08),
       0 1px 2px rgba(15, 23, 42, 0.04),
-      inset 0 1px 0 rgba(255, 255, 255, 0.8);
+      inset 0 1px 0 rgba(255, 255, 255, 0.85);
   }
-  .page-nav button.active .nav-icon { transform: scale(1.08); color: #000; }
-  .page-nav .nav-icon { font-size: 1.2rem; transition: transform 0.2s ease; }
+  .page-nav button.active .nav-icon { transform: scale(1.06); color: #000; }
+  .page-nav .nav-icon {
+    width: 22px;
+    height: 22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    line-height: 1;
+    transition: transform 0.2s ease;
+  }
 
   main > section.page { display: none; animation: pageIn 0.3s ease-out; }
   main > section.page.active { display: block; }
@@ -721,15 +734,15 @@ h2 .badge {
 .batting-row {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.5rem 0.875rem;
+  gap: 0.625rem;
+  padding: 0.35rem 0.75rem;
   background: rgba(255, 255, 255, 0.7);
   border: 1.5px solid rgba(15, 23, 42, 0.08);
-  border-radius: 16px;
+  border-radius: 14px;
   font-weight: 700;
   counter-increment: bat;
   transition: all 0.15s ease;
-  min-height: 52px;
+  min-height: 44px;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
 }
@@ -742,15 +755,15 @@ h2 .badge {
 }
 
 .batting-num {
-  width: 36px;
-  height: 36px;
+  width: 28px;
+  height: 28px;
   border-radius: 999px;
   background: var(--navy);
   color: var(--gold);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.05rem;
+  font-size: 0.875rem;
   font-weight: 900;
   flex-shrink: 0;
   letter-spacing: -0.02em;
@@ -783,7 +796,7 @@ h2 .badge {
 }
 
 .batting-name {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   font-weight: 900;
   color: var(--navy);
   letter-spacing: -0.015em;
@@ -1064,17 +1077,18 @@ h2 .badge {
   display: grid;
   grid-template-columns: 1fr auto;
   align-items: center;
-  gap: 0.625rem;
-  padding: 0.25rem 0.75rem;
+  gap: 0.5rem;
+  padding: 0.15rem 0.625rem;
   background: rgba(255, 255, 255, 0.6);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   border: 1.5px solid rgba(15, 23, 42, 0.05);
-  border-radius: 13px;
-  min-height: 36px;
+  border-radius: 12px;
+  min-height: 30px;
   transition: all 0.15s ease;
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5) inset;
 }
+.defense-list { gap: 0.2rem !important; }
 .defense-list { gap: 0.3rem !important; }
 .defense-row:hover { transform: translateX(2px); }
 .defense-row.premium {
@@ -1107,12 +1121,12 @@ h2 .badge {
 }
 
 .defense-pos-emoji {
-  font-size: 1.2rem;
+  font-size: 1rem;
   line-height: 1;
   flex-shrink: 0;
 }
 @media (min-width: 768px) {
-  .defense-pos-emoji { font-size: 1.65rem; }
+  .defense-pos-emoji { font-size: 1.5rem; }
 }
 
 .defense-pos-text { min-width: 0; }
@@ -1124,11 +1138,11 @@ h2 .badge {
   flex-wrap: wrap;
 }
 .defense-pos-name {
-  font-size: 1.0625rem;
+  font-size: 0.9375rem;
   font-weight: 900;
   letter-spacing: -0.01em;
   color: var(--navy);
-  line-height: 1.05;
+  line-height: 1;
   text-transform: uppercase;
 }
 @media (min-width: 768px) {
@@ -1175,11 +1189,11 @@ h2 .badge {
 }
 
 .defense-player-name {
-  font-size: 1.0625rem;
+  font-size: 0.9375rem;
   font-weight: 900;
   color: var(--navy);
   letter-spacing: -0.015em;
-  line-height: 1.05;
+  line-height: 1;
 }
 @media (min-width: 768px) {
   .defense-player-name { font-size: 1.625rem; }
@@ -1504,12 +1518,12 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
 /* iPhone and small phones — tightening that's separate from header sizing */
 @media (max-width: 600px) {
   main {
-    padding: 0.75rem 0.75rem 2rem;
-    padding-left: max(0.75rem, env(safe-area-inset-left));
-    padding-right: max(0.75rem, env(safe-area-inset-right));
+    padding: 0.75rem 1rem 2rem;
+    padding-left: max(1rem, env(safe-area-inset-left));
+    padding-right: max(1rem, env(safe-area-inset-right));
     gap: 0.625rem;
   }
-  section { padding: 0.75rem 0.75rem; border-radius: 14px; }
+  section { padding: 0.75rem 0.75rem; border-radius: 18px; max-width: 100%; }
   h2 { margin-bottom: 0.625rem; }
   .stacked-heading { margin-top: 1rem; }
   .diamond { aspect-ratio: 1 / 0.95; max-width: 100%; }
@@ -1711,12 +1725,12 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   border: 1.5px solid rgba(15, 23, 42, 0.05);
-  border-radius: 13px;
-  padding: 0.3rem 0.75rem;
+  border-radius: 12px;
+  padding: 0.2rem 0.625rem;
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5) inset;
-  min-height: 40px;
+  min-height: 34px;
 }
-.scorecard-list { gap: 0.3rem !important; }
+.scorecard-list { gap: 0.2rem !important; }
 .scorecard-name {
   font-weight: 900;
   font-size: 1.5rem;
@@ -1870,10 +1884,6 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
         <span class="roster-date" id="rosterDateLabel">—</span>
         <input type="date" id="rosterDateInput" class="roster-date-input" />
       </label>
-      <div class="h2-controls">
-        <button class="collapse-btn" id="rosterPrintBtn" title="Print lineup" aria-label="Print lineup">🖨</button>
-        <button class="collapse-btn" id="rosterCollapseBtn" title="Collapse / expand" aria-label="Collapse roster">▾</button>
-      </div>
     </h2>
     <div class="roster-body" id="rosterBody">
       <div class="roster-grid" id="rosterGrid"></div>
@@ -1940,11 +1950,11 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
 </footer>
 
 <div class="sponsor-strip sponsor-strip-bottom" id="sponsorStrip">
-  <span class="sponsor-strip-text">App built by</span>
+  <span class="sponsor-strip-text">Built by</span>
   <a href="https://www.redkeysolutions.com/" target="_blank" rel="noopener" class="sponsor-strip-logo">
     <img src="https://www.redkeysolutions.com/wp-content/uploads/2025/06/logo-update-2025-V1.webp" alt="Red Key" loading="lazy">
   </a>
-  <span class="sponsor-strip-tagline">your technology &amp; AI partner</span>
+  <span class="sponsor-strip-tagline">your technology and AI partner</span>
 </div>
 
 <script>
@@ -2584,25 +2594,8 @@ localStorage.removeItem('cardinals_outs');
   });
 })();
 
-// Roster collapse
-const rosterSection = document.getElementById('rosterSection');
-if (localStorage.getItem('cardinals_roster_collapsed') === '1') {
-  rosterSection.classList.add('collapsed');
-}
-document.getElementById('rosterCollapseBtn').addEventListener('click', (e) => {
-  e.stopPropagation();
-  rosterSection.classList.toggle('collapsed');
-  localStorage.setItem('cardinals_roster_collapsed',
-    rosterSection.classList.contains('collapsed') ? '1' : '0');
-});
-
-// Print / PDF export — opens the browser's print sheet, which on iOS/Safari
-// lets you "Save to Files" as PDF. Print stylesheet at the top of the file
-// already drops controls/avatars and lays everything out cleanly.
-document.getElementById('rosterPrintBtn').addEventListener('click', (e) => {
-  e.stopPropagation();
-  window.print();
-});
+// Roster collapse + print buttons removed by request — no handlers needed.
+localStorage.removeItem('cardinals_roster_collapsed');
 
 function resizeImage(file, size, cb) {
   const reader = new FileReader();
