@@ -100,7 +100,9 @@ button { font-family: inherit; }
 header {
   background: linear-gradient(135deg, var(--cardinal-red) 0%, var(--cardinal-red-dark) 100%);
   color: white;
-  padding: 0.875rem 0.75rem 1rem;
+  padding: 0.875rem 1rem 1rem;
+  padding-left: max(1rem, env(safe-area-inset-left));
+  padding-right: max(1rem, env(safe-area-inset-right));
   box-shadow: var(--shadow-md);
   position: relative;
   overflow: hidden;
@@ -120,22 +122,22 @@ header::before {
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 0.75rem;
+  gap: clamp(0.625rem, 3vw, 1.5rem);
   max-width: 1200px;
   margin: 0 auto;
   min-width: 0;
 }
 
 .team-logo {
-  width: 118px;
-  height: 118px;
+  width: clamp(92px, 26vw, 200px);
+  height: clamp(92px, 26vw, 200px);
   border-radius: 50%;
   background: white;
   border: 3px solid rgba(255,255,255,0.7);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2.5rem;
+  font-size: clamp(2rem, 7vw, 4rem);
   cursor: pointer;
   position: relative;
   flex-shrink: 0;
@@ -156,53 +158,38 @@ header::before {
   flex: 1 1 0;
   min-width: 0;
   text-align: left;
+  overflow: hidden;
 }
 .brand-text h1 {
-  font-size: 1.25rem;
+  font-size: clamp(1.0625rem, 4.6vw, 3rem);
   font-weight: 900;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.015em;
   line-height: 1.05;
   text-shadow: 2px 2px 4px rgba(0,0,0,0.25);
-  overflow-wrap: break-word;
+  overflow-wrap: anywhere;
+  word-break: normal;
 }
 .brand-text .subtitle {
-  font-size: 0.62rem;
+  font-size: clamp(0.58rem, 2.1vw, 1.05rem);
   opacity: 0.94;
   font-weight: 700;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
-  margin-top: 0.35rem;
+  margin-top: 0.3rem;
   line-height: 1.25;
-}
-
-@media (min-width: 380px) {
-  .team-logo { width: 128px; height: 128px; font-size: 2.6rem; }
-  .brand-text h1 { font-size: 1.375rem; letter-spacing: 0.025em; }
-  .brand-text .subtitle { font-size: 0.66rem; letter-spacing: 0.06em; }
-}
-
-@media (min-width: 420px) {
-  header { padding: 1rem 0.875rem 1.125rem; }
-  .header-inner { gap: 0.875rem; }
-  .team-logo { width: 144px; height: 144px; font-size: 2.95rem; }
-  .brand-text h1 { font-size: 1.5rem; letter-spacing: 0.035em; }
-  .brand-text .subtitle { font-size: 0.72rem; }
+  overflow-wrap: anywhere;
 }
 
 @media (min-width: 600px) {
   header { padding: 1.5rem 1.25rem 1.75rem; }
-  .header-inner { gap: 1.25rem; }
-  .team-logo { width: 170px; height: 170px; font-size: 3.5rem; }
-  .brand-text h1 { font-size: 2.25rem; letter-spacing: 0.06em; }
-  .brand-text .subtitle { font-size: 0.9rem; letter-spacing: 0.1em; }
+  .brand-text h1 { letter-spacing: 0.06em; }
+  .brand-text .subtitle { letter-spacing: 0.08em; }
 }
 
 @media (min-width: 1024px) {
   header { padding: 2rem 2rem 2.25rem; }
-  .header-inner { gap: 1.75rem; }
-  .team-logo { width: 200px; height: 200px; font-size: 4rem; border-width: 5px; }
-  .brand-text h1 { font-size: 3rem; letter-spacing: 0.08em; }
-  .brand-text .subtitle { font-size: 1.05rem; }
+  .team-logo { border-width: 5px; }
+  .brand-text h1 { letter-spacing: 0.08em; }
 }
 
 /* Quote bubble */
