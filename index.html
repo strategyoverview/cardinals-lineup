@@ -6,6 +6,9 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#C41E3A">
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+<meta name="googlebot" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
 <link rel="icon" type="image/png" href="logo.png">
 <link rel="apple-touch-icon" href="logo.png">
 <title>Little Cardinals — Game Day</title>
@@ -50,7 +53,7 @@ html { -webkit-tap-highlight-color: transparent; -webkit-text-size-adjust: 100%;
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', system-ui, sans-serif;
-  background: linear-gradient(160deg, var(--cream) 0%, var(--cream-warm) 50%, var(--pink-bg) 100%);
+  background: #FFFFFF;
   color: var(--navy);
   min-height: 100vh;
   line-height: 1.5;
@@ -1022,12 +1025,12 @@ footer {
 <header>
   <div class="header-inner">
     <div class="team-logo" id="teamLogo" title="Click to upload team logo">
-      <span id="teamLogoFallback">⚾</span>
+      <span id="teamLogoFallback">＋</span>
       <span class="logo-hint">＋</span>
     </div>
     <div class="brand-text">
       <h1>LITTLE CARDINALS</h1>
-      <div class="subtitle">Fairfield Little League Nationals</div>
+      <div class="subtitle">Little League · Cardinals Forever</div>
     </div>
     <div class="header-actions">
       <button class="icon-btn" id="printBtn" title="Print lineup">🖨</button>
@@ -1472,8 +1475,12 @@ document.getElementById('logoInput').addEventListener('change', (e) => {
 });
 
 document.getElementById('teamLogo').addEventListener('click', () => {
-  // Logo behavior: spin + show quip; right-click / long-press to upload
   const el = document.getElementById('teamLogo');
+  // If no logo yet, clicking opens the upload picker. Otherwise: spin + quip.
+  if (!el.classList.contains('has-photo')) {
+    document.getElementById('logoInput').click();
+    return;
+  }
   el.classList.remove('spin');
   void el.offsetWidth;
   el.classList.add('spin');
