@@ -270,6 +270,105 @@ main {
   box-sizing: border-box;
   width: 100%;
 }
+
+/* ============ Page nav (glass) ============ */
+.page-nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(22px) saturate(180%);
+  -webkit-backdrop-filter: blur(22px) saturate(180%);
+  padding: 0.625rem 1rem;
+  padding-left: max(1rem, env(safe-area-inset-left));
+  padding-right: max(1rem, env(safe-area-inset-right));
+  border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+  box-shadow: 0 4px 24px rgba(15, 23, 42, 0.05);
+  width: 100%;
+  box-sizing: border-box;
+}
+.page-nav button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: transparent;
+  border: none;
+  padding: 0.5rem 0.875rem;
+  border-radius: 12px;
+  color: var(--gray-700);
+  cursor: pointer;
+  font-weight: 800;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+.page-nav button:hover { background: rgba(15, 23, 42, 0.06); color: var(--cardinal-red); }
+.page-nav button.active {
+  background: var(--cardinal-red);
+  color: white;
+  box-shadow: 0 4px 12px rgba(196, 30, 58, 0.25);
+}
+.page-nav .nav-icon { font-size: 1.15rem; line-height: 1; display: inline-flex; align-items: center; }
+.page-nav .nav-icon svg { width: 1.15em; height: 1.15em; display: block; }
+
+/* Mobile: bottom-fixed glass nav, only one page visible */
+@media (max-width: 768px) {
+  .page-nav {
+    position: fixed;
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-top: 1px solid rgba(255,255,255,0.65);
+    border-bottom: none;
+    box-shadow: 0 -6px 28px rgba(15, 23, 42, 0.1);
+    padding: 0.4rem 0.4rem;
+    padding-bottom: max(0.4rem, env(safe-area-inset-bottom));
+    gap: 0;
+    background: rgba(255, 255, 255, 0.72);
+    justify-content: space-around;
+  }
+  .page-nav button {
+    flex: 1 1 0;
+    flex-direction: column;
+    gap: 3px;
+    padding: 0.4rem 0.25rem;
+    border-radius: 12px;
+    font-size: 0.68rem;
+    text-transform: none;
+    letter-spacing: 0.01em;
+    min-height: 54px;
+  }
+  .page-nav button.active {
+    background: transparent;
+    color: var(--cardinal-red);
+    box-shadow: none;
+  }
+  .page-nav button.active .nav-icon { transform: scale(1.18); }
+  .page-nav .nav-icon { font-size: 1.6rem; transition: transform 0.2s ease; }
+
+  main > section.page { display: none; animation: pageIn 0.3s ease-out; }
+  main > section.page.active { display: block; }
+  @keyframes pageIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  body { padding-bottom: calc(72px + env(safe-area-inset-bottom)); }
+}
+
+/* Desktop: all pages visible, nav at top with anchor highlight */
+@media (min-width: 769px) {
+  main > section.page { display: block; }
+  .page-nav button.active { transform: scale(1.04); }
+}
+
+.stacked-heading { margin-top: 2rem; }
 @media (min-width: 768px) {
   main { padding: 1.5rem 1.5rem 4rem; gap: 1.5rem; }
 }
@@ -1351,7 +1450,8 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
   .header-actions, .photo-btn, .link-btn, .coach-bubble, .footer-quote { display: none !important; }
   .view-toggle { display: none; }
   .tab { display: none; }
-  #battingView, #defenseView { display: block !important; }
+  main > section.page { display: block !important; }
+  .page-nav { display: none !important; }
   section { box-shadow: none; border: 1px solid #ccc; page-break-inside: avoid; }
   .player-card.absent { display: none; }
   main { padding: 0.5rem; gap: 0.75rem; max-width: 100%; }
@@ -1380,7 +1480,7 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
   .footer-sponsor { padding: 1rem 1rem; }
   .footer-sponsor .sponsor-name { font-size: 1.25rem; }
   .sponsor-strip { font-size: 0.72rem; padding: 0.45rem 0.5rem; }
-  h2 { font-size: 1rem; }
+  h2 { font-size: 2.25rem; }
 }
 
 /* Very small phones - iPhone SE 375 etc */
@@ -1686,8 +1786,41 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
 
 <div class="coach-bubble" id="coachBubble"></div>
 
+<nav class="page-nav" id="pageNav" aria-label="Sections">
+  <button data-page="roster" class="active">
+    <span class="nav-icon" aria-hidden="true">👥</span>
+    <span class="nav-label">Roster</span>
+  </button>
+  <button data-page="batting">
+    <span class="nav-icon" aria-hidden="true">
+      <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" fill="none">
+        <g transform="rotate(-38 16 16)">
+          <path d="M12 4 Q12 2 14 2 L18 2 Q20 2 20 4 L20 18 Q20 19 19 19 L13 19 Q12 19 12 18 Z" fill="currentColor"/>
+          <rect x="14" y="19" width="4" height="6" fill="currentColor"/>
+          <circle cx="16" cy="27" r="3" fill="currentColor"/>
+        </g>
+      </svg>
+    </span>
+    <span class="nav-label">Batting</span>
+  </button>
+  <button data-page="fielding">
+    <span class="nav-icon" aria-hidden="true">
+      <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" fill="none">
+        <path d="M7 13 Q7 5 14 5 Q19 5 19 11 L19 14 L23 14 Q27 14 27 18 Q27 23 24 26 L24 28 Q24 29 23 29 L9 29 Q8 29 8 28 L8 26 Q5 23 5 18 Q5 13 7 13 Z" fill="currentColor"/>
+        <path d="M14 7 L14 15" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M19 14 L19 19" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </span>
+    <span class="nav-label">Fielding</span>
+  </button>
+  <button data-page="score">
+    <span class="nav-icon" aria-hidden="true">📊</span>
+    <span class="nav-label">Score</span>
+  </button>
+</nav>
+
 <main>
-  <section id="rosterSection">
+  <section id="rosterPage" class="page active">
     <h2>
       Today's Roster
       <label class="roster-date-wrap" title="Pick game date">
@@ -1711,48 +1844,28 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
     <input type="file" id="logoInput" class="hidden-input" accept="image/*">
   </section>
 
-  <section class="play-section">
-    <div class="view-toggle" role="tablist">
-      <button class="active" data-view="batting" role="tab">
-        <span class="toggle-icon" aria-hidden="true">
-          <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" fill="none">
-            <g transform="rotate(-38 16 16)">
-              <path d="M12 4 Q12 2 14 2 L18 2 Q20 2 20 4 L20 18 Q20 19 19 19 L13 19 Q12 19 12 18 Z" fill="currentColor"/>
-              <rect x="14" y="19" width="4" height="6" fill="currentColor"/>
-              <circle cx="16" cy="27" r="3" fill="currentColor"/>
-            </g>
-          </svg>
-        </span>
-        Batting
-      </button>
-      <button data-view="defense" role="tab">
-        <span class="toggle-icon" aria-hidden="true">
-          <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" fill="none">
-            <path d="M7 13 Q7 5 14 5 Q19 5 19 11 L19 14 L23 14 Q27 14 27 18 Q27 23 24 26 L24 28 Q24 29 23 29 L9 29 Q8 29 8 28 L8 26 Q5 23 5 18 Q5 13 7 13 Z" fill="currentColor"/>
-            <path d="M14 7 L14 15" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
-            <path d="M19 14 L19 19" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
-          </svg>
-        </span>
-        Fielding
-      </button>
-    </div>
+  <section id="battingPage" class="page">
+    <div class="section-quote" id="battingQuote"></div>
+    <h2>Batting Order</h2>
+    <ol class="batting-list" id="battingOrder"></ol>
+  </section>
 
-    <div id="battingView" class="play-view">
-      <div class="section-quote" id="battingQuote"></div>
-      <h2>Batting Order</h2>
-      <ol class="batting-list" id="battingOrder"></ol>
-    </div>
+  <section id="fieldingPage" class="page">
+    <div class="section-quote" id="fieldingQuote"></div>
+    <h2>Field Rotation</h2>
+    <div id="rotationNote"></div>
+    <div class="inning-tabs" id="inningTabs"></div>
+    <div id="inningContent"></div>
 
-    <div id="defenseView" class="play-view" style="display: none;">
-      <div class="section-quote" id="defenseQuote"></div>
-      <h2>Field Rotation</h2>
-      <div id="rotationNote"></div>
-      <div class="inning-tabs" id="inningTabs"></div>
-      <div id="inningContent"></div>
+    <h2 class="stacked-heading">Position Summary</h2>
+    <div id="statsContainer"></div>
+    <div class="stats-legend">
+      <span><span class="pos-pill premium">SS</span> Premium (Pitcher / Infield / Shortstop)</span>
+      <span><span class="pos-pill outfield">LF</span> Outfield</span>
     </div>
   </section>
 
-  <section>
+  <section id="scorePage" class="page">
     <h2>Scorecard</h2>
     <div class="outs-section outs-readonly" id="outsSection">
       <div class="outs-display">
@@ -1767,15 +1880,6 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
       <span>Outs</span>
     </div>
     <div class="scorecard-list" id="scorecardList"></div>
-  </section>
-
-  <section>
-    <h2>Position Summary</h2>
-    <div id="statsContainer"></div>
-    <div class="stats-legend">
-      <span><span class="pos-pill premium">SS</span> Premium (Pitcher / Infield / Shortstop)</span>
-      <span><span class="pos-pill outfield">LF</span> Outfield</span>
-    </div>
   </section>
 </main>
 
@@ -1868,13 +1972,15 @@ const state = {
   present: loadPresent(),
   photos: loadPhotos(),
   teamLogo: localStorage.getItem('cardinals_logo') || null,
-  view: localStorage.getItem('cardinals_view') || 'batting',
+  page: localStorage.getItem('cardinals_page') || 'roster',
   currentInning: 1,
   uploadTarget: null,
   rotation: [],
   isStatic: true,
   sundae: false
 };
+// Clean up stale key from the old toggle days
+localStorage.removeItem('cardinals_view');
 
 function loadPresent() {
   try {
@@ -2177,12 +2283,24 @@ function renderStats() {
   container.innerHTML = html;
 }
 
-function applyView() {
-  document.querySelectorAll('.view-toggle button').forEach(b => {
-    b.classList.toggle('active', b.dataset.view === state.view);
+const VALID_PAGES = ['roster', 'batting', 'fielding', 'score'];
+function showPage(page) {
+  if (!VALID_PAGES.includes(page)) page = 'roster';
+  state.page = page;
+  localStorage.setItem('cardinals_page', page);
+  document.querySelectorAll('main > section.page').forEach(s => {
+    s.classList.toggle('active', s.id === page + 'Page');
   });
-  document.getElementById('battingView').style.display = state.view === 'batting' ? '' : 'none';
-  document.getElementById('defenseView').style.display = state.view === 'defense' ? '' : 'none';
+  document.querySelectorAll('.page-nav button').forEach(b => {
+    b.classList.toggle('active', b.dataset.page === page);
+  });
+  if (window.innerWidth > 768) {
+    const el = document.getElementById(page + 'Page');
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } else {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  rotateSectionQuotes();
 }
 
 function rotateSectionQuotes() {
@@ -2248,7 +2366,7 @@ function render() {
   renderBatting();
   renderInnings();
   renderStats();
-  applyView();
+  showPage(state.page);
 }
 
 /* ============ Events ============ */
@@ -2270,12 +2388,9 @@ document.addEventListener('click', (e) => {
     return;
   }
 
-  const viewBtn = e.target.closest('.view-toggle button');
-  if (viewBtn) {
-    state.view = viewBtn.dataset.view;
-    localStorage.setItem('cardinals_view', state.view);
-    applyView();
-    rotateSectionQuotes();
+  const navBtn = e.target.closest('.page-nav button');
+  if (navBtn) {
+    showPage(navBtn.dataset.page);
     return;
   }
 });
