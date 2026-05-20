@@ -72,28 +72,37 @@ button { font-family: inherit; }
 
 /* ============ Sponsor strip ============ */
 .sponsor-strip {
-  background: linear-gradient(90deg, var(--pink) 0%, #FF8FAB 100%);
-  color: white;
+  background: white;
+  color: var(--navy);
   text-align: center;
-  padding: 0.5rem 1rem;
-  font-size: 0.8rem;
-  font-weight: 600;
-  letter-spacing: 0.03em;
+  padding: 0.625rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
   position: relative;
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  border-bottom: 1px solid var(--gray-200);
 }
-.sponsor-strip a {
-  color: white;
-  text-decoration: none;
-  font-weight: 800;
-  border-bottom: 1.5px dashed rgba(255,255,255,0.6);
-  padding-bottom: 1px;
+.sponsor-strip-text { color: var(--gray-700); }
+.sponsor-strip-logo {
+  display: inline-flex;
+  align-items: center;
+  line-height: 0;
 }
-.sponsor-strip a:hover { border-bottom-style: solid; }
-.sponsor-strip .cone { display: inline-block; animation: bobble 3s ease-in-out infinite; }
-@keyframes bobble {
-  0%, 100% { transform: translateY(0) rotate(-5deg); }
-  50% { transform: translateY(-3px) rotate(5deg); }
+.sponsor-strip-logo img {
+  height: 26px;
+  width: auto;
+  display: block;
+  transition: transform 0.2s ease;
+}
+.sponsor-strip-logo:hover img { transform: scale(1.06); }
+@media (min-width: 600px) {
+  .sponsor-strip { font-size: 1rem; padding: 0.75rem 1rem; }
+  .sponsor-strip-logo img { height: 32px; }
 }
 
 /* ============ Header ============ */
@@ -1466,7 +1475,10 @@ footer {
 <body>
 
 <div class="sponsor-strip" id="sponsorStrip">
-  App sponsored by <strong>RED KEY SOLUTIONS</strong>
+  <span class="sponsor-strip-text">App Sponsored by</span>
+  <a href="https://www.redkeysolutions.com/" target="_blank" rel="noopener" class="sponsor-strip-logo">
+    <img src="https://www.redkeysolutions.com/wp-content/uploads/2025/06/logo-update-2025-V1.webp" alt="Red Key" loading="lazy">
+  </a>
 </div>
 
 <header>
@@ -1585,7 +1597,6 @@ footer {
     <div class="sponsor-locations">Fairfield · Bridgeport, CT</div>
   </div>
 
-  <div class="footer-thanks">Thank you to our team sponsor <a href="https://www.tabithasicecream.com/" target="_blank" rel="noopener">Tabitha's Ice Cream</a></div>
   <div class="footer-made">Made in Fairfield</div>
 </footer>
 
@@ -1801,22 +1812,21 @@ function renderRoster() {
   const grid = document.getElementById('rosterGrid');
   grid.innerHTML = ROSTER.map(player => {
     const present = state.present.has(player);
-    const constrained = PLAYER_CONSTRAINTS[player] && PLAYER_CONSTRAINTS[player].allowedPositions;
-    const badge = constrained ? '<span class="player-tag">OF only</span>' : '';
     return `
       <div class="player-card ${present ? 'present' : 'absent'}" data-player="${player}">
         ${present ? '<div class="checkmark">✓</div>' : ''}
         <div class="name">${player}</div>
-        ${badge}
       </div>
     `;
   }).join('');
 
   const cnt = state.present.size;
-  document.getElementById('presentCount').textContent = cnt;
-  document.getElementById('totalCount').textContent = ROSTER.length;
-  document.getElementById('rosterBadge').textContent = `${cnt} ON ${ROSTER.length}`;
-  document.getElementById('squadLabel').style.display = cnt === ROSTER.length ? 'inline-block' : 'none';
+  const presentEl = document.getElementById('presentCount');
+  const totalEl = document.getElementById('totalCount');
+  const squadEl = document.getElementById('squadLabel');
+  if (presentEl) presentEl.textContent = cnt;
+  if (totalEl) totalEl.textContent = ROSTER.length;
+  if (squadEl) squadEl.style.display = cnt === ROSTER.length ? 'inline-block' : 'none';
 }
 
 function renderBatting() {
