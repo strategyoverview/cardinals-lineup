@@ -54,7 +54,9 @@ html { -webkit-tap-highlight-color: transparent; -webkit-text-size-adjust: 100%;
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', system-ui, sans-serif;
-  background: #FFFFFF;
+  background:
+    radial-gradient(ellipse at top, #D9304C 0%, var(--cardinal-red) 35%, var(--cardinal-red-dark) 100%);
+  background-attachment: fixed;
   color: var(--navy);
   min-height: 100vh;
   line-height: 1.5;
@@ -205,6 +207,13 @@ header::before {
   .brand-text .subtitle { letter-spacing: 0.08em; }
 }
 
+@media (min-width: 768px) {
+  .header-inner { justify-content: center; }
+  .brand-text { flex: 0 1 auto; text-align: center; }
+  .brand-text h1 { align-items: center; }
+  .brand-text .subtitle, .brand-text .header-sponsor { text-align: center; }
+}
+
 @media (min-width: 1024px) {
   .team-logo { border-width: 5px; }
   .brand-text h1 { letter-spacing: 0.08em; }
@@ -283,28 +292,19 @@ section:hover {
 }
 
 h2 {
-  font-size: 1.875rem;
+  font-size: 2.25rem;
   font-weight: 900;
   color: var(--navy);
-  margin-bottom: 1.125rem;
+  margin-bottom: 1.25rem;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.03em;
   display: flex;
   align-items: center;
   gap: 0.75rem;
   line-height: 1.05;
 }
 @media (min-width: 768px) {
-  h2 { font-size: 2.375rem; letter-spacing: 0.05em; }
-}
-h2::before {
-  content: '';
-  display: block;
-  width: 7px;
-  height: 1.875rem;
-  background: linear-gradient(180deg, var(--cardinal-red), var(--cardinal-red-dark));
-  border-radius: 4px;
-  flex-shrink: 0;
+  h2 { font-size: 2.625rem; letter-spacing: 0.04em; }
 }
 h2 .badge {
   font-size: 0.75rem;
@@ -322,6 +322,37 @@ h2 .badge {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+}
+
+.roster-date-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: 10px;
+  transition: background 0.2s ease;
+}
+.roster-date-wrap:hover { background: var(--gray-100); }
+.roster-date {
+  font-size: inherit;
+  font-weight: 900;
+  color: var(--cardinal-red);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+.roster-cal-icon {
+  font-size: 0.7em;
+  line-height: 1;
+}
+.roster-date-input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
 }
 
 .collapse-btn {
@@ -605,39 +636,41 @@ h2 .badge {
 /* ============ Innings Tabs ============ */
 .inning-tabs {
   display: flex;
-  gap: 0.3rem;
+  gap: 0.625rem;
   margin-bottom: 1.25rem;
   flex-wrap: nowrap;
-  overflow-x: auto;
-  scrollbar-width: none;
 }
-.inning-tabs::-webkit-scrollbar { display: none; }
 .tab {
   flex: 1 1 0;
   min-width: 0;
-  min-height: 52px;
+  min-height: 56px;
   padding: 0.625rem 0.25rem;
   background: var(--gray-100);
-  border: 2.5px solid transparent;
-  border-radius: 12px;
+  border: 2px solid transparent;
+  border-radius: 999px;
   font-weight: 800;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  font-size: 0.95rem;
+  font-size: 0.82rem;
   color: var(--gray-700);
   letter-spacing: 0.02em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.06);
 }
 .tab:hover { background: var(--gray-200); transform: translateY(-1px); }
 .tab:active { transform: scale(0.97); }
 .tab.active {
-  background: var(--cardinal-red);
+  background: linear-gradient(135deg, var(--cardinal-red) 0%, var(--cardinal-red-dark) 100%);
   color: white;
-  box-shadow: 0 3px 12px rgba(196, 30, 58, 0.35);
+  box-shadow: 0 6px 18px rgba(196, 30, 58, 0.4);
   border-color: var(--cardinal-red-dark);
-  transform: scale(1.04);
+  transform: scale(1.06);
+}
+@media (min-width: 600px) {
+  .inning-tabs { gap: 0.75rem; }
+  .tab { font-size: 1rem; min-height: 60px; }
 }
 
 /* ============ Diamond ============ */
@@ -660,39 +693,103 @@ h2 .badge {
   position: relative;
   width: 100%;
   max-width: 640px;
-  aspect-ratio: 1 / 0.92;
+  aspect-ratio: 1 / 1.02;
   margin: 0 auto 0;
+  padding-top: 0.5rem;
   background:
-    radial-gradient(ellipse at center top, var(--grass) 0%, var(--grass-dark) 100%);
+    radial-gradient(ellipse 75% 90% at center 35%, #6FB552 0%, #4F8F37 60%, #3D7128 100%),
+    repeating-linear-gradient(110deg, rgba(255,255,255,0.04) 0 8px, transparent 8px 18px);
+  background-blend-mode: multiply;
   border-radius: var(--radius-md);
   overflow: hidden;
   border: 1px solid var(--gray-300);
-  box-shadow: inset 0 4px 12px rgba(0,0,0,0.2);
+  box-shadow: inset 0 4px 14px rgba(0,0,0,0.25);
 }
 .diamond::before {
   content: '';
   position: absolute;
-  top: 30%;
+  top: 36%;
   left: 50%;
-  width: 54%;
-  height: 54%;
-  background: linear-gradient(135deg, var(--dirt) 0%, #C9985F 100%);
+  width: 58%;
+  height: 58%;
+  background: radial-gradient(circle at 40% 30%, #E0B380 0%, #BA8A4F 60%, #8E6534 100%);
   transform: translateX(-50%) rotate(45deg);
-  border: 2px solid var(--dirt-dark);
-  box-shadow: inset 0 0 24px rgba(0,0,0,0.15);
+  border: 2px solid #6B4A22;
+  box-shadow: inset 0 0 28px rgba(0,0,0,0.22);
 }
 .diamond::after {
   content: '';
   position: absolute;
-  top: 56%;
+  top: 60%;
   left: 50%;
   width: 64px;
   height: 64px;
-  background: radial-gradient(circle, var(--dirt-dark) 0%, var(--dirt) 75%);
+  background: radial-gradient(circle, #A87749 0%, #C9985F 70%, #D4A570 100%);
   transform: translate(-50%, -50%);
   border-radius: 50%;
-  border: 2px solid var(--dirt-dark);
-  box-shadow: 0 0 0 4px rgba(0,0,0,0.04);
+  border: 2px solid #6B4A22;
+  box-shadow: 0 0 0 3px rgba(0,0,0,0.06), inset 0 -2px 6px rgba(0,0,0,0.15);
+  z-index: 0;
+}
+
+/* Bases (white squares at corners of dirt diamond) */
+.diamond-base {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  background: white;
+  border: 1px solid #6B4A22;
+  transform: translate(-50%, -50%) rotate(45deg);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  z-index: 0;
+}
+.diamond-base.b1 { top: 65%; left: 79%; }
+.diamond-base.b2 { top: 36%; left: 50%; }
+.diamond-base.b3 { top: 65%; left: 21%; }
+
+/* Home plate (white pentagon) */
+.diamond-home {
+  position: absolute;
+  top: 92%;
+  left: 50%;
+  width: 22px;
+  height: 18px;
+  background: white;
+  transform: translate(-50%, -50%);
+  border: 1px solid #6B4A22;
+  clip-path: polygon(0 0, 100% 0, 100% 55%, 50% 100%, 0 55%);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  z-index: 0;
+}
+
+/* Foul lines */
+.diamond-foul {
+  position: absolute;
+  top: 79%;
+  left: 50%;
+  width: 70%;
+  height: 2px;
+  background: white;
+  opacity: 0.65;
+  transform-origin: left center;
+  z-index: 0;
+  pointer-events: none;
+}
+.diamond-foul.left { transform: translate(-100%, -50%) rotate(-135deg); }
+.diamond-foul.right { transform: translateY(-50%) rotate(-45deg); }
+
+/* Warning track ring */
+.diamond-warning {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 165%;
+  height: 165%;
+  border-radius: 50%;
+  background: radial-gradient(circle, transparent 60%, rgba(186, 138, 79, 0.45) 60%, rgba(186, 138, 79, 0.45) 65%, transparent 65%);
+  transform: translateX(-50%);
+  pointer-events: none;
+  z-index: 0;
 }
 
 .diamond-position {
@@ -762,16 +859,16 @@ h2 .badge {
   .pos-name { font-size: 0.9rem; padding: 3px 11px; }
 }
 
-.pos-LF { top: 18%; left: 12%; }
-.pos-LCF { top: 14%; left: 32%; }
-.pos-CF { top: 11%; left: 55%; }
-.pos-RF { top: 18%; left: 88%; }
-.pos-3B { top: 44%; left: 22%; }
-.pos-SS { top: 39%; left: 38%; }
-.pos-2B { top: 39%; left: 62%; }
-.pos-1B { top: 44%; left: 78%; }
-.pos-P1 { top: 56%; left: 38%; }
-.pos-P2 { top: 56%; left: 62%; }
+.pos-LF { top: 24%; left: 12%; }
+.pos-LCF { top: 20%; left: 32%; }
+.pos-CF { top: 17%; left: 55%; }
+.pos-RF { top: 24%; left: 88%; }
+.pos-3B { top: 48%; left: 22%; }
+.pos-SS { top: 43%; left: 38%; }
+.pos-2B { top: 43%; left: 62%; }
+.pos-1B { top: 48%; left: 78%; }
+.pos-P1 { top: 60%; left: 38%; }
+.pos-P2 { top: 60%; left: 62%; }
 
 /* ============ Defense list (single column, easy to read) ============ */
 .defense-list {
@@ -969,6 +1066,26 @@ h2 .badge {
   min-width: 42px;
   border: 1.5px solid var(--gray-200);
 }
+
+.premium-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 32px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: var(--gray-100);
+  color: var(--gray-400);
+  font-weight: 900;
+  font-size: 1rem;
+  border: 1.5px solid var(--gray-200);
+}
+.premium-count.has {
+  background: linear-gradient(135deg, #FFE0E8 0%, #FFEFF3 100%);
+  color: var(--cardinal-red);
+  border-color: var(--cardinal-red-soft);
+}
 .pos-pill.premium {
   background: #FFE5EB;
   color: var(--cardinal-red);
@@ -1019,7 +1136,7 @@ footer {
 
 .footer-quote {
   font-size: 1rem;
-  color: var(--navy-soft);
+  color: rgba(255,255,255,0.92);
   font-style: italic;
   font-weight: 600;
   max-width: 540px;
@@ -1027,6 +1144,7 @@ footer {
   transition: opacity 0.4s ease;
   min-height: 2.5rem;
   padding: 0 0.5rem;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.18);
 }
 
 .footer-logo {
@@ -1068,13 +1186,14 @@ footer {
   font-weight: 800;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--gray-700);
+  color: rgba(255,255,255,0.92);
   text-align: center;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.18);
 }
 .footer-made::before, .footer-made::after {
   content: '·';
   margin: 0 0.625rem;
-  color: var(--cardinal-red);
+  color: var(--gold);
 }
 @keyframes thump {
   0%, 100% { transform: scale(1); }
@@ -1392,13 +1511,13 @@ footer {
   justify-content: center;
 }
 .sc-btn {
-  width: 34px;
-  height: 34px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
-  background: var(--cardinal-red);
-  color: white;
-  border: none;
-  font-size: 1.15rem;
+  background: white;
+  color: var(--navy);
+  border: 2px solid var(--gray-300);
+  font-size: 1.2rem;
   font-weight: 800;
   cursor: pointer;
   display: flex;
@@ -1407,9 +1526,22 @@ footer {
   line-height: 1;
   padding: 0;
   flex-shrink: 0;
-  box-shadow: 0 2px 6px rgba(196,30,58,0.25);
+  box-shadow: 0 2px 6px rgba(15,23,42,0.1);
+  transition: transform 0.1s ease;
 }
-.sc-btn:active { transform: scale(0.92); }
+.sc-btn[data-metric="assists"] {
+  background: white;
+  color: var(--navy);
+  border: 2px solid var(--gray-300);
+  box-shadow: 0 2px 6px rgba(15,23,42,0.1);
+}
+.sc-btn[data-metric="outs"] {
+  background: #1F9B4D;
+  color: white;
+  border: 2px solid #135E2C;
+  box-shadow: 0 2px 8px rgba(31,155,77,0.35);
+}
+.sc-btn:active { transform: scale(0.9); }
 .sc-btn:disabled { opacity: 0.3; cursor: not-allowed; box-shadow: none; }
 .sc-value {
   min-width: 1.5rem;
@@ -1474,13 +1606,6 @@ footer {
 </head>
 <body>
 
-<div class="sponsor-strip" id="sponsorStrip">
-  <span class="sponsor-strip-text">App Sponsored by</span>
-  <a href="https://www.redkeysolutions.com/" target="_blank" rel="noopener" class="sponsor-strip-logo">
-    <img src="https://www.redkeysolutions.com/wp-content/uploads/2025/06/logo-update-2025-V1.webp" alt="Red Key" loading="lazy">
-  </a>
-</div>
-
 <header>
   <div class="header-inner">
     <div class="team-logo" id="teamLogo" title="Tap to upload team logo">
@@ -1500,6 +1625,11 @@ footer {
   <section id="rosterSection">
     <h2>
       Today's Roster
+      <label class="roster-date-wrap" title="Pick game date">
+        <span class="roster-date" id="rosterDateLabel">—</span>
+        <span class="roster-cal-icon" aria-hidden="true">📅</span>
+        <input type="date" id="rosterDateInput" class="roster-date-input" />
+      </label>
       <div class="h2-controls">
         <button class="collapse-btn" id="rosterCollapseBtn" title="Collapse / expand" aria-label="Collapse roster">▾</button>
       </div>
@@ -1599,6 +1729,13 @@ footer {
 
   <div class="footer-made">Made in Fairfield</div>
 </footer>
+
+<div class="sponsor-strip sponsor-strip-bottom" id="sponsorStrip">
+  <span class="sponsor-strip-text">App Sponsored by</span>
+  <a href="https://www.redkeysolutions.com/" target="_blank" rel="noopener" class="sponsor-strip-logo">
+    <img src="https://www.redkeysolutions.com/wp-content/uploads/2025/06/logo-update-2025-V1.webp" alt="Red Key" loading="lazy">
+  </a>
+</div>
 
 <script>
 const ROSTER = ['Parker', 'Caleb', 'Hudson', 'Miles', 'Hart', 'Julian', 'Leon', 'Joel', 'Gabe', 'Asher'];
@@ -1871,7 +2008,7 @@ function renderInnings() {
   if (state.currentInning > result.rotation.length) state.currentInning = 1;
 
   tabs.innerHTML = result.rotation.map((_, i) =>
-    `<button class="tab ${state.currentInning === i + 1 ? 'active' : ''}" data-inning="${i + 1}">Inning ${i + 1}</button>`
+    `<button class="tab ${state.currentInning === i + 1 ? 'active' : ''}" data-inning="${i + 1}">Inn ${i + 1}</button>`
   ).join('');
 
   const inning = result.rotation[state.currentInning - 1];
@@ -1913,6 +2050,10 @@ function renderInnings() {
   }
 
   html += '<div class="diamond-section"><div class="diamond-section-label">Field map · for reference</div><div class="diamond">';
+  html += '<div class="diamond-warning"></div>';
+  html += '<div class="diamond-foul left"></div><div class="diamond-foul right"></div>';
+  html += '<div class="diamond-base b1"></div><div class="diamond-base b2"></div><div class="diamond-base b3"></div>';
+  html += '<div class="diamond-home"></div>';
   for (const pos of DIAMOND_ORDER) {
     if (!inning[pos]) continue;
     const player = inning[pos];
@@ -1964,7 +2105,7 @@ function renderStats() {
         html += `<td><span class="pos-pill ${cls}">${pos}</span></td>`;
       }
     }
-    html += `<td><strong style="color: ${premiumCount > 0 ? 'var(--cardinal-red)' : 'var(--gray-500)'}; font-size: 1.1rem;">${premiumCount}</strong></td>`;
+    html += `<td><span class="premium-count${premiumCount > 0 ? ' has' : ''}">${premiumCount}</span></td>`;
     html += '</tr>';
   }
   html += '</tbody></table></div>';
@@ -2171,6 +2312,25 @@ renderScorecard();
 // Team Outs is computed from scorecard; the renderTeamOuts() call inside renderScorecard
 // keeps it in sync. Clean up any stale single-counter state.
 localStorage.removeItem('cardinals_outs');
+
+// Roster date picker
+(function () {
+  const input = document.getElementById('rosterDateInput');
+  const label = document.getElementById('rosterDateLabel');
+  if (!input || !label) return;
+  const fmt = (d) => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  const toIso = (d) => d.toISOString().slice(0, 10);
+  const stored = localStorage.getItem('cardinals_roster_date');
+  const initial = stored ? new Date(stored + 'T00:00:00') : new Date();
+  input.value = toIso(initial);
+  label.textContent = fmt(initial);
+  input.addEventListener('change', () => {
+    if (!input.value) return;
+    const d = new Date(input.value + 'T00:00:00');
+    label.textContent = fmt(d);
+    localStorage.setItem('cardinals_roster_date', input.value);
+  });
+})();
 
 // Roster collapse
 const rosterSection = document.getElementById('rosterSection');
