@@ -1243,6 +1243,21 @@ h2 .badge {
   background: rgba(255, 255, 255, 0.95);
   border-color: var(--cardinal-red-soft);
 }
+.batting-row {
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.batting-row.dragging {
+  cursor: grabbing;
+  background: rgba(255, 255, 255, 1);
+  border-color: var(--cardinal-red);
+  box-shadow: 0 8px 20px rgba(196, 30, 58, 0.18);
+  transform: scale(1.02);
+  z-index: 2;
+  position: relative;
+}
 
 .batting-num {
   width: 28px;
@@ -1590,6 +1605,28 @@ h2 .badge {
   text-overflow: ellipsis;
 }
 .defense-list { gap: 0.3rem !important; }
+.defense-row {
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.defense-row.dragging {
+  cursor: grabbing;
+  opacity: 0.55;
+}
+.defense-row.drop-target {
+  outline: 3px dashed var(--cardinal-red);
+  outline-offset: -3px;
+}
+.bench-row {
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.bench-row.dragging { cursor: grabbing; opacity: 0.55; }
+.bench-row.drop-target { outline: 3px dashed var(--cardinal-red); outline-offset: -3px; }
 .defense-row:hover { transform: translateX(2px); }
 .defense-row.premium {
   background: linear-gradient(95deg, #DCF6E4 0%, #EEFAF1 60%);
@@ -1847,6 +1884,10 @@ footer {
   margin: 0.5rem auto 0;
   width: 100%;
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
 }
 footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
 
@@ -1856,18 +1897,25 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
   font-style: italic;
   font-weight: 700;
   max-width: 540px;
-  margin: 0 auto 1.25rem;
+  margin: 0 auto;
   transition: opacity 0.4s ease;
   min-height: 2.5rem;
   padding: 0 0.5rem;
 }
+.footer-quote.is-clickable {
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.footer-quote.is-clickable:hover { color: var(--cardinal-red); }
+.footer-quote.is-clickable:active { transform: scale(0.98); }
 
 .footer-logo {
   width: clamp(180px, 50vw, 280px);
   height: clamp(180px, 50vw, 280px);
   background-color: transparent;
   border-radius: 50%;
-  margin: 1rem auto 1.5rem;
+  margin: 0 auto;
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -1895,7 +1943,6 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
 }
 
 .footer-made {
-  margin-top: 1.5rem;
   font-size: 1.0625rem;
   font-weight: 800;
   letter-spacing: 0.18em;
@@ -1911,7 +1958,6 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
   color: var(--cardinal-red);
 }
 .footer-feedback {
-  margin-top: 2rem;
   padding: 1.25rem 1.5rem;
   background: rgba(255, 255, 255, 0.55);
   backdrop-filter: blur(16px) saturate(160%);
@@ -1960,7 +2006,7 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
 }
 
 .footer-sponsor {
-  margin: 1.5rem auto 0;
+  margin: 0 auto;
   padding: 1.25rem 1.25rem;
   background: linear-gradient(135deg, var(--pink-soft) 0%, var(--cream) 100%);
   border-radius: var(--radius-md);
@@ -2946,6 +2992,11 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
     <div class="sponsor-locations">Fairfield · Bridgeport, CT</div>
   </div>
 
+  <div class="footer-feedback">
+    <h4>Feedback</h4>
+    <p>Have feedback on the app? <a href="mailto:amarkov@redkeysolutions.com?subject=Lil%20Cardinals%20App%20Feedback">Email me</a> — I'd love to hear it.</p>
+  </div>
+
   <div class="footer-made">
     <svg class="fairfield-icon" viewBox="0 0 20 26" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <path d="M0 24 Q5 22 10 23 Q15 22 20 24 L20 26 L0 26 Z" fill="currentColor"/>
@@ -2958,12 +3009,19 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
     </svg>
     Made in Fairfield
   </div>
-
-  <div class="footer-feedback">
-    <h4>Feedback</h4>
-    <p>Have feedback on the app? <a href="mailto:amarkov@redkeysolutions.com?subject=Lil%20Cardinals%20App%20Feedback">Email me</a> — I'd love to hear it.</p>
-  </div>
 </footer>
+
+<div class="sponsor-strip-wrap" id="sponsorStripWrap">
+  <a class="sponsor-pill" href="https://www.redkeysolutions.com/" target="_blank" rel="noopener">
+    <span class="sponsor-pill-line">
+      <span class="sponsor-pill-text">Team Manager built by</span>
+      <span class="sponsor-pill-logo">
+        <img src="https://www.redkeysolutions.com/wp-content/uploads/2025/06/logo-update-2025-V1.webp" alt="Red Key" loading="lazy">
+      </span>
+    </span>
+    <span class="sponsor-pill-tagline">your technology &amp; AI partner</span>
+  </a>
+</div>
 
 <div class="app-team-links">
   <button class="app-team-link" id="appEditTeamBtn">
@@ -2997,18 +3055,6 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
       <button class="modal-btn-danger" id="tmDeleteConfirmBtn" disabled>Delete Team</button>
     </div>
   </div>
-</div>
-
-<div class="sponsor-strip-wrap" id="sponsorStripWrap">
-  <a class="sponsor-pill" href="https://www.redkeysolutions.com/" target="_blank" rel="noopener">
-    <span class="sponsor-pill-line">
-      <span class="sponsor-pill-text">Team Manager built by</span>
-      <span class="sponsor-pill-logo">
-        <img src="https://www.redkeysolutions.com/wp-content/uploads/2025/06/logo-update-2025-V1.webp" alt="Red Key" loading="lazy">
-      </span>
-    </span>
-    <span class="sponsor-pill-tagline">your technology &amp; AI partner</span>
-  </a>
 </div>
 
 <script>
@@ -3366,8 +3412,8 @@ function bindTeamManager() {
   document.getElementById('tmNewTeamLogoFile')?.addEventListener('change', (e) => {
     const file = e.target.files && e.target.files[0];
     if (!file) return;
-    if (file.size > 2 * 1024 * 1024) {
-      alert('Image is too large (max 2 MB). Pick a smaller file.');
+    if (file.size > 4 * 1024 * 1024) {
+      alert('Image is too large (max 4 MB). Pick a smaller file.');
       e.target.value = '';
       return;
     }
@@ -3621,21 +3667,53 @@ function canPlay(player, pos) {
 }
 
 const COACH_QUOTES = [
+  // Silly T-ball reality
   "Keep your eye on the ball… unless there's a butterfly.",
   "Sunflower seeds are NOT lunch.",
   "Cheering is mandatory, hitting is encouraged.",
   "We don't lose — we just earn ice cream privileges.",
   "Hustle now, sundae later. 🍦",
   "If you don't run hard, you bat eighth tomorrow.",
-  "First rule of Cardinals: be a good teammate. Second rule: hit the ball.",
+  "First rule: be a good teammate. Second rule: hit the ball.",
   "Anyone caught making dirt angels in the outfield owes the coach a scoop.",
-  "Swing like Tabitha's is on the line.",
   "Glove down, gum in, helmet on.",
   "If a parent yells, just nod. Then run.",
-  "Catchers: it's a mask, not a snack.",
   "Walks ARE as good as hits — but home runs are better than both.",
   "We play loud, we cheer louder, we eat ice cream loudest.",
-  "When in doubt, throw to first."
+  "When in doubt, throw to first.",
+  "The grass is not a bed. The dugout is not a fort.",
+  "Don't eat the chalk. It's not powdered sugar.",
+  "Your glove goes ON your hand. Yes, every inning.",
+  "The dandelions will still be there after the game.",
+  "Helmet on backwards counts as style, not a strike.",
+  "Bases are not for sitting on. Probably.",
+  "If the ball rolls past you, chase it. Yes, even now.",
+  "Cleats stay tied. We checked. Re-check.",
+  "Bat to home, glove to field, snack to mouth. In that order.",
+  "Crying in baseball is fine. But finish the inning first.",
+  "If you find a bug, the bug can wait until after the at-bat.",
+  // Inspirational baseball wisdom
+  "Every pitch is a new chance.",
+  "You miss 100% of the swings you don't take. — Wayne Gretzky, probably.",
+  "It ain't over till it's over. — Yogi Berra",
+  "The harder I work, the luckier I get. — Some Hall of Famer",
+  "Slow is smooth, smooth is fast. Now run that base.",
+  "Striking out is part of it. Trying isn't optional.",
+  "Heroes are made between innings.",
+  "Show up, look up, swing up.",
+  "Be the teammate you'd want to play with.",
+  "There's no 'I' in team — but there is one in 'win'.",
+  "Hit the ball, run it out, then ask questions.",
+  "Big league effort, little league heart.",
+  "Confidence is just practice in disguise.",
+  "The next pitch is the only one that matters.",
+  "Champions are made when the bleachers are empty.",
+  "Hands quick, feet quicker, smile quickest.",
+  "Play hard. Cheer harder. Lose with class.",
+  "Tough times don't last. Tough teammates do.",
+  "Good things come to those who hustle.",
+  "One game, one team, one heartbeat.",
+  "Swing like the dugout is watching."
 ];
 
 const POP_QUIPS = [
@@ -3659,8 +3737,24 @@ const state = {
   uploadTarget: null,
   rotation: [],
   isStatic: true,
-  sundae: false
+  sundae: false,
+  manualRotation: loadManualRotation()
 };
+function loadManualRotation() {
+  try {
+    const raw = localStorage.getItem(tk('cardinals_manual_rotation_v1'));
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    return (parsed && typeof parsed === 'object') ? parsed : {};
+  } catch (e) { return {}; }
+}
+function saveManualRotation() {
+  try { localStorage.setItem(tk('cardinals_manual_rotation_v1'), JSON.stringify(state.manualRotation)); } catch (e) {}
+}
+function clearManualRotation() {
+  state.manualRotation = {};
+  localStorage.removeItem(tk('cardinals_manual_rotation_v1'));
+}
 // Clean up stale key from the old toggle days
 localStorage.removeItem('cardinals_view');
 document.body.dataset.page = state.page;
@@ -3835,7 +3929,7 @@ function renderBatting() {
   list.innerHTML = present.map((player, i) => {
     const suffix = suffixes[i] || '';
     return `
-      <li class="batting-row">
+      <li class="batting-row" data-i="${i}" data-player="${escapeHtml(player)}">
         <div class="batting-num">${i + 1}</div>
         <span class="batting-name">${player}</span>
         ${suffix ? `<span class="batting-suffix">${suffix}</span>` : ''}
@@ -3844,9 +3938,89 @@ function renderBatting() {
   }).join('');
 }
 
+// Drag a batting row up/down to reorder. Persists by reshuffling ROSTER
+// so the new batting order is the new roster order (absent players keep
+// their relative order at the end).
+function bindBattingDrag() {
+  const list = document.getElementById('battingOrder');
+  if (!list) return;
+  let drag = null;
+  function presentNow() { return getPresentInRosterOrder(); }
+  function rowAtY(y) {
+    const rows = [...list.querySelectorAll('.batting-row[data-i]')];
+    for (const r of rows) {
+      const rect = r.getBoundingClientRect();
+      if (y >= rect.top && y <= rect.bottom) return r;
+    }
+    return null;
+  }
+  list.addEventListener('pointerdown', (e) => {
+    const row = e.target.closest('.batting-row[data-i]');
+    if (!row) return;
+    e.preventDefault();
+    drag = { pointerId: e.pointerId, fromIndex: parseInt(row.dataset.i, 10), order: presentNow().slice() };
+    row.classList.add('dragging');
+    try { list.setPointerCapture(e.pointerId); } catch (err) {}
+  });
+  list.addEventListener('pointermove', (e) => {
+    if (!drag || e.pointerId !== drag.pointerId) return;
+    const target = rowAtY(e.clientY);
+    if (!target) return;
+    const toIndex = parseInt(target.dataset.i, 10);
+    if (toIndex === drag.fromIndex) return;
+    const moved = drag.order.splice(drag.fromIndex, 1)[0];
+    drag.order.splice(toIndex, 0, moved);
+    drag.fromIndex = toIndex;
+    // Persist immediately so the visual stays in sync after re-render.
+    const absent = ROSTER.filter(p => !state.present.has(p));
+    saveRoster([...drag.order, ...absent]);
+    renderBatting();
+    renderRoster();
+    const newRow = list.querySelector(`.batting-row[data-i="${toIndex}"]`);
+    if (newRow) newRow.classList.add('dragging');
+  });
+  function endDrag(e) {
+    if (!drag) return;
+    if (e && e.pointerId !== drag.pointerId) return;
+    list.querySelectorAll('.dragging').forEach(r => r.classList.remove('dragging'));
+    drag = null;
+  }
+  list.addEventListener('pointerup', endDrag);
+  list.addEventListener('pointercancel', endDrag);
+}
+
 function renderInnings() {
   const present = getPresentInRosterOrder();
   const result = generateRotation(present);
+  // Apply any per-inning manual overrides on top of the auto-generated rotation.
+  // An override is only honored when its player set exactly matches the
+  // current present set — otherwise a kid showing up or leaving would
+  // produce a half-stale lineup.
+  if (state.manualRotation && Object.keys(state.manualRotation).length) {
+    const presentSet = new Set(present);
+    let droppedAny = false;
+    Object.keys(state.manualRotation).forEach(key => {
+      const idx = parseInt(key, 10);
+      if (isNaN(idx) || idx < 0 || idx >= result.rotation.length) {
+        delete state.manualRotation[key];
+        droppedAny = true;
+        return;
+      }
+      const override = state.manualRotation[key];
+      const overridePlayers = new Set([
+        ...Object.entries(override).filter(([k]) => k !== '_bench').map(([, v]) => v),
+        ...((override._bench) || [])
+      ]);
+      const sameSet = overridePlayers.size === presentSet.size && [...overridePlayers].every(p => presentSet.has(p));
+      if (sameSet) {
+        result.rotation[idx] = JSON.parse(JSON.stringify(override));
+      } else {
+        delete state.manualRotation[key];
+        droppedAny = true;
+      }
+    });
+    if (droppedAny) saveManualRotation();
+  }
   state.rotation = result.rotation;
   state.isStatic = result.isStatic;
 
@@ -3872,14 +4046,14 @@ function renderInnings() {
   const inning = result.rotation[state.currentInning - 1];
   const bench = inning._bench || [];
 
-  let html = '<div class="defense-list">';
+  let html = '<div class="defense-list" data-fielding-zone="defense">';
   for (const pos of DEFENSE_LIST_ORDER) {
     if (!inning[pos]) continue;
     const player = inning[pos];
     const isPrem = PREMIUM.includes(pos);
     const isOut = OUTFIELD.includes(pos);
     html += `
-      <div class="defense-row ${isPrem ? 'premium' : isOut ? 'outfield' : 'infield'}">
+      <div class="defense-row ${isPrem ? 'premium' : isOut ? 'outfield' : 'infield'}" data-pos="${pos}" data-player="${escapeHtml(player)}">
         <div class="defense-pos-block">
           <span class="defense-pos-emoji" aria-hidden="true">${POSITION_EMOJI[pos]}</span>
           <div class="defense-pos-text">
@@ -3896,14 +4070,14 @@ function renderInnings() {
   html += '</div>';
 
   if (bench.length) {
-    html += '<div class="bench-block"><div class="bench-title">🪑 On the Bench</div><div class="bench-list">';
-    for (const player of bench) {
+    html += '<div class="bench-block" data-fielding-zone="bench"><div class="bench-title">🪑 On the Bench</div><div class="bench-list">';
+    bench.forEach((player, idx) => {
       html += `
-        <div class="bench-row">
+        <div class="bench-row" data-bench-idx="${idx}" data-player="${escapeHtml(player)}">
           <div class="bench-name">${player}</div>
         </div>
       `;
-    }
+    });
     html += '</div></div>';
   }
 
@@ -3926,6 +4100,92 @@ function renderInnings() {
   html += '</div></div>';
 
   content.innerHTML = html;
+}
+
+// Drag a player from one position to another inside the current inning.
+// Swaps the two players (works for position↔position and position↔bench).
+// Persists the modified inning to state.manualRotation.
+function bindFieldingDrag() {
+  const content = document.getElementById('inningContent');
+  if (!content) return;
+  let drag = null;
+  function findRow(el) {
+    return el.closest('.defense-row[data-pos], .bench-row[data-bench-idx]');
+  }
+  function clearTargets() {
+    content.querySelectorAll('.drop-target').forEach(r => r.classList.remove('drop-target'));
+  }
+  content.addEventListener('pointerdown', (e) => {
+    const row = findRow(e.target);
+    if (!row) return;
+    e.preventDefault();
+    drag = {
+      pointerId: e.pointerId,
+      srcEl: row,
+      srcKind: row.classList.contains('defense-row') ? 'pos' : 'bench',
+      srcKey: row.classList.contains('defense-row') ? row.dataset.pos : parseInt(row.dataset.benchIdx, 10),
+      srcPlayer: row.dataset.player
+    };
+    row.classList.add('dragging');
+    try { content.setPointerCapture(e.pointerId); } catch (err) {}
+  });
+  content.addEventListener('pointermove', (e) => {
+    if (!drag || e.pointerId !== drag.pointerId) return;
+    const target = document.elementFromPoint(e.clientX, e.clientY);
+    if (!target) return;
+    const row = findRow(target);
+    clearTargets();
+    if (row && row !== drag.srcEl) row.classList.add('drop-target');
+  });
+  content.addEventListener('pointerup', (e) => {
+    if (!drag || e.pointerId !== drag.pointerId) return;
+    const target = document.elementFromPoint(e.clientX, e.clientY);
+    const dropRow = target ? findRow(target) : null;
+    clearTargets();
+    drag.srcEl.classList.remove('dragging');
+    if (dropRow && dropRow !== drag.srcEl) {
+      const dstKind = dropRow.classList.contains('defense-row') ? 'pos' : 'bench';
+      const dstKey = dropRow.classList.contains('defense-row') ? dropRow.dataset.pos : parseInt(dropRow.dataset.benchIdx, 10);
+      const dstPlayer = dropRow.dataset.player;
+      swapFielders(drag.srcKind, drag.srcKey, drag.srcPlayer, dstKind, dstKey, dstPlayer);
+    }
+    drag = null;
+  });
+  content.addEventListener('pointercancel', () => {
+    if (!drag) return;
+    clearTargets();
+    drag.srcEl.classList.remove('dragging');
+    drag = null;
+  });
+}
+
+// Apply a swap to the current inning (positions or bench) and persist.
+function swapFielders(srcKind, srcKey, srcPlayer, dstKind, dstKey, dstPlayer) {
+  const inningIdx = state.currentInning - 1;
+  const cur = state.rotation[inningIdx];
+  if (!cur) return;
+  // Snapshot the current inning so we can mutate freely.
+  const next = JSON.parse(JSON.stringify(cur));
+  if (!Array.isArray(next._bench)) next._bench = [];
+  function setSlot(kind, key, player) {
+    if (kind === 'pos') {
+      next[key] = player;
+    } else {
+      // bench: replace at given index, or append
+      if (typeof key === 'number' && key >= 0 && key < next._bench.length) {
+        next._bench[key] = player;
+      } else {
+        next._bench.push(player);
+      }
+    }
+  }
+  setSlot(srcKind, srcKey, dstPlayer);
+  setSlot(dstKind, dstKey, srcPlayer);
+  state.manualRotation[String(inningIdx)] = next;
+  saveManualRotation();
+  // Re-render the inning and stats.
+  renderInnings();
+  renderStats();
 }
 
 function renderStats() {
@@ -4477,10 +4737,12 @@ function showBubble(text) {
   b._timer = setTimeout(() => b.classList.remove('show'), 2400);
 }
 
-// Rotating footer quote
+// Rotating footer quote — auto-cycles every 9s, also tap-to-advance.
 let quoteIdx = Math.floor(Math.random() * COACH_QUOTES.length);
+let quoteTimer = null;
 function rotateQuote() {
   const q = document.getElementById('footerQuote');
+  if (!q) return;
   q.style.opacity = '0';
   setTimeout(() => {
     q.textContent = '"' + COACH_QUOTES[quoteIdx] + '"';
@@ -4488,8 +4750,25 @@ function rotateQuote() {
     quoteIdx = (quoteIdx + 1) % COACH_QUOTES.length;
   }, 400);
 }
+function startQuoteTimer() {
+  if (quoteTimer) clearInterval(quoteTimer);
+  quoteTimer = setInterval(rotateQuote, 9000);
+}
 rotateQuote();
-setInterval(rotateQuote, 9000);
+startQuoteTimer();
+(() => {
+  const q = document.getElementById('footerQuote');
+  if (!q) return;
+  q.classList.add('is-clickable');
+  q.setAttribute('role', 'button');
+  q.setAttribute('tabindex', '0');
+  q.setAttribute('title', 'Tap for a new one');
+  const advance = () => { rotateQuote(); startQuoteTimer(); };
+  q.addEventListener('click', advance);
+  q.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); advance(); }
+  });
+})();
 
 // Konami → sundae mode
 const KONAMI = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
@@ -4638,6 +4917,8 @@ document.querySelectorAll('.section-quote').forEach(el => {
 
 rotateSectionQuotes();
 render();
+bindBattingDrag();
+bindFieldingDrag();
 </script>
 </body>
 </html>
