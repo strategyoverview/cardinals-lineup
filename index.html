@@ -935,12 +935,20 @@ main {
   body[data-page="fielding"] header,
   body[data-page="score"] header { display: none; }
   /* Without the header, the section title sits directly under the
-     iPhone Dynamic Island / notch in full-screen mode. Push main
-     down by the safe-area inset on those pages. */
+     iPhone Dynamic Island / notch in full-screen mode. Use max() so
+     we always reserve enough room for the iOS status bar even when
+     env(safe-area-inset-top) reports 0 (e.g. Safari tab, desktop). */
   body[data-page="batting"] main,
   body[data-page="fielding"] main,
   body[data-page="score"] main {
-    padding-top: calc(1rem + env(safe-area-inset-top));
+    padding-top: max(3rem, calc(env(safe-area-inset-top) + 1.5rem)) !important;
+  }
+}
+@media (max-width: 600px) {
+  body[data-page="batting"] main,
+  body[data-page="fielding"] main,
+  body[data-page="score"] main {
+    padding-top: max(3rem, calc(env(safe-area-inset-top) + 1.5rem)) !important;
   }
 }
 
