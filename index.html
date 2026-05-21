@@ -136,6 +136,258 @@ button { font-family: inherit; }
   .sponsor-strip-logo img { height: 22px; }
 }
 
+/* ============ Team Manager landing ============ */
+body.is-manager {
+  background:
+    linear-gradient(180deg, #FFFFFF 0%, #F0F6FF 60%, #E5EDFF 100%);
+  background-attachment: fixed;
+}
+body.is-manager > header,
+body.is-manager > nav.page-nav,
+body.is-manager > main,
+body.is-manager > footer,
+body.is-manager > .sponsor-strip { display: none !important; }
+body.is-manager #teamManagerView { display: block; }
+body.is-manager { padding-bottom: 0 !important; }
+
+.tm-view { min-height: 100vh; }
+
+.tm-flag {
+  display: flex;
+  width: 100%;
+  height: 6px;
+}
+.tm-flag-stripe { flex: 1; }
+.tm-flag-stripe.red { background: #B22234; }
+.tm-flag-stripe.white { background: #FFFFFF; border-top: 1px solid #E5E7EB; border-bottom: 1px solid #E5E7EB; }
+.tm-flag-stripe.blue { background: #3C3B6E; }
+
+.tm-hero {
+  padding: 2.5rem 1.25rem 2rem;
+  text-align: center;
+  background: linear-gradient(135deg, #B22234 0%, #C41E3A 35%, #3C3B6E 100%);
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+.tm-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 15% 25%, rgba(255,255,255,0.15) 0%, transparent 40%),
+    radial-gradient(circle at 85% 75%, rgba(255,255,255,0.1) 0%, transparent 40%);
+  pointer-events: none;
+}
+.tm-title {
+  font-size: clamp(2.25rem, 7vw, 3.75rem);
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  text-shadow: 2px 3px 6px rgba(0,0,0,0.3);
+  position: relative;
+  margin-top: 0.75rem;
+}
+.tm-tagline {
+  margin-top: 0.875rem;
+  font-size: clamp(0.95rem, 2.5vw, 1.2rem);
+  font-weight: 600;
+  opacity: 0.95;
+  max-width: 540px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.4;
+  position: relative;
+}
+
+.tm-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 3rem;
+}
+.tm-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+  gap: 0.75rem;
+}
+.tm-section-title {
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  font-weight: 900;
+  color: #1F2937;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.tm-new-btn {
+  background: linear-gradient(135deg, #B22234 0%, #C41E3A 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.25rem;
+  border-radius: 999px;
+  font-weight: 800;
+  font-size: 0.95rem;
+  cursor: pointer;
+  font-family: inherit;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 6px 16px rgba(178, 34, 52, 0.35);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.tm-new-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 22px rgba(178, 34, 52, 0.4); }
+.tm-new-btn:active { transform: translateY(0); }
+
+.tm-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+}
+.tm-card {
+  background: white;
+  border: 1.5px solid rgba(15, 23, 42, 0.08);
+  border-radius: 18px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+}
+.tm-card:hover { transform: translateY(-3px); box-shadow: 0 12px 28px rgba(15, 23, 42, 0.12); }
+.tm-card-logo {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--tm-card-color, #C41E3A);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 900;
+  font-size: 1.5rem;
+  box-shadow: 0 3px 8px rgba(15, 23, 42, 0.15);
+}
+.tm-card-name {
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: #1F2937;
+  letter-spacing: -0.01em;
+}
+.tm-card-meta {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #6B7280;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.tm-card-link {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #B22234;
+  letter-spacing: 0.04em;
+  font-family: -apple-system, ui-monospace, monospace;
+}
+.tm-card-id {
+  position: absolute;
+  top: 0.875rem;
+  right: 1rem;
+  background: rgba(15, 23, 42, 0.05);
+  color: #6B7280;
+  font-weight: 800;
+  font-size: 0.7rem;
+  padding: 3px 8px;
+  border-radius: 999px;
+  letter-spacing: 0.05em;
+}
+.tm-card { position: relative; }
+
+.tm-card.tm-card-add {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border: 2.5px dashed rgba(178, 34, 52, 0.35);
+  background: rgba(255, 255, 255, 0.6);
+  color: #B22234;
+  min-height: 180px;
+}
+.tm-card.tm-card-add:hover {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: #B22234;
+}
+.tm-card.tm-card-add i { font-size: 2rem; }
+.tm-card.tm-card-add span { font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; }
+
+.tm-footer {
+  text-align: center;
+  padding: 2rem 1rem;
+  border-top: 1px solid rgba(15, 23, 42, 0.06);
+  background: rgba(255, 255, 255, 0.5);
+}
+.tm-footer-feedback {
+  font-size: 0.85rem;
+  color: #6B7280;
+  font-weight: 600;
+}
+.tm-footer-feedback a { color: #B22234; font-weight: 800; text-decoration: none; }
+.tm-footer-feedback a:hover { text-decoration: underline; }
+
+/* Create Team modal field styling */
+.tm-field {
+  display: block;
+  margin-bottom: 1rem;
+}
+.tm-field-label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #374151;
+  margin-bottom: 0.4rem;
+}
+.tm-field-hint { font-weight: 500; text-transform: none; letter-spacing: 0; color: #9CA3AF; }
+.tm-field input,
+.tm-field select {
+  width: 100%;
+  padding: 0.625rem 0.875rem;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-family: inherit;
+  font-weight: 600;
+  color: #111827;
+  background: white;
+  outline: none;
+  box-sizing: border-box;
+}
+.tm-field input:focus,
+.tm-field select:focus { border-color: #C41E3A; }
+.tm-color-swatches {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.tm-swatch {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2.5px solid white;
+  outline: 2px solid #E5E7EB;
+  cursor: pointer;
+  padding: 0;
+  transition: transform 0.15s ease, outline-color 0.15s ease;
+}
+.tm-swatch:hover { transform: scale(1.1); }
+.tm-swatch.active { outline-color: #111827; outline-width: 3px; transform: scale(1.08); }
+
 /* ============ Header ============ */
 header {
   background: transparent;
@@ -2164,6 +2416,77 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
 </head>
 <body>
 
+<!-- ============ Team Manager landing (shown when no ?team=N in URL) ============ -->
+<div id="teamManagerView" class="tm-view" hidden>
+  <div class="tm-hero">
+    <div class="tm-flag">
+      <span class="tm-flag-stripe red"></span>
+      <span class="tm-flag-stripe white"></span>
+      <span class="tm-flag-stripe blue"></span>
+    </div>
+    <h1 class="tm-title">TEAM MANAGER</h1>
+    <p class="tm-tagline">Build, share, and run your team's lineup, fielding, and scorecard.</p>
+  </div>
+  <div class="tm-container">
+    <div class="tm-section-head">
+      <h2 class="tm-section-title">Your Teams</h2>
+      <button class="tm-new-btn" id="tmNewTeamBtn">
+        <i class="fa-solid fa-plus" aria-hidden="true"></i> New Team
+      </button>
+    </div>
+    <div class="tm-grid" id="tmTeamsGrid"></div>
+  </div>
+  <div class="tm-footer">
+    <div class="tm-footer-feedback">
+      Built by <a href="https://www.redkeysolutions.com/" target="_blank" rel="noopener">Red Key</a> · Have feedback? <a href="mailto:amarkov@redkeysolutions.com?subject=Team%20Manager%20Feedback">amarkov@redkeysolutions.com</a>
+    </div>
+  </div>
+</div>
+
+<!-- ============ New Team modal ============ -->
+<div class="modal-overlay" id="tmNewTeamOverlay" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="tmNewTeamTitle">
+    <div class="modal-header">
+      <h3 id="tmNewTeamTitle">Create New Team</h3>
+      <button class="modal-close" id="tmNewTeamCloseBtn" aria-label="Close">×</button>
+    </div>
+    <div class="modal-body">
+      <label class="tm-field">
+        <span class="tm-field-label">Team Name</span>
+        <input type="text" id="tmNewTeamName" maxlength="40" placeholder="e.g. Westport Wildcats">
+      </label>
+      <label class="tm-field">
+        <span class="tm-field-label">Sport</span>
+        <select id="tmNewTeamSport">
+          <option value="teeball">Tee Ball</option>
+          <option value="softball">Softball</option>
+        </select>
+      </label>
+      <div class="tm-field">
+        <span class="tm-field-label">Team Color</span>
+        <div class="tm-color-swatches" id="tmColorSwatches">
+          <button type="button" class="tm-swatch active" data-color="#C41E3A" style="background:#C41E3A" aria-label="Cardinal red"></button>
+          <button type="button" class="tm-swatch" data-color="#1D4ED8" style="background:#1D4ED8" aria-label="Royal blue"></button>
+          <button type="button" class="tm-swatch" data-color="#16A34A" style="background:#16A34A" aria-label="Forest green"></button>
+          <button type="button" class="tm-swatch" data-color="#F59E0B" style="background:#F59E0B" aria-label="Gold"></button>
+          <button type="button" class="tm-swatch" data-color="#7C3AED" style="background:#7C3AED" aria-label="Purple"></button>
+          <button type="button" class="tm-swatch" data-color="#0F172A" style="background:#0F172A" aria-label="Navy"></button>
+          <button type="button" class="tm-swatch" data-color="#EA580C" style="background:#EA580C" aria-label="Orange"></button>
+          <button type="button" class="tm-swatch" data-color="#0E7490" style="background:#0E7490" aria-label="Teal"></button>
+        </div>
+      </div>
+      <label class="tm-field">
+        <span class="tm-field-label">Logo URL <span class="tm-field-hint">(optional)</span></span>
+        <input type="url" id="tmNewTeamLogo" placeholder="https://...">
+      </label>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn-secondary" id="tmNewTeamCancelBtn">Cancel</button>
+      <button class="modal-btn-primary" id="tmNewTeamSaveBtn">Create Team</button>
+    </div>
+  </div>
+</div>
+
 <header>
   <div class="header-inner">
     <div class="team-logo" id="teamLogo" title="Tap to upload team logo">
@@ -2338,15 +2661,192 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
 </div>
 
 <script>
+/* ============ Team Manager: routing + registry ============ */
+const TEAM_QUERY = 'team';
+function getCurrentTeamId() {
+  const p = new URLSearchParams(location.search);
+  const v = parseInt(p.get(TEAM_QUERY), 10);
+  return isNaN(v) ? null : v;
+}
+const CURRENT_TEAM_ID = getCurrentTeamId();
+
+// Team 1 = the original Lil Cardinals app. Its data lives in the existing
+// "cardinals_*" localStorage keys (no migration needed). Other teams use
+// the "tm_t<N>_<key>" prefix so each gets its own isolated bucket.
+function tk(key) {
+  if (CURRENT_TEAM_ID === 1 || CURRENT_TEAM_ID === null) return key;
+  return `tm_t${CURRENT_TEAM_ID}_${key}`;
+}
+
+// Built-in seed team — Lil Cardinals always exists as team 1.
+const SEED_TEAM_1 = {
+  id: 1,
+  name: 'Lil Cardinals',
+  sport: 'teeball',
+  color: '#C41E3A',
+  logo: 'LilCardinalsLogo.png',
+  builtIn: true
+};
+
+function loadTeams() {
+  try {
+    const raw = JSON.parse(localStorage.getItem('tm_teams') || '[]');
+    if (!Array.isArray(raw)) return [SEED_TEAM_1];
+    // Always include team 1 (Lil Cardinals) at the front
+    const hasOne = raw.some(t => t && t.id === 1);
+    const list = hasOne ? raw : [SEED_TEAM_1, ...raw];
+    return list.filter(t => t && typeof t === 'object');
+  } catch (e) { return [SEED_TEAM_1]; }
+}
+function saveTeams(teams) {
+  localStorage.setItem('tm_teams', JSON.stringify(teams));
+}
+function nextTeamId(teams) {
+  let max = 0;
+  for (const t of teams) if (typeof t.id === 'number' && t.id > max) max = t.id;
+  return max + 1;
+}
+function getTeamById(id) {
+  return loadTeams().find(t => t.id === id) || null;
+}
+
+/* ============ Team Manager UI ============ */
+function renderTeamManager() {
+  const grid = document.getElementById('tmTeamsGrid');
+  if (!grid) return;
+  const teams = loadTeams();
+  const cards = teams.map(team => {
+    const linkHref = `?team=${team.id}`;
+    const initial = (team.name || '?').trim()[0].toUpperCase();
+    const logoStyle = team.logo
+      ? `background-image: url('${team.logo.replace(/'/g, "\\'")}');`
+      : `background-color: ${team.color || '#C41E3A'};`;
+    return `
+      <a class="tm-card" href="${linkHref}" style="--tm-card-color: ${team.color || '#C41E3A'}">
+        <span class="tm-card-id">#${team.id}</span>
+        <div class="tm-card-logo" style="${logoStyle}">${team.logo ? '' : initial}</div>
+        <div class="tm-card-name">${team.name || 'Untitled Team'}</div>
+        <div class="tm-card-meta">${team.sport === 'softball' ? 'Softball' : 'Tee Ball'}</div>
+        <div class="tm-card-link">?team=${team.id}</div>
+      </a>
+    `;
+  }).join('');
+  const addCard = `
+    <button class="tm-card tm-card-add" type="button" id="tmAddCard">
+      <i class="fa-solid fa-plus" aria-hidden="true"></i>
+      <span>New Team</span>
+    </button>
+  `;
+  grid.innerHTML = cards + addCard;
+  document.getElementById('tmAddCard')?.addEventListener('click', openNewTeamModal);
+}
+
+/* ============ New Team modal ============ */
+function openNewTeamModal() {
+  const overlay = document.getElementById('tmNewTeamOverlay');
+  document.getElementById('tmNewTeamName').value = '';
+  document.getElementById('tmNewTeamSport').value = 'teeball';
+  document.getElementById('tmNewTeamLogo').value = '';
+  document.querySelectorAll('.tm-swatch').forEach(s => s.classList.toggle('active', s.dataset.color === '#C41E3A'));
+  overlay.hidden = false;
+  setTimeout(() => document.getElementById('tmNewTeamName').focus(), 80);
+}
+function closeNewTeamModal() {
+  document.getElementById('tmNewTeamOverlay').hidden = true;
+}
+function selectedSwatch() {
+  const s = document.querySelector('.tm-swatch.active');
+  return s ? s.dataset.color : '#C41E3A';
+}
+function saveNewTeam() {
+  const name = document.getElementById('tmNewTeamName').value.trim();
+  if (!name) {
+    document.getElementById('tmNewTeamName').focus();
+    return;
+  }
+  const sport = document.getElementById('tmNewTeamSport').value;
+  const color = selectedSwatch();
+  const logo = document.getElementById('tmNewTeamLogo').value.trim() || null;
+  const teams = loadTeams();
+  const id = nextTeamId(teams);
+  teams.push({ id, name, sport, color, logo });
+  saveTeams(teams);
+  closeNewTeamModal();
+  // Jump straight into the newly-created team
+  location.search = `?team=${id}`;
+}
+
+function bindTeamManager() {
+  document.getElementById('tmNewTeamBtn')?.addEventListener('click', openNewTeamModal);
+  document.getElementById('tmNewTeamCloseBtn')?.addEventListener('click', closeNewTeamModal);
+  document.getElementById('tmNewTeamCancelBtn')?.addEventListener('click', closeNewTeamModal);
+  document.getElementById('tmNewTeamSaveBtn')?.addEventListener('click', saveNewTeam);
+  document.getElementById('tmNewTeamOverlay')?.addEventListener('click', (e) => {
+    if (e.target.id === 'tmNewTeamOverlay') closeNewTeamModal();
+  });
+  document.getElementById('tmColorSwatches')?.addEventListener('click', (e) => {
+    const sw = e.target.closest('.tm-swatch');
+    if (!sw) return;
+    document.querySelectorAll('.tm-swatch').forEach(s => s.classList.remove('active'));
+    sw.classList.add('active');
+  });
+}
+
+/* ============ Boot: route between manager and team app ============ */
+(function bootRouter() {
+  if (CURRENT_TEAM_ID === null) {
+    // No ?team= → Team Manager landing
+    document.body.classList.add('is-manager');
+    document.getElementById('teamManagerView').hidden = false;
+    renderTeamManager();
+    bindTeamManager();
+    return;
+  }
+
+  // We have a team id — show the existing app. Apply team config if not Team 1.
+  document.body.classList.add('is-app');
+  const team = getTeamById(CURRENT_TEAM_ID);
+  if (team && CURRENT_TEAM_ID !== 1) {
+    // Apply custom color
+    if (team.color) {
+      document.documentElement.style.setProperty('--cardinal-red', team.color);
+    }
+    // Apply custom name (split on space for the two-line header)
+    document.title = `${team.name} — Game Day`;
+    const h1 = document.querySelector('.brand-text h1');
+    if (h1) {
+      const words = (team.name || '').trim().split(/\s+/);
+      if (words.length >= 2) {
+        const half = Math.ceil(words.length / 2);
+        h1.innerHTML = `<span>${words.slice(0, half).join(' ').toUpperCase()}</span><span>${words.slice(half).join(' ').toUpperCase()}</span>`;
+      } else {
+        h1.innerHTML = `<span>${(team.name || '').toUpperCase()}</span>`;
+      }
+    }
+    // Apply custom logo
+    if (team.logo) {
+      const teamLogoEl = document.getElementById('teamLogo');
+      const footerLogoEl = document.getElementById('footerLogo');
+      const fb = document.getElementById('teamLogoFallback');
+      if (teamLogoEl) {
+        teamLogoEl.style.backgroundImage = `url('${team.logo}')`;
+        teamLogoEl.classList.add('has-photo');
+        if (fb) fb.style.display = 'none';
+      }
+      if (footerLogoEl) footerLogoEl.style.backgroundImage = `url('${team.logo}')`;
+    }
+  }
+})();
+
 const DEFAULT_ROSTER = ['Caleb', 'Gabe', 'Hart', 'Hudson', 'Joel', 'Julian', 'Leon', 'Miles', 'Parker', 'Asher'];
 function loadRoster() {
   try {
-    const saved = localStorage.getItem('cardinals_roster_v2');
+    const saved = localStorage.getItem(tk('cardinals_roster_v2'));
     const OLD_DEFAULT = JSON.stringify(['Parker', 'Caleb', 'Hudson', 'Miles', 'Hart', 'Julian', 'Leon', 'Joel', 'Gabe', 'Asher']);
     if (saved === OLD_DEFAULT) {
       // First load after sort change — drop the stale stored order so the
       // new alphabetical-with-Asher-last default is used instead.
-      localStorage.removeItem('cardinals_roster_v2');
+      localStorage.removeItem(tk('cardinals_roster_v2'));
     } else if (saved) {
       const parsed = JSON.parse(saved);
       if (Array.isArray(parsed) && parsed.length > 0) {
@@ -2359,7 +2859,7 @@ function loadRoster() {
 let ROSTER = loadRoster();
 function saveRoster(next) {
   ROSTER = next.slice();
-  localStorage.setItem('cardinals_roster_v2', JSON.stringify(ROSTER));
+  localStorage.setItem(tk('cardinals_roster_v2'), JSON.stringify(ROSTER));
 }
 // T-ball field positions: 2 pitchers + 4-OF + 4-infield = 10 spots so everyone plays.
 // Order = fill / keep priority. If roster shrinks, extras (P2, then LCF) drop first
@@ -2424,8 +2924,8 @@ const POP_QUIPS = [
 const state = {
   present: loadPresent(),
   photos: loadPhotos(),
-  teamLogo: localStorage.getItem('cardinals_logo') || null,
-  page: localStorage.getItem('cardinals_page') || 'roster',
+  teamLogo: localStorage.getItem(tk('cardinals_logo')) || null,
+  page: localStorage.getItem(tk('cardinals_page')) || 'roster',
   currentInning: 1,
   uploadTarget: null,
   rotation: [],
@@ -2438,7 +2938,7 @@ document.body.dataset.page = state.page;
 
 function loadPresent() {
   try {
-    const saved = localStorage.getItem('cardinals_present_v2');
+    const saved = localStorage.getItem(tk('cardinals_present_v2'));
     if (saved) {
       const parsed = JSON.parse(saved);
       return new Set(parsed.filter(p => ROSTER.includes(p)));
@@ -2446,7 +2946,7 @@ function loadPresent() {
   } catch (e) {}
   return new Set(ROSTER);
 }
-function savePresent() { localStorage.setItem('cardinals_present_v2', JSON.stringify([...state.present])); }
+function savePresent() { localStorage.setItem(tk('cardinals_present_v2'), JSON.stringify([...state.present])); }
 function loadPhotos() {
   try { return JSON.parse(localStorage.getItem('cardinals_photos') || '{}'); }
   catch (e) { return {}; }
@@ -2743,7 +3243,7 @@ function showPage(page, opts) {
   opts = opts || {};
   if (!VALID_PAGES.includes(page)) page = 'roster';
   state.page = page;
-  localStorage.setItem('cardinals_page', page);
+  localStorage.setItem(tk('cardinals_page'), page);
   document.body.dataset.page = page;
   document.querySelectorAll('main > section.page').forEach(s => {
     s.classList.toggle('active', s.id === page + 'Page');
@@ -2788,9 +3288,9 @@ function rotateSectionQuotes() {
 function setTeamLogo(dataUrl) {
   state.teamLogo = dataUrl;
   if (dataUrl) {
-    try { localStorage.setItem('cardinals_logo', dataUrl); } catch (e) {}
+    try { localStorage.setItem(tk('cardinals_logo'), dataUrl); } catch (e) {}
   } else {
-    localStorage.removeItem('cardinals_logo');
+    localStorage.removeItem(tk('cardinals_logo'));
   }
   applyTeamLogo();
 }
@@ -3103,9 +3603,9 @@ document.getElementById('teamLogo').addEventListener('touchend', () => {
 
 // Scorecard (per-date, per-player assists + outs) — each game day gets its own bucket.
 function currentDateKey() {
-  return localStorage.getItem('cardinals_roster_date') || new Date().toISOString().slice(0, 10);
+  return localStorage.getItem(tk('cardinals_roster_date')) || new Date().toISOString().slice(0, 10);
 }
-function scorecardStorageKey(dateKey) { return 'cardinals_scorecard_v2::' + dateKey; }
+function scorecardStorageKey(dateKey) { return tk('cardinals_scorecard_v2::' + dateKey); }
 function loadScorecardFor(dateKey) {
   try {
     const raw = localStorage.getItem(scorecardStorageKey(dateKey));
@@ -3198,7 +3698,7 @@ localStorage.removeItem('cardinals_outs');
   if (!input || !label) return;
   const fmt = (d) => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   const toIso = (d) => d.toISOString().slice(0, 10);
-  const stored = localStorage.getItem('cardinals_roster_date');
+  const stored = localStorage.getItem(tk('cardinals_roster_date'));
   const initial = stored ? new Date(stored + 'T00:00:00') : new Date();
   input.value = toIso(initial);
   label.textContent = fmt(initial);
@@ -3206,7 +3706,7 @@ localStorage.removeItem('cardinals_outs');
     if (!input.value) return;
     const d = new Date(input.value + 'T00:00:00');
     label.textContent = fmt(d);
-    localStorage.setItem('cardinals_roster_date', input.value);
+    localStorage.setItem(tk('cardinals_roster_date'), input.value);
     scorecard = loadScorecardFor(input.value);
     renderScorecard();
     showBubble('Loaded ' + fmt(d));
