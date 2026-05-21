@@ -72,6 +72,10 @@ body {
   padding-bottom: env(safe-area-inset-bottom);
   overflow-x: hidden;
 }
+/* Hide page chrome until bootRouter decides which view to render.
+   Prevents the Cardinals team header from flashing during the cloud
+   pull on the way to ?manager. */
+body:not(.is-manager):not(.is-app) > * { visibility: hidden; }
 
 @media (min-width: 768px) {
   body { font-size: 18px; }
@@ -3228,8 +3232,18 @@ async function cloudPull() {
   const url = pantryUrl();
   if (!url) return null;
   try {
-    const r = await fetch(url, { method: 'GET', headers: { Accept: 'application/json' } });
-    if (r.status === 400 || r.status === 404) return null;
+    // 5-second cap so a slow / unreachable Pantry can't keep the page
+    // hidden indefinitely on first load.
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 5000);
+    const r = await fetch(url, { method: 'GET', headers: { Accept: 'application/json' }, signal: controller.signal });
+    clearTimeout(timeout);
+    if (r.status === 400 || r.status === 404) {
+      // Basket doesn't exist yet — that's fine, we just have nothing
+      // to pull. Mark the pull as completed so the first push can fly.
+      cloudPullCompleted = true;
+      return null;
+    }
     if (!r.ok) throw new Error('HTTP ' + r.status);
     const wrap = await r.json();
     if (!wrap || typeof wrap !== 'object' || typeof wrap.payload !== 'string') return null;
@@ -3242,10 +3256,57 @@ async function cloudPull() {
         catch (e) { console.warn('[cloudPull] storage write failed for', k, e); }
       }
     }
+    cloudPullCompleted = true;
     return data;
   } catch (err) {
     console.warn('[cloudPull] failed:', err);
     return null;
+  }
+}
+
+// Once we've successfully pulled cloud state at least once, we trust
+// local is at least as fresh as cloud. Before that, we never push
+// — otherwise our fresh-boot local (which can be empty) would
+// overwrite a populated cloud basket.
+let cloudPullCompleted = false;
+
+async function doCloudPush() {
+  const url = pantryUrl();
+  if (!url) return;
+  if (!cloudPullCompleted) {
+    console.warn('[cloudPush] skipped: pull not completed yet');
+    return;
+  }
+  const payload = {};
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (!k || !shouldSyncKey(k)) continue;
+    try { payload[k] = JSON.parse(localStorage.getItem(k)); }
+    catch (e) { payload[k] = localStorage.getItem(k); }
+  }
+  // Safety net: never replace a populated cloud basket with an empty
+  // local snapshot. The classic "I just cleared my browser" scenario
+  // would otherwise wipe the team list for every other device.
+  if (!payload.tm_teams || (Array.isArray(payload.tm_teams) && payload.tm_teams.length === 0)) {
+    console.warn('[cloudPush] skipped: tm_teams is empty/missing — refusing to clobber cloud');
+    return;
+  }
+  const body = JSON.stringify({ payload: JSON.stringify(payload) });
+  try {
+    // Always POST — Pantry's POST overwrites the basket whole-hog,
+    // unlike PUT which deep-merges (which concatenates arrays).
+    let r = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body
+    });
+    if (!r.ok && r.status !== 400) throw new Error('HTTP ' + r.status);
+    if (r.status === 400) {
+      r = await fetch(url, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body });
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+    }
+  } catch (err) {
+    console.warn('[cloudPush] failed:', err);
   }
 }
 
@@ -3254,33 +3315,15 @@ function cloudPush() {
   const url = pantryUrl();
   if (!url) return;
   clearTimeout(pushTimer);
-  pushTimer = setTimeout(async () => {
-    const payload = {};
-    for (let i = 0; i < localStorage.length; i++) {
-      const k = localStorage.key(i);
-      if (!k || !shouldSyncKey(k)) continue;
-      try { payload[k] = JSON.parse(localStorage.getItem(k)); }
-      catch (e) { payload[k] = localStorage.getItem(k); }
-    }
-    const body = JSON.stringify({ payload: JSON.stringify(payload) });
-    try {
-      // Always POST — Pantry's POST overwrites the basket whole-hog,
-      // unlike PUT which deep-merges (which concatenates arrays).
-      let r = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body
-      });
-      if (!r.ok && r.status !== 400) throw new Error('HTTP ' + r.status);
-      if (r.status === 400) {
-        // Basket doesn't exist — same call with PUT creates it.
-        r = await fetch(url, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body });
-        if (!r.ok) throw new Error('HTTP ' + r.status);
-      }
-    } catch (err) {
-      console.warn('[cloudPush] failed:', err);
-    }
-  }, 800);
+  pushTimer = setTimeout(() => { pushTimer = null; doCloudPush(); }, 800);
+}
+
+// Force a push immediately and return when it's actually on the wire.
+// Called before any navigation that would unload the page (saveNewTeam,
+// deleteTeam) so the pending data isn't lost to the unload.
+async function flushCloudPush() {
+  if (pushTimer) { clearTimeout(pushTimer); pushTimer = null; }
+  if (pantryUrl()) await doCloudPush();
 }
 
 // Wrap localStorage so any tracked-key write triggers a cloud push.
@@ -3600,7 +3643,7 @@ function selectedBackground() {
   const s = document.querySelector('.tm-bg-swatch.active');
   return s ? s.dataset.bg : 'sky';
 }
-function saveNewTeam() {
+async function saveNewTeam() {
   const name = document.getElementById('tmNewTeamName').value.trim();
   if (!name) {
     document.getElementById('tmNewTeamName').focus();
@@ -3631,14 +3674,19 @@ function saveNewTeam() {
     const editedId = editingTeamId;
     closeNewTeamModal();
     const fresh = teams[teams.findIndex(t => t.id === editedId)];
+    // Flush the cloud push before the page unloads — otherwise the
+    // pending debounced write is cancelled by navigation and the
+    // edit doesn't make it to the pantry.
+    await flushCloudPush();
     location.search = teamHref(fresh);
     return;
   }
   const id = nextTeamId(teams);
-  const newTeam = { id, name, sport, innings, positions, league, sponsor, sponsorSlogan, sponsorEmoji, color, background, logo };
+  const newTeam = { id, name, sport, innings, positions, league, sponsor, sponsorUrl, sponsorSlogan, sponsorEmoji, color, background, logo };
   teams.push(newTeam);
   if (!saveTeams(teams)) return;
   closeNewTeamModal();
+  await flushCloudPush();
   location.search = teamHref(newTeam);
 }
 
@@ -3819,29 +3867,45 @@ function bindDeleteTeam() {
   document.getElementById('tmDeleteOverlay')?.addEventListener('click', (e) => {
     if (e.target.id === 'tmDeleteOverlay') closeDeleteTeamModal();
   });
-  confirm?.addEventListener('click', () => {
+  confirm?.addEventListener('click', async () => {
     if (deletingTeamId == null || confirm.disabled) return;
     deleteTeam(deletingTeamId);
+    await flushCloudPush();
     location.search = '?manager';
   });
 }
 
 /* ============ Boot: route between manager and team app ============ */
 (async function bootRouter() {
+  // Safety net: if anything below throws or the network hangs past the
+  // 5-second cloudPull timeout, this fallback fires so the body never
+  // stays hidden.
+  const safetyShow = setTimeout(() => {
+    if (!document.body.classList.contains('is-manager') &&
+        !document.body.classList.contains('is-app')) {
+      const fallback = (typeof CURRENT_TEAM_ID === 'number') ? 'is-app' : 'is-manager';
+      document.body.classList.add(fallback);
+    }
+  }, 6000);
+
   // Modal exists in both views — bind its events unconditionally
   bindTeamManager();
   bindDeleteTeam();
   bindSyncUi();
 
-  // If cross-device sync is configured, pull the latest cloud state
-  // BEFORE we render. If the pull brings down different data than
-  // what's already in localStorage, reload the page so every state
-  // variable (ROSTER, state.present, etc.) reads the fresh values.
+  // Pull cloud state in the background — don't block the initial render
+  // or reload (the reload-on-diff approach raced with the unload, which
+  // could leave cloud writes mid-flight and corrupt the basket). When
+  // the pull lands, just re-render the manager grid so newly arrived
+  // teams pop in. Team views read at most one team's data, so they
+  // don't need a refresh.
   if (getPantryId()) {
-    const before = syncSnapshot();
-    try { await cloudPull(); } catch (e) { /* logged in cloudPull */ }
-    const after = syncSnapshot();
-    if (before !== after) { location.reload(); return; }
+    cloudPull().then((data) => {
+      if (!data) return;
+      if (CURRENT_TEAM_ID === null && typeof renderTeamManager === 'function') {
+        renderTeamManager();
+      }
+    }).catch(() => {});
   }
 
   if (CURRENT_TEAM_ID === null) {
@@ -3938,6 +4002,7 @@ function bindDeleteTeam() {
     }
     applySponsorBlock(team);
   }
+  clearTimeout(safetyShow);
 })();
 
 // Rebuild the .footer-sponsor card from team data. Team 1's hardcoded
