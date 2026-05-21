@@ -141,7 +141,11 @@ button { font-family: inherit; }
 
 /* ============ Team Manager landing — Liquid Glass, mostly white / black ============ */
 body.is-manager {
-  background: #FFFFFF;
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 0%, rgba(196, 30, 58, 0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 90% 90%, rgba(29, 78, 216, 0.04) 0%, transparent 55%),
+    #FAFAFA;
+  background-attachment: fixed;
   color: #0A0A0A;
 }
 body.is-manager > header,
@@ -164,11 +168,15 @@ body.is-manager { padding-bottom: 0 !important; }
   position: relative;
 }
 .tm-title {
-  font-size: clamp(2.5rem, 8vw, 4.5rem);
+  font-size: clamp(2.75rem, 9vw, 5rem);
   font-weight: 900;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.035em;
   line-height: 0.95;
-  color: #0A0A0A;
+  background: linear-gradient(180deg, #0A0A0A 0%, #404040 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
 }
 .tm-tagline {
   margin-top: 1rem;
@@ -240,31 +248,37 @@ body.is-manager { padding-bottom: 0 !important; }
 }
 .tm-card {
   position: relative;
-  background: rgba(255, 255, 255, 0.72);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border: 1px solid rgba(10, 10, 10, 0.08);
-  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(30px) saturate(200%);
+  -webkit-backdrop-filter: blur(30px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 24px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.6) inset,
-    0 4px 18px rgba(10, 10, 10, 0.06),
+    0 1px 0 rgba(255, 255, 255, 0.9) inset,
+    0 0 0 0.5px rgba(10, 10, 10, 0.04),
+    0 6px 22px rgba(10, 10, 10, 0.06),
     0 1px 2px rgba(10, 10, 10, 0.04);
-  transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.2s ease;
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1),
+              box-shadow 0.25s ease,
+              background 0.25s ease;
   cursor: pointer;
   text-decoration: none;
   color: inherit;
   aspect-ratio: 1;
 }
 .tm-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-5px);
+  background: rgba(255, 255, 255, 0.7);
   box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.6) inset,
-    0 18px 36px rgba(10, 10, 10, 0.12),
+    0 1px 0 rgba(255, 255, 255, 0.9) inset,
+    0 0 0 0.5px rgba(10, 10, 10, 0.06),
+    0 22px 44px rgba(10, 10, 10, 0.14),
     0 2px 4px rgba(10, 10, 10, 0.06);
 }
+.tm-card:active { transform: translateY(-2px); }
 .tm-card-logo {
   position: absolute;
   inset: 0;
@@ -329,8 +343,8 @@ body.is-manager { padding-bottom: 0 !important; }
   gap: 0.5rem;
 }
 .tm-card.tm-card-add:hover {
-  background: rgba(255, 255, 255, 0.8);
-  border-color: #0A0A0A;
+  background: rgba(255, 255, 255, 0.7);
+  border-color: rgba(10, 10, 10, 0.4);
 }
 .tm-card.tm-card-add i { font-size: 1.75rem; color: #B22234; }
 .tm-card.tm-card-add span { font-weight: 800; letter-spacing: 0.04em; font-size: 0.95rem; }
@@ -570,6 +584,48 @@ body.is-app > .app-team-links > .app-team-link + .app-team-link::before {
 }
 .tm-sponsor-emoji-input {
   font-size: 1.25rem;
+  text-align: center;
+}
+
+.tm-row-2 {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 0.875rem;
+}
+.tm-row-2 .tm-field { margin-bottom: 1rem; }
+
+.tm-pos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 0.4rem;
+}
+.tm-pos-check {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.5rem 0.75rem;
+  background: rgba(255, 255, 255, 0.55);
+  border: 1.5px solid #E5E7EB;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #374151;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.tm-pos-check:hover { background: rgba(255, 255, 255, 0.85); }
+.tm-pos-check.checked {
+  background: rgba(196, 30, 58, 0.08);
+  border-color: var(--cardinal-red);
+  color: var(--cardinal-red-dark);
+}
+.tm-pos-check input { display: none; }
+.tm-pos-check .tm-pos-emoji { font-size: 0.95rem; }
+.tm-pos-check .tm-pos-abbr {
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  min-width: 1.6em;
   text-align: center;
 }
 
@@ -1390,107 +1446,28 @@ h2 .badge {
   margin-bottom: 0.625rem;
 }
 
+/* Real-baseball field: SVG handles the field illustration. CSS just sets the
+   green outfield grass + container. */
 .diamond {
   position: relative;
   width: 100%;
   max-width: 640px;
-  aspect-ratio: 1 / 1.02;
-  margin: 0 auto 0;
-  padding-top: 0.5rem;
-  background:
-    radial-gradient(ellipse 75% 90% at center 35%, #6FB552 0%, #4F8F37 60%, #3D7128 100%),
-    repeating-linear-gradient(110deg, rgba(255,255,255,0.04) 0 8px, transparent 8px 18px);
-  background-blend-mode: multiply;
+  aspect-ratio: 1 / 1;
+  margin: 0 auto;
   border-radius: var(--radius-md);
   overflow: hidden;
-  border: 1px solid var(--gray-300);
-  box-shadow: inset 0 4px 14px rgba(0,0,0,0.25);
+  border: 1px solid rgba(15, 23, 42, 0.15);
+  box-shadow: inset 0 4px 14px rgba(0, 0, 0, 0.2);
+  background:
+    radial-gradient(ellipse 80% 65% at 50% 100%, #4F8F37 0%, #3D7128 100%),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.035) 0 12px, transparent 12px 24px);
 }
-.diamond::before {
-  content: '';
+.diamond-svg {
   position: absolute;
-  top: 36%;
-  left: 50%;
-  width: 58%;
-  height: 58%;
-  background: radial-gradient(circle at 40% 30%, #E0B380 0%, #BA8A4F 60%, #8E6534 100%);
-  transform: translateX(-50%) rotate(45deg);
-  border: 2px solid #6B4A22;
-  box-shadow: inset 0 0 28px rgba(0,0,0,0.22);
-}
-.diamond::after {
-  content: '';
-  position: absolute;
-  top: 60%;
-  left: 50%;
-  width: 64px;
-  height: 64px;
-  background: radial-gradient(circle, #A87749 0%, #C9985F 70%, #D4A570 100%);
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  border: 2px solid #6B4A22;
-  box-shadow: 0 0 0 3px rgba(0,0,0,0.06), inset 0 -2px 6px rgba(0,0,0,0.15);
-  z-index: 0;
-}
-
-/* Bases (white squares at corners of dirt diamond) */
-.diamond-base {
-  position: absolute;
-  width: 14px;
-  height: 14px;
-  background: white;
-  border: 1px solid #6B4A22;
-  transform: translate(-50%, -50%) rotate(45deg);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
-  z-index: 0;
-}
-.diamond-base.b1 { top: 65%; left: 79%; }
-.diamond-base.b2 { top: 36%; left: 50%; }
-.diamond-base.b3 { top: 65%; left: 21%; }
-
-/* Home plate (white pentagon) */
-.diamond-home {
-  position: absolute;
-  top: 92%;
-  left: 50%;
-  width: 22px;
-  height: 18px;
-  background: white;
-  transform: translate(-50%, -50%);
-  border: 1px solid #6B4A22;
-  clip-path: polygon(0 0, 100% 0, 100% 55%, 50% 100%, 0 55%);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
-  z-index: 0;
-}
-
-/* Foul lines */
-.diamond-foul {
-  position: absolute;
-  top: 79%;
-  left: 50%;
-  width: 70%;
-  height: 2px;
-  background: white;
-  opacity: 0.65;
-  transform-origin: left center;
-  z-index: 0;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   pointer-events: none;
-}
-.diamond-foul.left { transform: translate(-100%, -50%) rotate(-135deg); }
-.diamond-foul.right { transform: translateY(-50%) rotate(-45deg); }
-
-/* Warning track ring */
-.diamond-warning {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  width: 165%;
-  height: 165%;
-  border-radius: 50%;
-  background: radial-gradient(circle, transparent 60%, rgba(186, 138, 79, 0.45) 60%, rgba(186, 138, 79, 0.45) 65%, transparent 65%);
-  transform: translateX(-50%);
-  pointer-events: none;
-  z-index: 0;
 }
 
 .diamond-position {
@@ -1568,8 +1545,10 @@ h2 .badge {
 .pos-SS { top: 43%; left: 38%; }
 .pos-2B { top: 43%; left: 62%; }
 .pos-1B { top: 48%; left: 78%; }
-.pos-P1 { top: 60%; left: 38%; }
-.pos-P2 { top: 60%; left: 62%; }
+.pos-P1 { top: 58%; left: 40%; }
+.pos-P2 { top: 58%; left: 60%; }
+.pos-C { top: 90%; left: 50%; }
+.pos-RCF { top: 20%; left: 70%; }
 
 /* ============ Defense list (single column, easy to read) ============ */
 .defense-list {
@@ -2224,6 +2203,31 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
 .roster-edit-btn:hover { transform: scale(1.08) rotate(-6deg); }
 .roster-edit-btn:active { transform: scale(0.95); }
 
+.rotation-shuffle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(10, 10, 10, 0.08);
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  color: var(--navy-dark);
+  font-size: 0.95rem;
+  cursor: pointer;
+  margin-left: 0.5rem;
+  vertical-align: middle;
+  box-shadow: 0 2px 6px rgba(10, 10, 10, 0.06);
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+.rotation-shuffle-btn:hover {
+  background: rgba(255, 255, 255, 0.9);
+  transform: rotate(180deg);
+}
+.rotation-shuffle-btn:active { transform: rotate(360deg) scale(0.92); }
+
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -2254,12 +2258,21 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
   box-shadow: 0 24px 60px rgba(15, 23, 42, 0.25);
   animation: modalRise 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
-/* Team editor is bigger — has lots of fields */
+/* Team editor is bigger — has lots of fields. Uses dvh so the iPhone
+   keyboard doesn't push the Save button below the visible viewport. */
 #tmNewTeamOverlay > .modal-card {
   max-width: 600px;
   max-height: 92vh;
+  max-height: 92dvh;
 }
 #tmNewTeamOverlay .modal-body { padding: 1.5rem 1.5rem; }
+#tmNewTeamOverlay .modal-footer {
+  position: sticky;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
 @keyframes modalRise { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
 .modal-header {
@@ -2740,7 +2753,7 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
   </div>
   <div class="tm-container">
     <div class="tm-section-head">
-      <h2 class="tm-section-title">My Teams</h2>
+      <h2 class="tm-section-title">All Teams</h2>
       <button class="tm-new-btn" id="tmNewTeamBtn">
         <i class="fa-solid fa-plus" aria-hidden="true"></i> New Team
       </button>
@@ -2775,13 +2788,24 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
         <span class="tm-field-label">Team Name</span>
         <input type="text" id="tmNewTeamName" maxlength="40" placeholder="e.g. Westport Wildcats">
       </label>
-      <label class="tm-field">
-        <span class="tm-field-label">Sport</span>
-        <select id="tmNewTeamSport">
-          <option value="teeball">Tee Ball</option>
-          <option value="softball">Softball</option>
-        </select>
-      </label>
+      <div class="tm-row-2">
+        <label class="tm-field">
+          <span class="tm-field-label">Sport</span>
+          <select id="tmNewTeamSport">
+            <option value="teeball">Tee Ball</option>
+            <option value="softball">Softball</option>
+            <option value="baseball">Baseball</option>
+          </select>
+        </label>
+        <label class="tm-field">
+          <span class="tm-field-label">Innings</span>
+          <input type="number" id="tmNewTeamInnings" min="1" max="9" value="4">
+        </label>
+      </div>
+      <div class="tm-field">
+        <span class="tm-field-label">Positions <span class="tm-field-hint">(check which your team plays)</span></span>
+        <div class="tm-pos-grid" id="tmPositionChecks"></div>
+      </div>
       <label class="tm-field">
         <span class="tm-field-label">League <span class="tm-field-hint">(optional)</span></span>
         <input type="text" id="tmNewTeamLeague" maxlength="60" placeholder="e.g. Fairfield Little League Nationals">
@@ -2919,7 +2943,12 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
   </section>
 
   <section id="fieldingPage" class="page">
-    <h2>Field Rotation</h2>
+    <h2>
+      Field Rotation
+      <button class="rotation-shuffle-btn" id="rotationShuffleBtn" type="button" aria-label="Shuffle all innings">
+        <i class="fa-solid fa-shuffle" aria-hidden="true"></i>
+      </button>
+    </h2>
     <div id="rotationNote"></div>
     <div class="inning-tabs" id="inningTabs"></div>
     <div id="inningContent"></div>
@@ -3206,10 +3235,13 @@ function tk(key) {
 // Built-in seed team — Lil Cardinals always exists as team 1.
 const SEED_TEAM_1 = {
   id: 1,
-  name: 'Lil Cardinals',
+  name: "Fairfield Lil' Cardinals",
   sport: 'teeball',
   color: '#C41E3A',
   logo: 'LilCardinalsLogo.png',
+  league: 'Fairfield Nationals',
+  sponsor: "Tabitha's Ice Cream",
+  background: 'sky',
   builtIn: true
 };
 
@@ -3220,7 +3252,12 @@ function loadTeams() {
     // Always include team 1 (Lil Cardinals) at the front
     const hasOne = raw.some(t => t && t.id === 1);
     const list = hasOne ? raw : [SEED_TEAM_1, ...raw];
-    return list.filter(t => t && typeof t === 'object');
+    const cleaned = list.filter(t => t && typeof t === 'object');
+    // Migrate old seed name "Lil Cardinals" → "Fairfield Lil' Cardinals" so the
+    // header reads correctly when the team object now drives the h1.
+    const t1 = cleaned.find(t => t.id === 1);
+    if (t1 && t1.name === 'Lil Cardinals') t1.name = SEED_TEAM_1.name;
+    return cleaned;
   } catch (e) { return [SEED_TEAM_1]; }
 }
 function saveTeams(teams) {
@@ -3294,6 +3331,24 @@ function renderBgSwatches(activeId) {
     </div>
   `).join('');
 }
+const POSITION_PICKER_ORDER = ['P1', 'P2', 'C', '1B', '2B', '3B', 'SS', 'LF', 'LCF', 'CF', 'RCF', 'RF'];
+function renderPositionChecks(activeSet) {
+  const c = document.getElementById('tmPositionChecks');
+  if (!c) return;
+  const set = new Set(activeSet && activeSet.length ? activeSet : DEFAULT_POSITIONS);
+  c.innerHTML = POSITION_PICKER_ORDER.map(p => `
+    <label class="tm-pos-check ${set.has(p) ? 'checked' : ''}" data-pos="${p}">
+      <input type="checkbox" ${set.has(p) ? 'checked' : ''} data-pos-input="${p}">
+      <span class="tm-pos-emoji" aria-hidden="true">${POSITION_EMOJI[p]}</span>
+      <span class="tm-pos-abbr">${p}</span>
+    </label>
+  `).join('');
+}
+function selectedPositions() {
+  return Array.from(document.querySelectorAll('#tmPositionChecks input[data-pos-input]'))
+    .filter(i => i.checked)
+    .map(i => i.dataset.posInput);
+}
 function setLogoPreview(src) {
   const preview = document.getElementById('tmLogoPreview');
   const hidden = document.getElementById('tmNewTeamLogo');
@@ -3318,6 +3373,7 @@ function openNewTeamModal(teamToEdit) {
     saveBtn.textContent = 'Save Team';
     document.getElementById('tmNewTeamName').value = teamToEdit.name || '';
     document.getElementById('tmNewTeamSport').value = teamToEdit.sport || 'teeball';
+    document.getElementById('tmNewTeamInnings').value = teamToEdit.innings || 4;
     document.getElementById('tmNewTeamLeague').value = teamToEdit.league || '';
     document.getElementById('tmNewTeamSponsor').value = teamToEdit.sponsor || '';
     document.getElementById('tmNewTeamSponsorSlogan').value = teamToEdit.sponsorSlogan || '';
@@ -3325,12 +3381,14 @@ function openNewTeamModal(teamToEdit) {
     setLogoPreview(teamToEdit.logo || '');
     document.querySelectorAll('.tm-swatch').forEach(s => s.classList.toggle('active', s.dataset.color === (teamToEdit.color || '#C41E3A')));
     renderBgSwatches(teamToEdit.background || 'sky');
+    renderPositionChecks(teamToEdit.positions);
   } else {
     editingTeamId = null;
     title.textContent = 'Create New Team';
     saveBtn.textContent = 'Create Team';
     document.getElementById('tmNewTeamName').value = '';
     document.getElementById('tmNewTeamSport').value = 'teeball';
+    document.getElementById('tmNewTeamInnings').value = 4;
     document.getElementById('tmNewTeamLeague').value = '';
     document.getElementById('tmNewTeamSponsor').value = '';
     document.getElementById('tmNewTeamSponsorSlogan').value = '';
@@ -3338,6 +3396,7 @@ function openNewTeamModal(teamToEdit) {
     setLogoPreview('');
     document.querySelectorAll('.tm-swatch').forEach(s => s.classList.toggle('active', s.dataset.color === '#C41E3A'));
     renderBgSwatches('sky');
+    renderPositionChecks(null);
   }
   overlay.hidden = false;
   setTimeout(() => document.getElementById('tmNewTeamName').focus(), 80);
@@ -3361,18 +3420,21 @@ function saveNewTeam() {
     return;
   }
   const sport = document.getElementById('tmNewTeamSport').value;
+  const inningsRaw = parseInt(document.getElementById('tmNewTeamInnings').value, 10);
+  const innings = Math.max(1, Math.min(9, isNaN(inningsRaw) ? 4 : inningsRaw));
   const league = document.getElementById('tmNewTeamLeague').value.trim() || null;
   const sponsor = document.getElementById('tmNewTeamSponsor').value.trim() || null;
   const sponsorSlogan = document.getElementById('tmNewTeamSponsorSlogan').value.trim() || null;
   const sponsorEmoji = document.getElementById('tmNewTeamSponsorEmoji').value.trim() || null;
   const color = selectedSwatch();
   const background = selectedBackground();
+  const positions = selectedPositions();
   const logo = document.getElementById('tmNewTeamLogo').value.trim() || null;
   const teams = loadTeams();
   if (editingTeamId !== null) {
     const idx = teams.findIndex(t => t.id === editingTeamId);
     if (idx >= 0) {
-      teams[idx] = Object.assign({}, teams[idx], { name, sport, league, sponsor, sponsorSlogan, sponsorEmoji, color, background, logo });
+      teams[idx] = Object.assign({}, teams[idx], { name, sport, innings, positions, league, sponsor, sponsorSlogan, sponsorEmoji, color, background, logo });
     }
     saveTeams(teams);
     const editedId = editingTeamId;
@@ -3382,7 +3444,7 @@ function saveNewTeam() {
     return;
   }
   const id = nextTeamId(teams);
-  const newTeam = { id, name, sport, league, sponsor, sponsorSlogan, sponsorEmoji, color, background, logo };
+  const newTeam = { id, name, sport, innings, positions, league, sponsor, sponsorSlogan, sponsorEmoji, color, background, logo };
   teams.push(newTeam);
   saveTeams(teams);
   closeNewTeamModal();
@@ -3408,6 +3470,12 @@ function bindTeamManager() {
     if (!sw) return;
     document.querySelectorAll('.tm-bg-swatch').forEach(s => s.classList.remove('active'));
     sw.classList.add('active');
+  });
+  document.getElementById('tmPositionChecks')?.addEventListener('change', (e) => {
+    const input = e.target.closest('input[data-pos-input]');
+    if (!input) return;
+    const label = input.closest('.tm-pos-check');
+    if (label) label.classList.toggle('checked', input.checked);
   });
   document.getElementById('tmNewTeamLogoFile')?.addEventListener('change', (e) => {
     const file = e.target.files && e.target.files[0];
@@ -3524,45 +3592,41 @@ function bindDeleteTeam() {
     // Apply per-team background gradient (default 'sky' matches the original look).
     const bgCss = getBackgroundCss(team.background || 'sky');
     if (bgCss) document.body.style.background = bgCss;
-    // Per-team favicon: use the team's logo if set; team 1 keeps the baked-in
-    // Cardinals favicon as a sane default.
+    // Per-team favicon: use the team's logo if set.
     if (team.logo) {
       ['faviconPng', 'faviconSvg', 'faviconShortcut', 'faviconApple'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.href = team.logo;
       });
     }
-    // For non-default teams, apply name/color/logo overrides. Team 1's
-    // baked-in HTML (FAIRFIELD LIL' / CARDINALS + Tabitha's footer block)
-    // is left alone unless the user has explicitly edited those fields.
-    if (CURRENT_TEAM_ID !== 1) {
-      if (team.color) {
-        document.documentElement.style.setProperty('--cardinal-red', team.color);
-      }
-      const h1 = document.querySelector('.brand-text h1');
-      if (h1) {
-        const words = (team.name || '').trim().split(/\s+/);
-        if (words.length >= 2) {
-          const half = Math.ceil(words.length / 2);
-          h1.innerHTML = `<span>${words.slice(0, half).join(' ').toUpperCase()}</span><span>${words.slice(half).join(' ').toUpperCase()}</span>`;
-        } else {
-          h1.innerHTML = `<span>${(team.name || '').toUpperCase()}</span>`;
-        }
-      }
-      const teamLogoEl = document.getElementById('teamLogo');
-      const footerLogoEl = document.getElementById('footerLogo');
-      const fb = document.getElementById('teamLogoFallback');
-      if (team.logo) {
-        if (teamLogoEl) {
-          teamLogoEl.style.backgroundImage = `url('${team.logo}')`;
-          teamLogoEl.classList.add('has-photo');
-          if (fb) fb.style.display = 'none';
-        }
-        if (footerLogoEl) footerLogoEl.style.backgroundImage = `url('${team.logo}')`;
+    // Apply name / color / logo overrides for ALL teams (including team 1)
+    // so that edits in the Edit Team modal visibly update the app.
+    if (team.color) {
+      document.documentElement.style.setProperty('--cardinal-red', team.color);
+    }
+    const h1 = document.querySelector('.brand-text h1');
+    if (h1) {
+      const words = (team.name || '').trim().split(/\s+/);
+      if (words.length >= 2) {
+        const half = Math.ceil(words.length / 2);
+        h1.innerHTML = `<span>${words.slice(0, half).join(' ').toUpperCase()}</span><span>${words.slice(half).join(' ').toUpperCase()}</span>`;
       } else {
-        if (teamLogoEl) teamLogoEl.style.display = 'none';
-        if (footerLogoEl) footerLogoEl.style.display = 'none';
+        h1.innerHTML = `<span>${(team.name || '').toUpperCase()}</span>`;
       }
+    }
+    const teamLogoEl = document.getElementById('teamLogo');
+    const footerLogoEl = document.getElementById('footerLogo');
+    const fb = document.getElementById('teamLogoFallback');
+    if (team.logo) {
+      if (teamLogoEl) {
+        teamLogoEl.style.backgroundImage = `url('${team.logo}')`;
+        teamLogoEl.classList.add('has-photo');
+        if (fb) fb.style.display = 'none';
+      }
+      if (footerLogoEl) footerLogoEl.style.backgroundImage = `url('${team.logo}')`;
+    } else {
+      if (teamLogoEl) teamLogoEl.style.display = 'none';
+      if (footerLogoEl) footerLogoEl.style.display = 'none';
     }
     // League + sponsor apply to ALL teams (including Team 1 if user edited them)
     if (team.league) {
@@ -3639,21 +3703,26 @@ function saveRoster(next) {
 // T-ball field positions: 2 pitchers + 4-OF + 4-infield = 10 spots so everyone plays.
 // Order = fill / keep priority. If roster shrinks, extras (P2, then LCF) drop first
 // so a smaller team still looks like a normal T-ball field.
-const POSITION_PRIORITY = ['P1', '1B', 'SS', '2B', '3B', 'CF', 'RF', 'LF', 'LCF', 'P2'];
-const DIAMOND_ORDER = ['LF', 'LCF', 'CF', 'RF', '3B', 'SS', '2B', '1B', 'P1', 'P2'];
-const DEFENSE_LIST_ORDER = ['P1', 'P2', '1B', '2B', '3B', 'SS', 'LF', 'LCF', 'CF', 'RF'];
+// Optional positions (Catcher, Right-Center) appear last so teams that opt in
+// get them filled only when the roster is large enough.
+const POSITION_PRIORITY = ['P1', '1B', 'SS', '2B', '3B', 'CF', 'RF', 'LF', 'LCF', 'P2', 'C', 'RCF'];
+const DIAMOND_ORDER = ['LF', 'LCF', 'CF', 'RCF', 'RF', '3B', 'SS', '2B', '1B', 'P1', 'P2', 'C'];
+const DEFENSE_LIST_ORDER = ['P1', 'P2', 'C', '1B', '2B', '3B', 'SS', 'LF', 'LCF', 'CF', 'RCF', 'RF'];
 const POSITION_NAMES = {
-  P1: 'Pitcher 1', P2: 'Pitcher 2',
+  P1: 'Pitcher 1', P2: 'Pitcher 2', C: 'Catcher',
   '1B': 'First Base', '2B': 'Second Base', '3B': 'Third Base', SS: 'Shortstop',
-  LF: 'Left Field', LCF: 'Left-Center', CF: 'Center Field', RF: 'Right Field'
+  LF: 'Left Field', LCF: 'Left-Center', CF: 'Center Field', RCF: 'Right-Center', RF: 'Right Field'
 };
 const POSITION_EMOJI = {
-  P1: '⚾', P2: '⚾',
+  P1: '⚾', P2: '⚾', C: '🛡️',
   '1B': '1️⃣', '2B': '2️⃣', '3B': '3️⃣', SS: '⭐',
-  LF: '🌳', LCF: '🌳', CF: '🌲', RF: '🌳'
+  LF: '🌳', LCF: '🌳', CF: '🌲', RCF: '🌳', RF: '🌳'
 };
-const PREMIUM = ['P1', 'P2', '1B', 'SS', '2B', '3B'];
-const OUTFIELD = ['LF', 'LCF', 'CF', 'RF'];
+const PREMIUM = ['P1', 'P2', 'C', '1B', 'SS', '2B', '3B'];
+const OUTFIELD = ['LF', 'LCF', 'CF', 'RCF', 'RF'];
+
+// Default position set for new teams = current T-ball ten.
+const DEFAULT_POSITIONS = ['P1', 'P2', '1B', '2B', '3B', 'SS', 'LF', 'LCF', 'CF', 'RF'];
 
 // Per-player constraints — e.g. allowedPositions limits where a kid can play.
 const PLAYER_CONSTRAINTS = {
@@ -3738,7 +3807,8 @@ const state = {
   rotation: [],
   isStatic: true,
   sundae: false,
-  manualRotation: loadManualRotation()
+  manualRotation: loadManualRotation(),
+  rotationSalt: 0 // bumped by the shuffle button to re-randomize
 };
 function loadManualRotation() {
   try {
@@ -3788,21 +3858,51 @@ function avatarContent(player) {
 }
 function getPresentInRosterOrder() { return ROSTER.filter(p => state.present.has(p)); }
 
-const gameInnings = 4;
 localStorage.removeItem('cardinals_innings');
 
-function generateRotation(presentList) {
+// Deterministic shuffle keyed on `salt` so each shuffle button click
+// produces a different but reproducible-within-the-session rotation.
+function saltedShuffle(arr, salt) {
+  const a = arr.slice();
+  if (!salt) return a;
+  let s = (salt * 2654435761) >>> 0;
+  function rnd() { s = (s * 9301 + 49297) % 233280; return s / 233280; }
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(rnd() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function generateRotation(presentList, opts) {
   const N = presentList.length;
+  const team = (typeof CURRENT_TEAM_ID === 'number') ? getTeamById(CURRENT_TEAM_ID) : null;
+  const numInnings = (team && team.innings) ? team.innings : 4;
+  const teamPositions = (team && Array.isArray(team.positions) && team.positions.length)
+    ? team.positions
+    : null;
+  const salt = (opts && opts.salt) || 0;
   if (N < 4) return { rotation: [], isStatic: false, benchPerInning: 0 };
 
-  const numInnings = gameInnings;
+  // If team has explicit positions, use them (filtered to known keys).
+  // Otherwise fall back to T-ball's 10-slot priority list.
+  const fullPositions = teamPositions
+    ? POSITION_PRIORITY.filter(p => teamPositions.includes(p))
+    : POSITION_PRIORITY;
   // If more kids than positions, the extras sit out each inning.
   // If fewer kids than positions, drop outfield positions from the end.
-  const fullPositions = POSITION_PRIORITY;
   const positions = N >= fullPositions.length
     ? fullPositions
     : fullPositions.slice(0, N);
   const benchPerInning = Math.max(0, N - positions.length);
+
+  // Salted tiebreaker — used when the user has clicked Shuffle so each
+  // press yields a different lineup while keeping the fairness logic.
+  const saltedOrder = salt ? new Map(saltedShuffle(presentList, salt).map((p, i) => [p, i])) : null;
+  function rosterTiebreak(a, b) {
+    if (saltedOrder) return saltedOrder.get(a) - saltedOrder.get(b);
+    return ROSTER.indexOf(a) - ROSTER.indexOf(b);
+  }
 
   const stats = {};
   presentList.forEach(p => stats[p] = {
@@ -3823,7 +3923,7 @@ function generateRotation(presentList) {
         return stats[a].benchedCount - stats[b].benchedCount;
       if (stats[a].playedCount !== stats[b].playedCount)
         return stats[b].playedCount - stats[a].playedCount;
-      return ROSTER.indexOf(a) - ROSTER.indexOf(b);
+      return rosterTiebreak(a, b);
     });
     const benched = new Set();
     for (const p of benchOrder) {
@@ -3876,7 +3976,7 @@ function generateRotation(presentList) {
           return stats[a].outfieldCount - stats[b].outfieldCount;
         if (stats[a].positions.size !== stats[b].positions.size)
           return stats[a].positions.size - stats[b].positions.size;
-        return ROSTER.indexOf(a) - ROSTER.indexOf(b);
+        return rosterTiebreak(a, b);
       });
 
       const chosen = eligible[0];
@@ -3938,13 +4038,17 @@ function renderBatting() {
   }).join('');
 }
 
-// Drag a batting row up/down to reorder. Persists by reshuffling ROSTER
-// so the new batting order is the new roster order (absent players keep
-// their relative order at the end).
+// Drag a batting row up/down to reorder. Requires a long-press to start
+// (so a normal tap or vertical scroll doesn't accidentally trigger a drag).
+// Persists by reshuffling ROSTER so the new batting order is the new
+// roster order (absent players keep their relative order at the end).
+const DRAG_HOLD_MS = 350;
+const DRAG_MOVE_TOLERANCE = 8; // px movement allowed before hold cancels
 function bindBattingDrag() {
   const list = document.getElementById('battingOrder');
   if (!list) return;
-  let drag = null;
+  let pending = null; // pre-activation hold state
+  let drag = null;    // active drag state
   function presentNow() { return getPresentInRosterOrder(); }
   function rowAtY(y) {
     const rows = [...list.querySelectorAll('.batting-row[data-i]')];
@@ -3954,16 +4058,38 @@ function bindBattingDrag() {
     }
     return null;
   }
+  function activateDrag() {
+    if (!pending) return;
+    drag = { pointerId: pending.pointerId, fromIndex: pending.fromIndex, order: presentNow().slice() };
+    const row = list.querySelector(`.batting-row[data-i="${drag.fromIndex}"]`);
+    if (row) row.classList.add('dragging');
+    try { list.setPointerCapture(drag.pointerId); } catch (err) {}
+    pending = null;
+  }
+  function cancelPending() {
+    if (pending) { clearTimeout(pending.timer); pending = null; }
+  }
   list.addEventListener('pointerdown', (e) => {
     const row = e.target.closest('.batting-row[data-i]');
     if (!row) return;
-    e.preventDefault();
-    drag = { pointerId: e.pointerId, fromIndex: parseInt(row.dataset.i, 10), order: presentNow().slice() };
-    row.classList.add('dragging');
-    try { list.setPointerCapture(e.pointerId); } catch (err) {}
+    cancelPending();
+    pending = {
+      pointerId: e.pointerId,
+      fromIndex: parseInt(row.dataset.i, 10),
+      startX: e.clientX,
+      startY: e.clientY,
+      timer: setTimeout(activateDrag, DRAG_HOLD_MS)
+    };
   });
   list.addEventListener('pointermove', (e) => {
+    if (pending && e.pointerId === pending.pointerId) {
+      const dx = e.clientX - pending.startX;
+      const dy = e.clientY - pending.startY;
+      if (Math.hypot(dx, dy) > DRAG_MOVE_TOLERANCE) cancelPending();
+      return;
+    }
     if (!drag || e.pointerId !== drag.pointerId) return;
+    e.preventDefault();
     const target = rowAtY(e.clientY);
     if (!target) return;
     const toIndex = parseInt(target.dataset.i, 10);
@@ -3971,7 +4097,6 @@ function bindBattingDrag() {
     const moved = drag.order.splice(drag.fromIndex, 1)[0];
     drag.order.splice(toIndex, 0, moved);
     drag.fromIndex = toIndex;
-    // Persist immediately so the visual stays in sync after re-render.
     const absent = ROSTER.filter(p => !state.present.has(p));
     saveRoster([...drag.order, ...absent]);
     renderBatting();
@@ -3980,6 +4105,7 @@ function bindBattingDrag() {
     if (newRow) newRow.classList.add('dragging');
   });
   function endDrag(e) {
+    cancelPending();
     if (!drag) return;
     if (e && e.pointerId !== drag.pointerId) return;
     list.querySelectorAll('.dragging').forEach(r => r.classList.remove('dragging'));
@@ -3987,11 +4113,12 @@ function bindBattingDrag() {
   }
   list.addEventListener('pointerup', endDrag);
   list.addEventListener('pointercancel', endDrag);
+  list.addEventListener('pointerleave', () => cancelPending());
 }
 
 function renderInnings() {
   const present = getPresentInRosterOrder();
-  const result = generateRotation(present);
+  const result = generateRotation(present, { salt: state.rotationSalt });
   // Apply any per-inning manual overrides on top of the auto-generated rotation.
   // An override is only honored when its player set exactly matches the
   // current present set — otherwise a kid showing up or leaving would
@@ -4082,10 +4209,39 @@ function renderInnings() {
   }
 
   html += '<div class="diamond-section"><h2 class="stacked-heading">Field Map</h2><div class="diamond">';
-  html += '<div class="diamond-warning"></div>';
-  html += '<div class="diamond-foul left"></div><div class="diamond-foul right"></div>';
-  html += '<div class="diamond-base b1"></div><div class="diamond-base b2"></div><div class="diamond-base b3"></div>';
-  html += '<div class="diamond-home"></div>';
+  html += `
+    <svg class="diamond-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+      <defs>
+        <radialGradient id="dirtFill" cx="50%" cy="55%" r="55%">
+          <stop offset="0%" stop-color="#E0B380"/>
+          <stop offset="60%" stop-color="#BA8A4F"/>
+          <stop offset="100%" stop-color="#8E6534"/>
+        </radialGradient>
+        <radialGradient id="moundFill" cx="50%" cy="40%" r="60%">
+          <stop offset="0%" stop-color="#D4A570"/>
+          <stop offset="100%" stop-color="#A87749"/>
+        </radialGradient>
+        <radialGradient id="grassFill" cx="50%" cy="0%" r="100%">
+          <stop offset="0%" stop-color="#6FB552"/>
+          <stop offset="100%" stop-color="#4F8F37"/>
+        </radialGradient>
+      </defs>
+      <!-- Dirt infield diamond (home to 2nd via 1st & 3rd) -->
+      <polygon points="50,82 82,55 50,28 18,55" fill="url(#dirtFill)" stroke="#6B4A22" stroke-width="0.4"/>
+      <!-- Foul lines from home plate out to corners -->
+      <line x1="50" y1="82" x2="6" y2="38" stroke="white" stroke-width="0.6" opacity="0.85"/>
+      <line x1="50" y1="82" x2="94" y2="38" stroke="white" stroke-width="0.6" opacity="0.85"/>
+      <!-- Pitcher's mound -->
+      <circle cx="50" cy="56" r="5" fill="url(#moundFill)" stroke="#6B4A22" stroke-width="0.3"/>
+      <rect x="48.5" y="55.5" width="3" height="1" fill="white" opacity="0.85" rx="0.2"/>
+      <!-- Bases (1B, 2B, 3B) -->
+      <rect x="78.5" y="53.5" width="3" height="3" fill="white" stroke="#6B4A22" stroke-width="0.3" transform="rotate(45 80 55)"/>
+      <rect x="48.5" y="26.5" width="3" height="3" fill="white" stroke="#6B4A22" stroke-width="0.3" transform="rotate(45 50 28)"/>
+      <rect x="18.5" y="53.5" width="3" height="3" fill="white" stroke="#6B4A22" stroke-width="0.3" transform="rotate(45 20 55)"/>
+      <!-- Home plate (pentagon) -->
+      <polygon points="47,80 53,80 53,83 50,85.5 47,83" fill="white" stroke="#6B4A22" stroke-width="0.3"/>
+    </svg>
+  `;
   for (const pos of DIAMOND_ORDER) {
     if (!inning[pos]) continue;
     const player = inning[pos];
@@ -4103,44 +4259,70 @@ function renderInnings() {
 }
 
 // Drag a player from one position to another inside the current inning.
-// Swaps the two players (works for position↔position and position↔bench).
-// Persists the modified inning to state.manualRotation.
+// Requires a long-press to activate. Swaps the two players (works for
+// position↔position and position↔bench). Persists the modified inning
+// to state.manualRotation.
 function bindFieldingDrag() {
   const content = document.getElementById('inningContent');
   if (!content) return;
+  let pending = null;
   let drag = null;
   function findRow(el) {
-    return el.closest('.defense-row[data-pos], .bench-row[data-bench-idx]');
+    return el && el.closest ? el.closest('.defense-row[data-pos], .bench-row[data-bench-idx]') : null;
   }
   function clearTargets() {
     content.querySelectorAll('.drop-target').forEach(r => r.classList.remove('drop-target'));
   }
+  function activateDrag() {
+    if (!pending) return;
+    drag = {
+      pointerId: pending.pointerId,
+      srcEl: pending.srcEl,
+      srcKind: pending.srcKind,
+      srcKey: pending.srcKey,
+      srcPlayer: pending.srcPlayer
+    };
+    drag.srcEl.classList.add('dragging');
+    try { content.setPointerCapture(drag.pointerId); } catch (err) {}
+    pending = null;
+  }
+  function cancelPending() {
+    if (pending) { clearTimeout(pending.timer); pending = null; }
+  }
   content.addEventListener('pointerdown', (e) => {
     const row = findRow(e.target);
     if (!row) return;
-    e.preventDefault();
-    drag = {
+    cancelPending();
+    pending = {
       pointerId: e.pointerId,
       srcEl: row,
       srcKind: row.classList.contains('defense-row') ? 'pos' : 'bench',
       srcKey: row.classList.contains('defense-row') ? row.dataset.pos : parseInt(row.dataset.benchIdx, 10),
-      srcPlayer: row.dataset.player
+      srcPlayer: row.dataset.player,
+      startX: e.clientX,
+      startY: e.clientY,
+      timer: setTimeout(activateDrag, DRAG_HOLD_MS)
     };
-    row.classList.add('dragging');
-    try { content.setPointerCapture(e.pointerId); } catch (err) {}
   });
   content.addEventListener('pointermove', (e) => {
+    if (pending && e.pointerId === pending.pointerId) {
+      const dx = e.clientX - pending.startX;
+      const dy = e.clientY - pending.startY;
+      if (Math.hypot(dx, dy) > DRAG_MOVE_TOLERANCE) cancelPending();
+      return;
+    }
     if (!drag || e.pointerId !== drag.pointerId) return;
+    e.preventDefault();
     const target = document.elementFromPoint(e.clientX, e.clientY);
-    if (!target) return;
     const row = findRow(target);
     clearTargets();
     if (row && row !== drag.srcEl) row.classList.add('drop-target');
   });
   content.addEventListener('pointerup', (e) => {
+    cancelPending();
     if (!drag || e.pointerId !== drag.pointerId) return;
     const target = document.elementFromPoint(e.clientX, e.clientY);
-    const dropRow = target ? findRow(target) : null;
+    const dropRow = findRow(target);
     clearTargets();
     drag.srcEl.classList.remove('dragging');
     if (dropRow && dropRow !== drag.srcEl) {
@@ -4152,11 +4334,13 @@ function bindFieldingDrag() {
     drag = null;
   });
   content.addEventListener('pointercancel', () => {
+    cancelPending();
     if (!drag) return;
     clearTargets();
     drag.srcEl.classList.remove('dragging');
     drag = null;
   });
+  content.addEventListener('pointerleave', () => cancelPending());
 }
 
 // Apply a swap to the current inning (positions or bench) and persist.
@@ -4919,6 +5103,16 @@ rotateSectionQuotes();
 render();
 bindBattingDrag();
 bindFieldingDrag();
+
+// Reset / shuffle button on the Field Rotation header. Bumps the salt so
+// the rotation re-randomizes and clears any manual overrides.
+document.getElementById('rotationShuffleBtn')?.addEventListener('click', () => {
+  state.rotationSalt = (state.rotationSalt || 0) + 1;
+  clearManualRotation();
+  renderInnings();
+  renderStats();
+  showBubble('Rotation shuffled ⚡');
+});
 </script>
 </body>
 </html>
