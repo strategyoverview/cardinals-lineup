@@ -2833,16 +2833,14 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
   <div class="tm-container">
     <div class="tm-section-head">
       <h2 class="tm-section-title">All Teams</h2>
-      <div class="tm-section-actions">
-        <button class="tm-sync-btn" id="tmSyncBtn" type="button" title="Cross-device sync">
-          <i class="fa-solid fa-cloud-arrow-up" aria-hidden="true"></i>
-          <span class="tm-sync-label">Sync</span>
-        </button>
-        <button class="tm-new-btn" id="tmNewTeamBtn">
-          <i class="fa-solid fa-plus" aria-hidden="true"></i> New Team
-        </button>
-      </div>
+      <button class="tm-new-btn" id="tmNewTeamBtn">
+        <i class="fa-solid fa-plus" aria-hidden="true"></i> New Team
+      </button>
     </div>
+    <button class="tm-sync-btn" id="tmSyncBtn" type="button" hidden title="Cross-device sync">
+      <i class="fa-solid fa-cloud-arrow-up" aria-hidden="true"></i>
+      <span class="tm-sync-label">Sync</span>
+    </button>
     <div class="tm-grid" id="tmTeamsGrid"></div>
   </div>
   <div class="tm-glass-footer">
@@ -3316,6 +3314,32 @@ async function flushCloudPush() {
   if (pantryUrl()) await doCloudPush();
 }
 
+// Fire-and-forget version that survives the page unload — browser
+// delivers the request after we've already navigated. Used at save
+// time so the user doesn't sit through Pantry's 8 s latency before
+// the team page actually loads. Same safety net as doCloudPush:
+// refuse to push an empty tm_teams.
+function cloudBeacon() {
+  const url = pantryUrl();
+  if (!url || typeof navigator === 'undefined' || !navigator.sendBeacon) return false;
+  if (pushTimer) { clearTimeout(pushTimer); pushTimer = null; }
+  const payload = {};
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (!k || !shouldSyncKey(k)) continue;
+    try { payload[k] = JSON.parse(localStorage.getItem(k)); }
+    catch (e) { payload[k] = localStorage.getItem(k); }
+  }
+  if (!payload.tm_teams || (Array.isArray(payload.tm_teams) && payload.tm_teams.length === 0)) return false;
+  const body = JSON.stringify({ payload: JSON.stringify(payload) });
+  const blob = new Blob([body], { type: 'application/json' });
+  // Mark the timestamp so the next page boot skips its cloudPull and
+  // trusts local data — otherwise the pull races with sendBeacon
+  // delivery and can overwrite our just-saved team with stale cloud.
+  try { localStorage.setItem('tm_last_push', String(Date.now())); } catch (e) {}
+  return navigator.sendBeacon(url, blob);
+}
+
 // Wrap localStorage so any tracked-key write triggers a cloud push.
 (function wrapLocalStorage() {
   const origSet = localStorage.setItem.bind(localStorage);
@@ -3664,10 +3688,9 @@ async function saveNewTeam() {
     const editedId = editingTeamId;
     closeNewTeamModal();
     const fresh = teams[teams.findIndex(t => t.id === editedId)];
-    // Flush the cloud push before the page unloads — otherwise the
-    // pending debounced write is cancelled by navigation and the
-    // edit doesn't make it to the pantry.
-    await flushCloudPush();
+    // sendBeacon queues the push so it survives the navigation, but
+    // we don't wait on the network — the user shouldn't see a delay.
+    cloudBeacon();
     location.search = teamHref(fresh);
     return;
   }
@@ -3676,7 +3699,7 @@ async function saveNewTeam() {
   teams.push(newTeam);
   if (!saveTeams(teams)) return;
   closeNewTeamModal();
-  await flushCloudPush();
+  cloudBeacon();
   location.search = teamHref(newTeam);
 }
 
@@ -3857,10 +3880,10 @@ function bindDeleteTeam() {
   document.getElementById('tmDeleteOverlay')?.addEventListener('click', (e) => {
     if (e.target.id === 'tmDeleteOverlay') closeDeleteTeamModal();
   });
-  confirm?.addEventListener('click', async () => {
+  confirm?.addEventListener('click', () => {
     if (deletingTeamId == null || confirm.disabled) return;
     deleteTeam(deletingTeamId);
-    await flushCloudPush();
+    cloudBeacon();
     location.search = '?manager';
   });
 }
@@ -3893,12 +3916,20 @@ function bindDeleteTeam() {
   // teams pop in. Team views read at most one team's data, so they
   // don't need a refresh.
   if (getPantryId()) {
-    cloudPull().then((data) => {
-      if (!data) return;
-      if (CURRENT_TEAM_ID === null && typeof renderTeamManager === 'function') {
-        renderTeamManager();
-      }
-    }).catch(() => {});
+    // Don't pull immediately after a sendBeacon push — Pantry hasn't
+    // necessarily caught up yet, and a fresh pull would race with the
+    // beacon delivery and overwrite our just-saved team with stale
+    // cloud data. 5s is plenty for the beacon to land on the server.
+    const lastPush = parseInt(localStorage.getItem('tm_last_push') || '0', 10);
+    const sincePush = Date.now() - lastPush;
+    if (sincePush > 5000) {
+      cloudPull().then((data) => {
+        if (!data) return;
+        if (CURRENT_TEAM_ID === null && typeof renderTeamManager === 'function') {
+          renderTeamManager();
+        }
+      }).catch(() => {});
+    }
   }
 
   if (CURRENT_TEAM_ID === null) {
