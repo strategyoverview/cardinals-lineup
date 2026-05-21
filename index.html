@@ -17,7 +17,7 @@
 <link rel="apple-touch-icon" href="LilCardinalFavicon.png?v=2" id="faviconApple">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Pacifico&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer">
 <title>Team Manager</title>
 <style>
@@ -170,15 +170,42 @@ body.is-manager { padding-bottom: 0 !important; }
   position: relative;
 }
 .tm-title {
-  font-size: clamp(2.75rem, 9vw, 5rem);
-  font-weight: 900;
-  letter-spacing: -0.035em;
-  line-height: 0.95;
-  background: linear-gradient(180deg, #0A0A0A 0%, #404040 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
+  font-family: 'Pacifico', 'Brush Script MT', cursive;
+  font-weight: 400;
+  line-height: 0.85;
+  letter-spacing: -0.01em;
+  color: #1B2954;
+  -webkit-text-stroke: 2px #FFFFFF;
+  paint-order: stroke fill;
+  text-shadow:
+    3px 3px 0 #1B2954,
+    4px 4px 0 #FFFFFF,
+    0 8px 18px rgba(27, 41, 84, 0.18);
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.1em;
+  transform: rotate(-3deg);
+  position: relative;
+}
+.tm-title span {
+  font-size: clamp(3rem, 11vw, 6rem);
+  display: block;
+}
+.tm-title span:nth-child(2) {
+  margin-left: 0.9em;
+  position: relative;
+}
+.tm-title-swoosh {
+  position: absolute;
+  bottom: -0.35em;
+  left: 0.9em;
+  width: 4.8em;
+  height: 0.25em;
+  background: #1B2954;
+  border: 2px solid #FFFFFF;
+  border-radius: 0 0 1em 1em / 0 0 1em 0.4em;
+  transform: skewY(-3deg);
+  z-index: -1;
 }
 .tm-tagline {
   margin-top: 1rem;
@@ -281,33 +308,19 @@ body.is-manager { padding-bottom: 0 !important; }
     0 2px 4px rgba(10, 10, 10, 0.06);
 }
 .tm-card:active { transform: translateY(-2px); }
-.tm-card-bg {
-  position: absolute;
-  inset: 0;
-  background: var(--tm-card-bg, var(--tm-card-color, #0A0A0A));
-  z-index: 0;
-}
-.tm-card-bg::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0%, transparent 40%);
-  pointer-events: none;
-}
 .tm-card-logo {
   position: absolute;
-  inset: 8% 8% 28% 8%;
+  inset: 10% 10% 28% 10%;
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: var(--tm-card-color, #0A0A0A);
   font-weight: 900;
   font-size: clamp(3rem, 10vw, 5rem);
   letter-spacing: -0.03em;
-  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.2));
   z-index: 1;
 }
 .tm-card-footer {
@@ -315,35 +328,34 @@ body.is-manager { padding-bottom: 0 !important; }
   bottom: 0;
   left: 0;
   right: 0;
-  background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.55) 100%);
   padding: 0.875rem 1rem 0.875rem;
-  color: white;
+  color: #0A0A0A;
+  text-align: center;
 }
 .tm-card-name {
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   font-weight: 800;
   letter-spacing: -0.01em;
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
   line-height: 1.15;
+  color: #0A0A0A;
 }
 .tm-card-meta {
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  opacity: 0.9;
-  margin-top: 0.2rem;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  opacity: 0.65;
+  margin-top: 0.15rem;
+  color: #525866;
 }
 .tm-card-num {
   position: absolute;
-  bottom: 0.5rem;
+  top: 0.5rem;
   right: 0.625rem;
-  font-size: 0.68rem;
+  font-size: 0.65rem;
   font-weight: 700;
-  color: rgba(255, 255, 255, 0.85);
+  color: #9CA3AF;
   letter-spacing: 0.04em;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
   z-index: 2;
   pointer-events: none;
 }
@@ -564,6 +576,16 @@ body.is-app > .app-team-links > .app-team-link + .app-team-link::before {
 .tm-logo-preview.has-image { border-style: solid; border-color: rgba(10, 10, 10, 0.12); background-color: white; }
 .tm-logo-preview.has-image .tm-logo-preview-fallback { display: none; }
 .tm-logo-preview-fallback { font-size: 0.7rem; color: #9CA3AF; font-weight: 600; }
+.tm-logo-preview.processing {
+  border-style: solid;
+  border-color: var(--cardinal-red);
+  background-color: #FEF2F2;
+}
+.tm-logo-preview.processing .tm-logo-preview-fallback { display: block !important; }
+.tm-logo-preview.processing .tm-logo-preview-fallback::after {
+  content: ' • Processing…';
+  color: var(--cardinal-red);
+}
 .tm-logo-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
 .tm-logo-pick {
   display: inline-flex;
@@ -2764,7 +2786,10 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
 <!-- ============ Team Manager landing (shown when no ?team=N in URL) ============ -->
 <div id="teamManagerView" class="tm-view" hidden>
   <div class="tm-hero">
-    <h1 class="tm-title">Team Manager</h1>
+    <h1 class="tm-title">
+      <span>Team</span>
+      <span>Manager<span class="tm-title-swoosh" aria-hidden="true"></span></span>
+    </h1>
     <p class="tm-tagline">Build your lineup, run your scorecard, and enjoy the golden years of coaching.</p>
   </div>
   <div class="tm-container">
@@ -3303,7 +3328,6 @@ function renderTeamManager() {
   const cards = teams.map(team => {
     const initial = (team.name || '?').trim()[0].toUpperCase();
     const hasLogo = !!team.logo;
-    const bgCss = getBackgroundCss(team.background) || (team.color || '#0A0A0A');
     const logoStyle = hasLogo
       ? `background-image: url('${team.logo.replace(/'/g, "\\'")}');`
       : '';
@@ -3311,8 +3335,7 @@ function renderTeamManager() {
                        : team.sport === 'baseball' ? 'Baseball'
                        : 'Tee Ball';
     return `
-      <a class="tm-card" href="${teamHref(team)}" data-team-id="${team.id}" style="--tm-card-color: ${team.color || '#0A0A0A'}; --tm-card-bg: ${bgCss}">
-        <div class="tm-card-bg" aria-hidden="true"></div>
+      <a class="tm-card" href="${teamHref(team)}" data-team-id="${team.id}" style="--tm-card-color: ${team.color || '#0A0A0A'}">
         <div class="tm-card-logo" style="${logoStyle}">${hasLogo ? '' : initial}</div>
         <div class="tm-card-footer">
           <div class="tm-card-name">${escapeHtml(team.name || 'Untitled Team')}</div>
@@ -3545,12 +3568,31 @@ function bindTeamManager() {
       e.target.value = '';
       return;
     }
-    compressLogo(file).then(dataUrl => {
+    // Lock Save and clear the hidden field while we process — prevents
+    // saving with the previous logo if the user taps Save too quickly.
+    const saveBtn = document.getElementById('tmNewTeamSaveBtn');
+    const hidden = document.getElementById('tmNewTeamLogo');
+    const preview = document.getElementById('tmLogoPreview');
+    if (saveBtn) saveBtn.disabled = true;
+    if (hidden) hidden.value = '';
+    if (preview) {
+      preview.classList.add('processing');
+      preview.style.backgroundImage = '';
+    }
+    const done = (dataUrl) => {
       setLogoPreview(dataUrl);
-    }).catch(err => {
+      if (saveBtn) saveBtn.disabled = false;
+      if (preview) preview.classList.remove('processing');
+    };
+    compressLogo(file).then(done).catch(err => {
       console.warn('[logo] compress failed, using raw file:', err);
       const reader = new FileReader();
-      reader.onload = () => setLogoPreview(reader.result);
+      reader.onload = () => done(reader.result);
+      reader.onerror = () => {
+        if (saveBtn) saveBtn.disabled = false;
+        if (preview) preview.classList.remove('processing');
+        alert("Couldn't read that image. Try a different file.");
+      };
       reader.readAsDataURL(file);
     });
     e.target.value = ''; // allow re-picking the same file
@@ -3641,6 +3683,17 @@ function bindDeleteTeam() {
     // No ?team= → Team Manager landing
     document.body.classList.add('is-manager');
     document.getElementById('teamManagerView').hidden = false;
+    // Swap favicons + Home Screen icon to the Team Manager monogram.
+    const tmSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#FFFFFF"/><text x="32" y="44" text-anchor="middle" font-family="Georgia, serif" font-style="italic" font-weight="700" font-size="34" fill="#1B2954" stroke="#FFFFFF" stroke-width="1.5" paint-order="stroke fill">TM</text></svg>`;
+    const tmIcon = `data:image/svg+xml;utf8,${encodeURIComponent(tmSvg)}`;
+    ['faviconPng', 'faviconSvg', 'faviconShortcut', 'faviconApple'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.href = tmIcon;
+    });
+    const appTitleMeta = document.getElementById('appleAppTitle');
+    if (appTitleMeta) appTitleMeta.setAttribute('content', 'Team Manager');
+    const themeMeta = document.getElementById('themeColorMeta');
+    if (themeMeta) themeMeta.setAttribute('content', '#1B2954');
     renderTeamManager();
     return;
   }
