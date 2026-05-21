@@ -138,11 +138,7 @@ button { font-family: inherit; }
 
 /* ============ Team Manager landing — Liquid Glass, mostly white / black ============ */
 body.is-manager {
-  background:
-    radial-gradient(ellipse 80% 50% at 20% 0%, rgba(178, 34, 52, 0.06) 0%, transparent 60%),
-    radial-gradient(ellipse 80% 50% at 80% 100%, rgba(60, 59, 110, 0.06) 0%, transparent 60%),
-    #FFFFFF;
-  background-attachment: fixed;
+  background: #FFFFFF;
   color: #0A0A0A;
 }
 body.is-manager > header,
@@ -155,15 +151,6 @@ body.is-manager #teamManagerView { display: block; }
 body.is-manager { padding-bottom: 0 !important; }
 
 .tm-view { min-height: 100vh; display: flex; flex-direction: column; }
-
-.tm-flag {
-  display: flex;
-  width: 100%;
-  height: 4px;
-}
-.tm-flag-stripe { flex: 1; }
-.tm-flag-stripe.red { background: #B22234; }
-.tm-flag-stripe.blue { background: #3C3B6E; }
 
 .tm-hero {
   padding: 3.5rem 1.5rem 2rem;
@@ -178,15 +165,6 @@ body.is-manager { padding-bottom: 0 !important; }
   letter-spacing: -0.02em;
   line-height: 0.95;
   color: #0A0A0A;
-}
-.tm-title::after {
-  content: '';
-  display: block;
-  width: 56px;
-  height: 4px;
-  margin: 1rem auto 0;
-  background: linear-gradient(90deg, #B22234 0%, #B22234 50%, #3C3B6E 50%, #3C3B6E 100%);
-  border-radius: 2px;
 }
 .tm-tagline {
   margin-top: 1rem;
@@ -323,6 +301,18 @@ body.is-manager { padding-bottom: 0 !important; }
   opacity: 0.9;
   margin-top: 0.2rem;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+.tm-card-num {
+  position: absolute;
+  bottom: 0.5rem;
+  right: 0.625rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.85);
+  letter-spacing: 0.04em;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  z-index: 1;
+  pointer-events: none;
 }
 
 .tm-card.tm-card-add {
@@ -950,6 +940,18 @@ h2 .badge {
 }
 @media (min-width: 1024px) {
   .roster-grid { grid-template-columns: repeat(5, 1fr); }
+}
+
+.roster-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 2rem 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--gray-500);
+  background: rgba(255, 255, 255, 0.45);
+  border: 1.5px dashed rgba(15, 23, 42, 0.18);
+  border-radius: var(--radius-md);
 }
 
 .player-card {
@@ -2257,6 +2259,57 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
   color: var(--navy);
 }
 .modal-btn-secondary:hover { background: var(--gray-200); }
+.modal-btn-danger {
+  padding: 0.625rem 1.125rem;
+  border-radius: 999px;
+  font-weight: 800;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+  background: #DC2626;
+  color: white;
+  box-shadow: 0 3px 10px rgba(220, 38, 38, 0.3);
+}
+.modal-btn-danger:hover:not(:disabled) { background: #B91C1C; }
+.modal-btn-danger:disabled { opacity: 0.45; cursor: not-allowed; box-shadow: none; }
+
+/* Delete-team modal extras */
+.tm-delete-warning {
+  background: #FEF2F2;
+  border: 1.5px solid #FECACA;
+  border-radius: 12px;
+  padding: 0.875rem 1rem;
+  color: #7F1D1D;
+  font-size: 0.92rem;
+  line-height: 1.4;
+  margin-bottom: 1rem;
+}
+.tm-delete-warning i { color: #DC2626; margin-right: 0.4rem; }
+.tm-delete-confirm-line {
+  font-size: 0.88rem;
+  color: var(--gray-700);
+  margin-bottom: 0.5rem;
+}
+.tm-delete-input {
+  width: 100%;
+  padding: 0.625rem 0.875rem;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-family: inherit;
+  font-weight: 600;
+  color: #111827;
+  background: white;
+  outline: none;
+  box-sizing: border-box;
+}
+.tm-delete-input:focus { border-color: #DC2626; }
+
+/* Danger variant of the bottom team-links bar */
+.app-team-link-danger { color: #B91C1C !important; }
+.app-team-link-danger i { color: #DC2626 !important; }
+.app-team-link-danger:hover { background: rgba(254, 226, 226, 0.85) !important; }
 
 /* ============ Outs counter ============ */
 .outs-section {
@@ -2524,10 +2577,6 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
 <!-- ============ Team Manager landing (shown when no ?team=N in URL) ============ -->
 <div id="teamManagerView" class="tm-view" hidden>
   <div class="tm-hero">
-    <div class="tm-flag">
-      <span class="tm-flag-stripe red"></span>
-      <span class="tm-flag-stripe blue"></span>
-    </div>
     <h1 class="tm-title">Team Manager</h1>
     <p class="tm-tagline">Build your lineup, run your scorecard, and enjoy the golden years of coaching.</p>
   </div>
@@ -2777,9 +2826,34 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
   <button class="app-team-link" id="appEditTeamBtn">
     <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i> Edit Team
   </button>
-  <a class="app-team-link" href="/">
-    <i class="fa-solid fa-grip" aria-hidden="true"></i> Manage Teams
+  <button class="app-team-link app-team-link-danger" id="appDeleteTeamBtn">
+    <i class="fa-solid fa-trash" aria-hidden="true"></i> Delete Team
+  </button>
+  <a class="app-team-link" href="?manager">
+    <i class="fa-solid fa-grip" aria-hidden="true"></i> Team Manager
   </a>
+</div>
+
+<!-- ============ Delete Team confirmation modal ============ -->
+<div class="modal-overlay" id="tmDeleteOverlay" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="tmDeleteTitle">
+    <div class="modal-header">
+      <h3 id="tmDeleteTitle">Delete this team?</h3>
+      <button class="modal-close" id="tmDeleteCloseBtn" aria-label="Close">×</button>
+    </div>
+    <div class="modal-body">
+      <p class="tm-delete-warning">
+        <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+        This <strong>cannot be undone</strong>. The team and all of its roster, batting order, field rotations, and scorecard data will be permanently deleted.
+      </p>
+      <p class="tm-delete-confirm-line">Type <strong id="tmDeleteTeamName">team name</strong> to confirm:</p>
+      <input type="text" id="tmDeleteConfirmInput" class="tm-delete-input" autocomplete="off" autocapitalize="off">
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn-secondary" id="tmDeleteCancelBtn">Cancel</button>
+      <button class="modal-btn-danger" id="tmDeleteConfirmBtn" disabled>Delete Team</button>
+    </div>
+  </div>
 </div>
 
 <div class="sponsor-strip sponsor-strip-glass" id="sponsorStrip">
@@ -2791,12 +2865,102 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
 </div>
 
 <script>
+/* ============ Optional cloud sync (Supabase) ============
+   Fill these in to enable multi-device sync. Until then the app runs
+   entirely on localStorage and nothing leaves the device.
+
+   Quick setup:
+   1. Create a free project at https://supabase.com
+   2. In the SQL editor run:
+        create table tm_state (
+          key text primary key,
+          value jsonb not null,
+          updated_at timestamptz default now()
+        );
+        alter table tm_state enable row level security;
+        create policy "anyone read"  on tm_state for select using (true);
+        create policy "anyone write" on tm_state for insert with check (true);
+        create policy "anyone update" on tm_state for update using (true);
+   3. Settings → API → copy "Project URL" and "anon public" key below.
+   Note: this anon-write policy is fine for a private coaching app, but
+   not for anything sensitive. For real multi-user use, add auth + per-row
+   policies. */
+const SUPABASE_URL = '';
+const SUPABASE_ANON_KEY = '';
+
+const cloudSync = (function () {
+  const enabled = !!(SUPABASE_URL && SUPABASE_ANON_KEY);
+  const SYNC_PREFIXES = ['tm_teams', 'cardinals_', 'tm_t'];
+  function shouldSync(key) {
+    return SYNC_PREFIXES.some(p => key === p || key.startsWith(p));
+  }
+  let client = null;
+  let ready = false;
+  async function init() {
+    if (!enabled) return;
+    if (!window.supabase) {
+      await new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+        s.onload = resolve;
+        s.onerror = reject;
+        document.head.appendChild(s);
+      });
+    }
+    client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    ready = true;
+    // Pull on boot — merge cloud → local for anything newer than local.
+    const { data, error } = await client.from('tm_state').select('key,value');
+    if (!error && Array.isArray(data)) {
+      for (const row of data) {
+        if (shouldSync(row.key)) {
+          localStorage.setItem(row.key, JSON.stringify(row.value));
+        }
+      }
+    }
+    // Subscribe to remote changes so other devices stay live.
+    client.channel('tm_state-sync')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'tm_state' }, (payload) => {
+        const row = payload.new || payload.old;
+        if (!row || !shouldSync(row.key)) return;
+        if (payload.eventType === 'DELETE') localStorage.removeItem(row.key);
+        else localStorage.setItem(row.key, JSON.stringify(row.value));
+      })
+      .subscribe();
+  }
+  function push(key, value) {
+    if (!ready || !shouldSync(key)) return;
+    try {
+      const parsed = JSON.parse(value);
+      client.from('tm_state').upsert({ key, value: parsed }).then(() => {});
+    } catch (e) { /* not JSON — skip */ }
+  }
+  // Wrap localStorage so any setItem on a tracked key pushes to cloud.
+  if (enabled) {
+    const origSet = localStorage.setItem.bind(localStorage);
+    const origRemove = localStorage.removeItem.bind(localStorage);
+    localStorage.setItem = function (k, v) { origSet(k, v); push(k, v); };
+    localStorage.removeItem = function (k) {
+      origRemove(k);
+      if (ready && shouldSync(k)) client.from('tm_state').delete().eq('key', k).then(() => {});
+    };
+    init().catch(err => console.warn('[cloudSync] init failed:', err));
+  }
+  return { enabled };
+})();
+
 /* ============ Team Manager: routing + registry ============ */
+// Routing:
+//   /?manager       → Team Manager landing
+//   /?team=N        → that team's app
+//   /  (no params)  → defaults to team 1 (the original Lil Cardinals app)
 const TEAM_QUERY = 'team';
 function getCurrentTeamId() {
   const p = new URLSearchParams(location.search);
+  if (p.has('manager')) return null;
   const v = parseInt(p.get(TEAM_QUERY), 10);
-  return isNaN(v) ? null : v;
+  if (!isNaN(v)) return v;
+  return 1; // default — Cardinals stays at the bare URL
 }
 const CURRENT_TEAM_ID = getCurrentTeamId();
 
@@ -2859,6 +3023,7 @@ function renderTeamManager() {
           <div class="tm-card-name">${escapeHtml(team.name || 'Untitled Team')}</div>
           <div class="tm-card-meta">${team.sport === 'softball' ? 'Softball' : 'Tee Ball'}${team.league ? ' · ' + escapeHtml(team.league) : ''}</div>
         </div>
+        <span class="tm-card-num">#${team.id}</span>
       </a>
     `;
   }).join('');
@@ -2942,11 +3107,14 @@ function saveNewTeam() {
       teams[idx] = Object.assign({}, teams[idx], { name, sport, league, sponsor, color, logo });
     }
     saveTeams(teams);
+    const editedId = editingTeamId;
     closeNewTeamModal();
-    if (CURRENT_TEAM_ID === editingTeamId) {
+    if (CURRENT_TEAM_ID === editedId) {
+      // Editing the team we're currently viewing — reload to apply changes.
       location.reload();
     } else {
-      renderTeamManager();
+      // Editing from Team Manager — jump into the team we just edited.
+      location.search = `?team=${editedId}`;
     }
     return;
   }
@@ -2981,12 +3149,76 @@ function bindAppTeamLinks() {
       if (team) openNewTeamModal(team);
     });
   }
+  const delBtn = document.getElementById('appDeleteTeamBtn');
+  if (delBtn) {
+    delBtn.addEventListener('click', () => {
+      const team = getTeamById(CURRENT_TEAM_ID);
+      if (team) openDeleteTeamModal(team);
+    });
+  }
+}
+
+/* ============ Delete Team modal ============ */
+let deletingTeamId = null;
+function openDeleteTeamModal(team) {
+  deletingTeamId = team.id;
+  document.getElementById('tmDeleteTeamName').textContent = team.name || `team #${team.id}`;
+  const input = document.getElementById('tmDeleteConfirmInput');
+  const confirm = document.getElementById('tmDeleteConfirmBtn');
+  input.value = '';
+  confirm.disabled = true;
+  document.getElementById('tmDeleteOverlay').hidden = false;
+  setTimeout(() => input.focus(), 80);
+}
+function closeDeleteTeamModal() {
+  document.getElementById('tmDeleteOverlay').hidden = true;
+  deletingTeamId = null;
+}
+function deleteTeam(id) {
+  // Wipe every localStorage key belonging to this team.
+  const prefix = (id === 1) ? null : `tm_t${id}_`;
+  const toRemove = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (!k) continue;
+    if (prefix) {
+      if (k.startsWith(prefix)) toRemove.push(k);
+    } else {
+      // Team 1 = bare "cardinals_*" keys
+      if (k.startsWith('cardinals_')) toRemove.push(k);
+    }
+  }
+  toRemove.forEach(k => localStorage.removeItem(k));
+  // Remove from team registry.
+  const teams = loadTeams().filter(t => t.id !== id);
+  saveTeams(teams);
+}
+function bindDeleteTeam() {
+  const input = document.getElementById('tmDeleteConfirmInput');
+  const confirm = document.getElementById('tmDeleteConfirmBtn');
+  if (input && confirm) {
+    input.addEventListener('input', () => {
+      const target = document.getElementById('tmDeleteTeamName').textContent.trim();
+      confirm.disabled = input.value.trim().toLowerCase() !== target.toLowerCase();
+    });
+  }
+  document.getElementById('tmDeleteCancelBtn')?.addEventListener('click', closeDeleteTeamModal);
+  document.getElementById('tmDeleteCloseBtn')?.addEventListener('click', closeDeleteTeamModal);
+  document.getElementById('tmDeleteOverlay')?.addEventListener('click', (e) => {
+    if (e.target.id === 'tmDeleteOverlay') closeDeleteTeamModal();
+  });
+  confirm?.addEventListener('click', () => {
+    if (deletingTeamId == null || confirm.disabled) return;
+    deleteTeam(deletingTeamId);
+    location.search = '?manager';
+  });
 }
 
 /* ============ Boot: route between manager and team app ============ */
 (function bootRouter() {
   // Modal exists in both views — bind its events unconditionally
   bindTeamManager();
+  bindDeleteTeam();
 
   if (CURRENT_TEAM_ID === null) {
     // No ?team= → Team Manager landing
@@ -3066,12 +3298,13 @@ function loadRoster() {
       localStorage.removeItem(tk('cardinals_roster_v2'));
     } else if (saved) {
       const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed) && parsed.length > 0) {
+      if (Array.isArray(parsed)) {
         return parsed.filter(s => typeof s === 'string' && s.trim()).slice(0, 30);
       }
     }
   } catch (e) {}
-  return [...DEFAULT_ROSTER];
+  // Only team 1 (Cardinals) gets the baked-in roster; new teams start empty.
+  return CURRENT_TEAM_ID === 1 ? [...DEFAULT_ROSTER] : [];
 }
 let ROSTER = loadRoster();
 function saveRoster(next) {
@@ -3289,15 +3522,19 @@ function generateRotation(presentList) {
 
 function renderRoster() {
   const grid = document.getElementById('rosterGrid');
-  grid.innerHTML = ROSTER.map(player => {
-    const present = state.present.has(player);
-    return `
-      <div class="player-card ${present ? 'present' : 'absent'}" data-player="${player}">
-        ${present ? '<div class="checkmark">✓</div>' : ''}
-        <div class="name">${player}</div>
-      </div>
-    `;
-  }).join('');
+  if (ROSTER.length === 0) {
+    grid.innerHTML = '<div class="roster-empty">No players yet — tap the pencil to add your roster.</div>';
+  } else {
+    grid.innerHTML = ROSTER.map(player => {
+      const present = state.present.has(player);
+      return `
+        <div class="player-card ${present ? 'present' : 'absent'}" data-player="${player}">
+          ${present ? '<div class="checkmark">✓</div>' : ''}
+          <div class="name">${player}</div>
+        </div>
+      `;
+    }).join('');
+  }
 
   const cnt = state.present.size;
   const presentEl = document.getElementById('presentCount');
