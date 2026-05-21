@@ -3232,18 +3232,15 @@ async function cloudPull() {
   const url = pantryUrl();
   if (!url) return null;
   try {
-    // 5-second cap so a slow / unreachable Pantry can't keep the page
-    // hidden indefinitely on first load.
+    // 15-second cap — Pantry can be slow during peak load. Long enough
+    // that legitimate pulls finish; short enough that a truly broken
+    // network doesn't keep the user staring at a hidden page for too
+    // long. The safety timer in bootRouter is 16s, so this fits.
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 5000);
+    const timeout = setTimeout(() => controller.abort(), 15000);
     const r = await fetch(url, { method: 'GET', headers: { Accept: 'application/json' }, signal: controller.signal });
     clearTimeout(timeout);
-    if (r.status === 400 || r.status === 404) {
-      // Basket doesn't exist yet — that's fine, we just have nothing
-      // to pull. Mark the pull as completed so the first push can fly.
-      cloudPullCompleted = true;
-      return null;
-    }
+    if (r.status === 400 || r.status === 404) return null;
     if (!r.ok) throw new Error('HTTP ' + r.status);
     const wrap = await r.json();
     if (!wrap || typeof wrap !== 'object' || typeof wrap.payload !== 'string') return null;
@@ -3256,7 +3253,6 @@ async function cloudPull() {
         catch (e) { console.warn('[cloudPull] storage write failed for', k, e); }
       }
     }
-    cloudPullCompleted = true;
     return data;
   } catch (err) {
     console.warn('[cloudPull] failed:', err);
@@ -3264,19 +3260,9 @@ async function cloudPull() {
   }
 }
 
-// Once we've successfully pulled cloud state at least once, we trust
-// local is at least as fresh as cloud. Before that, we never push
-// — otherwise our fresh-boot local (which can be empty) would
-// overwrite a populated cloud basket.
-let cloudPullCompleted = false;
-
 async function doCloudPush() {
   const url = pantryUrl();
   if (!url) return;
-  if (!cloudPullCompleted) {
-    console.warn('[cloudPush] skipped: pull not completed yet');
-    return;
-  }
   const payload = {};
   for (let i = 0; i < localStorage.length; i++) {
     const k = localStorage.key(i);
@@ -3284,9 +3270,13 @@ async function doCloudPush() {
     try { payload[k] = JSON.parse(localStorage.getItem(k)); }
     catch (e) { payload[k] = localStorage.getItem(k); }
   }
-  // Safety net: never replace a populated cloud basket with an empty
-  // local snapshot. The classic "I just cleared my browser" scenario
-  // would otherwise wipe the team list for every other device.
+  // Never replace a populated cloud basket with an empty local
+  // snapshot. This single check handles every dangerous case:
+  //   - fresh device whose pull hasn't landed yet
+  //   - user wiped their browser
+  //   - pull errored / timed out
+  // A user can't legitimately have zero teams (Cardinals is seeded),
+  // so refusing the push here is always the right call.
   if (!payload.tm_teams || (Array.isArray(payload.tm_teams) && payload.tm_teams.length === 0)) {
     console.warn('[cloudPush] skipped: tm_teams is empty/missing — refusing to clobber cloud');
     return;
@@ -3877,16 +3867,19 @@ function bindDeleteTeam() {
 
 /* ============ Boot: route between manager and team app ============ */
 (async function bootRouter() {
-  // Safety net: if anything below throws or the network hangs past the
-  // 5-second cloudPull timeout, this fallback fires so the body never
-  // stays hidden.
+  // Safety net: bootRouter is synchronous-ish (the only async work is
+  // wiring up the background cloud pull). If something below throws,
+  // this fallback fires after 2.5s so the body never stays hidden.
+  // The background cloudPull has its own 15s timeout and doesn't gate
+  // the visibility flip — bootRouter's classification happens before
+  // pull resolves.
   const safetyShow = setTimeout(() => {
     if (!document.body.classList.contains('is-manager') &&
         !document.body.classList.contains('is-app')) {
       const fallback = (typeof CURRENT_TEAM_ID === 'number') ? 'is-app' : 'is-manager';
       document.body.classList.add(fallback);
     }
-  }, 6000);
+  }, 2500);
 
   // Modal exists in both views — bind its events unconditionally
   bindTeamManager();
