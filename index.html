@@ -148,7 +148,7 @@ body.is-manager > header,
 body.is-manager > nav.page-nav,
 body.is-manager > main,
 body.is-manager > footer,
-body.is-manager > .sponsor-strip,
+body.is-manager > .sponsor-strip-wrap,
 body.is-manager > .app-team-links { display: none !important; }
 body.is-manager #teamManagerView { display: block; }
 body.is-manager { padding-bottom: 0 !important; }
@@ -502,6 +502,17 @@ body.is-app > .app-team-links > .app-team-link + .app-team-link::before {
   letter-spacing: 0.04em;
 }
 
+.tm-visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
 .tm-logo-upload {
   display: flex;
   align-items: center;
@@ -551,6 +562,16 @@ body.is-app > .app-team-links > .app-team-link + .app-team-link::before {
   font-family: inherit;
 }
 .tm-logo-remove:hover { background: var(--gray-200); }
+
+.tm-sponsor-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.5rem;
+}
+.tm-sponsor-emoji-input {
+  font-size: 1.25rem;
+  text-align: center;
+}
 
 /* ============ Header ============ */
 header {
@@ -1965,6 +1986,14 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
   animation: coneFloat 3.5s ease-in-out infinite;
 }
 .sponsor-cone svg { width: 100%; height: auto; display: block; }
+.sponsor-emoji-large {
+  font-size: clamp(2.5rem, 8vw, 4rem);
+  line-height: 1;
+  margin: 0.5rem auto 0.75rem;
+  display: inline-block;
+  filter: drop-shadow(0 6px 14px rgba(255, 107, 157, 0.3));
+  animation: coneFloat 3.5s ease-in-out infinite;
+}
 @keyframes coneFloat {
   0%, 100% { transform: translateY(0) rotate(-3deg); }
   50% { transform: translateY(-6px) rotate(3deg); }
@@ -2179,6 +2208,12 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
   box-shadow: 0 24px 60px rgba(15, 23, 42, 0.25);
   animation: modalRise 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
+/* Team editor is bigger — has lots of fields */
+#tmNewTeamOverlay > .modal-card {
+  max-width: 600px;
+  max-height: 92vh;
+}
+#tmNewTeamOverlay .modal-body { padding: 1.5rem 1.5rem; }
 @keyframes modalRise { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
 .modal-header {
@@ -2705,10 +2740,14 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
         <span class="tm-field-label">League <span class="tm-field-hint">(optional)</span></span>
         <input type="text" id="tmNewTeamLeague" maxlength="60" placeholder="e.g. Fairfield Little League Nationals">
       </label>
-      <label class="tm-field">
+      <div class="tm-field">
         <span class="tm-field-label">Team Sponsor <span class="tm-field-hint">(optional)</span></span>
-        <input type="text" id="tmNewTeamSponsor" maxlength="60" placeholder="e.g. Tabitha's Ice Cream">
-      </label>
+        <div class="tm-sponsor-grid">
+          <input type="text" id="tmNewTeamSponsor" maxlength="60" placeholder="Sponsor name (e.g. Tabitha's Ice Cream)">
+          <input type="text" id="tmNewTeamSponsorSlogan" maxlength="80" placeholder="Slogan (e.g. Classic parlor feel · Treat the team)">
+          <input type="text" id="tmNewTeamSponsorEmoji" maxlength="4" placeholder="Emoji (e.g. 🍨)" class="tm-sponsor-emoji-input">
+        </div>
+      </div>
       <div class="tm-field">
         <span class="tm-field-label">Team Color</span>
         <div class="tm-color-swatches" id="tmColorSwatches">
@@ -2736,7 +2775,7 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
             <label class="tm-logo-pick" for="tmNewTeamLogoFile">
               <i class="fa-solid fa-image" aria-hidden="true"></i> Choose image
             </label>
-            <input type="file" id="tmNewTeamLogoFile" accept="image/*" hidden>
+            <input type="file" id="tmNewTeamLogoFile" accept="image/*" class="tm-visually-hidden">
             <button type="button" class="tm-logo-remove" id="tmNewTeamLogoRemove">Remove</button>
           </div>
         </div>
@@ -3088,14 +3127,22 @@ function teamHref(team) {
 
 // Background gradient presets — each team picks one (or none).
 const BACKGROUND_PRESETS = [
-  { id: 'sky',      label: 'Sky',      css: 'linear-gradient(180deg, #98effb 0%, #BFF4FB 35%, #98effb 75%, #7BD6E8 100%)' },
-  { id: 'sunset',   label: 'Sunset',   css: 'linear-gradient(180deg, #FFE4B5 0%, #FFB991 50%, #FF8B6E 100%)' },
-  { id: 'mint',     label: 'Mint',     css: 'linear-gradient(180deg, #D4F4DD 0%, #B8E0D2 100%)' },
-  { id: 'lavender', label: 'Lavender', css: 'linear-gradient(180deg, #E9D5FF 0%, #D8B4FE 100%)' },
-  { id: 'peach',    label: 'Peach',    css: 'linear-gradient(180deg, #FFE5D9 0%, #FFCAB1 100%)' },
-  { id: 'ocean',    label: 'Ocean',    css: 'linear-gradient(180deg, #A2D5F2 0%, #6FB1D2 50%, #4A90B8 100%)' },
-  { id: 'meadow',   label: 'Meadow',   css: 'linear-gradient(180deg, #DCFCE7 0%, #BBF7D0 50%, #86EFAC 100%)' },
-  { id: 'night',    label: 'Night',    css: 'linear-gradient(180deg, #1E293B 0%, #334155 50%, #475569 100%)' },
+  { id: 'sky',       label: 'Sky',       css: 'linear-gradient(180deg, #98effb 0%, #BFF4FB 35%, #98effb 75%, #7BD6E8 100%)' },
+  { id: 'sunset',    label: 'Sunset',    css: 'linear-gradient(180deg, #FFE4B5 0%, #FFB991 50%, #FF8B6E 100%)' },
+  { id: 'mint',      label: 'Mint',      css: 'linear-gradient(180deg, #D4F4DD 0%, #B8E0D2 100%)' },
+  { id: 'lavender',  label: 'Lavender',  css: 'linear-gradient(180deg, #E9D5FF 0%, #D8B4FE 100%)' },
+  { id: 'peach',     label: 'Peach',     css: 'linear-gradient(180deg, #FFE5D9 0%, #FFCAB1 100%)' },
+  { id: 'ocean',     label: 'Ocean',     css: 'linear-gradient(180deg, #A2D5F2 0%, #6FB1D2 50%, #4A90B8 100%)' },
+  { id: 'meadow',    label: 'Meadow',    css: 'linear-gradient(180deg, #DCFCE7 0%, #BBF7D0 50%, #86EFAC 100%)' },
+  { id: 'night',     label: 'Night',     css: 'linear-gradient(180deg, #1E293B 0%, #334155 50%, #475569 100%)' },
+  { id: 'white',     label: 'White',     css: 'linear-gradient(180deg, #FFFFFF 0%, #F5F5F4 100%)' },
+  { id: 'cream',     label: 'Cream',     css: 'linear-gradient(180deg, #FFFBEB 0%, #FEF3C7 100%)' },
+  { id: 'rose',      label: 'Rose',      css: 'linear-gradient(180deg, #FFE4E6 0%, #FECDD3 50%, #FDA4AF 100%)' },
+  { id: 'sand',      label: 'Sand',      css: 'linear-gradient(180deg, #FEF3E2 0%, #FDE4B7 50%, #F5C97E 100%)' },
+  { id: 'sage',      label: 'Sage',      css: 'linear-gradient(180deg, #ECFCCB 0%, #D9F99D 100%)' },
+  { id: 'fog',       label: 'Fog',       css: 'linear-gradient(180deg, #F8FAFC 0%, #E2E8F0 100%)' },
+  { id: 'berry',     label: 'Berry',     css: 'linear-gradient(180deg, #FCE7F3 0%, #F9A8D4 50%, #EC4899 100%)' },
+  { id: 'ice',       label: 'Ice',       css: 'linear-gradient(180deg, #F0F9FF 0%, #E0F2FE 100%)' },
 ];
 function getBackgroundCss(id) {
   const p = BACKGROUND_PRESETS.find(x => x.id === id);
@@ -3227,6 +3274,8 @@ function openNewTeamModal(teamToEdit) {
     document.getElementById('tmNewTeamSport').value = teamToEdit.sport || 'teeball';
     document.getElementById('tmNewTeamLeague').value = teamToEdit.league || '';
     document.getElementById('tmNewTeamSponsor').value = teamToEdit.sponsor || '';
+    document.getElementById('tmNewTeamSponsorSlogan').value = teamToEdit.sponsorSlogan || '';
+    document.getElementById('tmNewTeamSponsorEmoji').value = teamToEdit.sponsorEmoji || '';
     setLogoPreview(teamToEdit.logo || '');
     document.querySelectorAll('.tm-swatch').forEach(s => s.classList.toggle('active', s.dataset.color === (teamToEdit.color || '#C41E3A')));
     renderBgSwatches(teamToEdit.background || 'sky');
@@ -3238,6 +3287,8 @@ function openNewTeamModal(teamToEdit) {
     document.getElementById('tmNewTeamSport').value = 'teeball';
     document.getElementById('tmNewTeamLeague').value = '';
     document.getElementById('tmNewTeamSponsor').value = '';
+    document.getElementById('tmNewTeamSponsorSlogan').value = '';
+    document.getElementById('tmNewTeamSponsorEmoji').value = '';
     setLogoPreview('');
     document.querySelectorAll('.tm-swatch').forEach(s => s.classList.toggle('active', s.dataset.color === '#C41E3A'));
     renderBgSwatches('sky');
@@ -3266,6 +3317,8 @@ function saveNewTeam() {
   const sport = document.getElementById('tmNewTeamSport').value;
   const league = document.getElementById('tmNewTeamLeague').value.trim() || null;
   const sponsor = document.getElementById('tmNewTeamSponsor').value.trim() || null;
+  const sponsorSlogan = document.getElementById('tmNewTeamSponsorSlogan').value.trim() || null;
+  const sponsorEmoji = document.getElementById('tmNewTeamSponsorEmoji').value.trim() || null;
   const color = selectedSwatch();
   const background = selectedBackground();
   const logo = document.getElementById('tmNewTeamLogo').value.trim() || null;
@@ -3273,7 +3326,7 @@ function saveNewTeam() {
   if (editingTeamId !== null) {
     const idx = teams.findIndex(t => t.id === editingTeamId);
     if (idx >= 0) {
-      teams[idx] = Object.assign({}, teams[idx], { name, sport, league, sponsor, color, background, logo });
+      teams[idx] = Object.assign({}, teams[idx], { name, sport, league, sponsor, sponsorSlogan, sponsorEmoji, color, background, logo });
     }
     saveTeams(teams);
     const editedId = editingTeamId;
@@ -3283,7 +3336,7 @@ function saveNewTeam() {
     return;
   }
   const id = nextTeamId(teams);
-  const newTeam = { id, name, sport, league, sponsor, color, background, logo };
+  const newTeam = { id, name, sport, league, sponsor, sponsorSlogan, sponsorEmoji, color, background, logo };
   teams.push(newTeam);
   saveTeams(teams);
   closeNewTeamModal();
@@ -3464,9 +3517,6 @@ function bindDeleteTeam() {
         if (teamLogoEl) teamLogoEl.style.display = 'none';
         if (footerLogoEl) footerLogoEl.style.display = 'none';
       }
-      // Hide the hardcoded Tabitha's pink footer card — it's Lil-Cardinals-specific
-      const tabithaCard = document.querySelector('.footer-sponsor');
-      if (tabithaCard) tabithaCard.style.display = 'none';
     }
     // League + sponsor apply to ALL teams (including Team 1 if user edited them)
     if (team.league) {
@@ -3481,8 +3531,40 @@ function bindDeleteTeam() {
       const sponsorLine = document.querySelector('.brand-text .header-sponsor');
       if (sponsorLine) sponsorLine.style.display = 'none';
     }
+    applySponsorBlock(team);
   }
 })();
+
+// Rebuild the .footer-sponsor card from team data. Team 1's hardcoded
+// Tabitha's card (with the SVG cone + dual locations) is preserved unless
+// the coach has entered explicit sponsor overrides. Other teams render a
+// generic version with an animated emoji standing in for the cone.
+function applySponsorBlock(team) {
+  const block = document.querySelector('.footer-sponsor');
+  if (!block) return;
+  const isTeam1 = team.id === 1;
+  const hasOverrides = !!(team.sponsorSlogan || team.sponsorEmoji);
+  const usingTabithasDefault = isTeam1 && !hasOverrides && (!team.sponsor || team.sponsor === "Tabitha's Ice Cream");
+  if (usingTabithasDefault) {
+    // Keep the baked-in Tabitha's HTML untouched.
+    return;
+  }
+  if (!team.sponsor) {
+    // No sponsor info at all — hide the card.
+    block.style.display = 'none';
+    return;
+  }
+  const emoji = team.sponsorEmoji || '⭐';
+  const safeEmoji = escapeHtml(emoji);
+  const safeName = escapeHtml(team.sponsor);
+  const slogan = team.sponsorSlogan ? `<div class="sponsor-tagline">${escapeHtml(team.sponsorSlogan)}</div>` : '';
+  block.innerHTML = `
+    <div class="sponsor-title">${safeEmoji} Today's game brought to you by ${safeEmoji}</div>
+    <div class="sponsor-emoji-large" aria-hidden="true">${safeEmoji}</div>
+    <div class="sponsor-name">${safeName}</div>
+    ${slogan}
+  `;
+}
 
 const DEFAULT_ROSTER = ['Caleb', 'Gabe', 'Hart', 'Hudson', 'Joel', 'Julian', 'Leon', 'Miles', 'Parker', 'Asher'];
 function loadRoster() {
