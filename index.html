@@ -2336,13 +2336,55 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
 }
 .roster-edit-row {
   display: grid;
-  grid-template-columns: auto 1fr auto auto;
+  grid-template-columns: auto 1fr auto auto auto;
   align-items: center;
   gap: 0.5rem;
   padding: 0.45rem 0.625rem;
   background: var(--gray-50);
   border: 1.5px solid var(--gray-200);
   border-radius: 12px;
+}
+.roster-edit-row .cap-stepper {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+  background: white;
+  border: 1px solid var(--gray-200);
+  border-radius: 999px;
+  padding: 0.1rem 0.15rem;
+}
+.roster-edit-row .cap-stepper button {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--gray-100);
+  color: var(--navy);
+  border: none;
+  font-size: 0.85rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  line-height: 1;
+}
+.roster-edit-row .cap-stepper button:disabled { opacity: 0.3; cursor: not-allowed; }
+.roster-edit-row .cap-value {
+  min-width: 1.6em;
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--navy);
+  font-variant-numeric: tabular-nums;
+}
+.roster-edit-row .cap-value.is-zero { color: var(--gray-500); }
+.roster-edit-row .cap-label {
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gray-500);
+  margin-right: 0.15rem;
 }
 .roster-edit-row {
   touch-action: none;
@@ -4018,16 +4060,10 @@ const OUTFIELD = ['LF', 'LCF', 'CF', 'RCF', 'RF'];
 // Default position set for new teams = current T-ball ten.
 const DEFAULT_POSITIONS = ['P1', 'P2', '1B', '2B', '3B', 'SS', 'LF', 'LCF', 'CF', 'RF'];
 
-// Per-player constraints — e.g. allowedPositions limits where a kid can play.
-const PLAYER_CONSTRAINTS = {
-  Asher: { allowedPositions: ['LF', 'LCF', 'CF', 'RF'] }
-};
-
-function canPlay(player, pos) {
-  const c = PLAYER_CONSTRAINTS[player];
-  if (!c || !c.allowedPositions) return true;
-  return c.allowedPositions.includes(pos);
-}
+// Per-player constraints used to live here (Asher was outfield-only).
+// We removed the hardcoded rule in favor of a per-player "max premium
+// positions per game" cap that the coach edits in the roster modal.
+function canPlay(player, pos) { return true; }
 
 const COACH_QUOTES = [
   // Silly T-ball reality
@@ -4130,6 +4166,23 @@ function clearManualRotation() {
   state.manualRotation = {};
   localStorage.removeItem(tk('cardinals_manual_rotation_v1'));
 }
+
+// Per-player premium-position cap. Each player can be assigned up to
+// DEFAULT_PREMIUM_CAP premium spots (Pitcher / Catcher / 1B / SS /
+// 2B / 3B) across all innings unless the coach overrides it in the
+// roster modal. A cap of 0 means "outfield only".
+const DEFAULT_PREMIUM_CAP = 2;
+function loadPremiumCaps() {
+  try {
+    const raw = localStorage.getItem(tk('cardinals_premium_caps_v1'));
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    return (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) ? parsed : {};
+  } catch (e) { return {}; }
+}
+function savePremiumCaps(caps) {
+  try { localStorage.setItem(tk('cardinals_premium_caps_v1'), JSON.stringify(caps)); } catch (e) {}
+}
 // Clean up stale key from the old toggle days
 localStorage.removeItem('cardinals_view');
 document.body.dataset.page = state.page;
@@ -4187,6 +4240,7 @@ function generateRotation(presentList, opts) {
     ? team.positions
     : null;
   const salt = (opts && opts.salt) || 0;
+  const premiumCaps = loadPremiumCaps();
   if (N < 4) return { rotation: [], isStatic: false, benchPerInning: 0 };
 
   // If team has explicit positions, use them (filtered to known keys).
@@ -4243,34 +4297,37 @@ function generateRotation(presentList, opts) {
     const assign = { _bench: [...benched] };
     const used = new Set();
 
-    // First pass: place constrained players (e.g. outfield-only) in their slots so they don't get crowded out.
-    const constrainedPlayers = fielders.filter(p => PLAYER_CONSTRAINTS[p] && PLAYER_CONSTRAINTS[p].allowedPositions);
-    for (const player of constrainedPlayers) {
-      const allowed = PLAYER_CONSTRAINTS[player].allowedPositions
-        .filter(pos => positions.includes(pos) && !assign[pos]);
-      if (!allowed.length) continue;
-      // Prefer positions this player hasn't played yet.
-      const fresh = allowed.filter(p => !stats[player].positions.has(p));
-      const choices = fresh.length ? fresh : allowed;
-      const chosen = choices[0];
-      assign[chosen] = player;
-      used.add(player);
-      stats[player].positions.add(chosen);
-      if (OUTFIELD.includes(chosen)) stats[player].outfieldCount++;
-      if (PREMIUM.includes(chosen)) stats[player].premiumCount++;
-    }
-
-    // Second pass: fill remaining positions with unconstrained fielders.
+    // Fill positions. For premium positions, skip players who've
+    // already hit their per-player premium cap. A cap of 0 means
+    // "never play premium" and is enforced even in the relax-on-
+    // shortage fallback below.
     for (const pos of positions) {
       if (assign[pos]) continue;
       const isPrem = PREMIUM.includes(pos);
       const isOut = OUTFIELD.includes(pos);
 
+      function capFor(p) {
+        return (typeof premiumCaps[p] === 'number') ? premiumCaps[p] : DEFAULT_PREMIUM_CAP;
+      }
+      function permanentlyNoPrem(p) { return isPrem && capFor(p) === 0; }
+      function atPremiumCap(p) {
+        if (!isPrem) return false;
+        const cap = capFor(p);
+        if (cap === 0) return true;
+        return stats[p].premiumCount >= cap;
+      }
+
       let eligible = fielders.filter(p =>
-        !used.has(p) && canPlay(p, pos) && !stats[p].positions.has(pos)
+        !used.has(p) && !stats[p].positions.has(pos) && !atPremiumCap(p)
       );
       if (!eligible.length) {
-        eligible = fielders.filter(p => !used.has(p) && canPlay(p, pos));
+        eligible = fielders.filter(p => !used.has(p) && !atPremiumCap(p));
+      }
+      // Last resort if everyone with capacity has been placed — relax
+      // the soft cap, but still respect cap=0 (those players never
+      // play premium regardless of slot shortage).
+      if (!eligible.length) {
+        eligible = fielders.filter(p => !used.has(p) && !permanentlyNoPrem(p));
       }
       if (!eligible.length) continue;
 
@@ -4947,9 +5004,11 @@ function playCardinalCall() {
   if (!overlay || !editBtn) return;
 
   let working = [];
+  let workingCaps = {};
 
   function open(focusAdd) {
     working = ROSTER.slice();
+    workingCaps = Object.assign({}, loadPremiumCaps());
     renderList();
     overlay.hidden = false;
     if (focusAdd) setTimeout(() => addInput?.focus(), 80);
@@ -4958,18 +5017,31 @@ function playCardinalCall() {
     overlay.hidden = true;
     addInput.value = '';
   }
+  function capFor(name) {
+    return (typeof workingCaps[name] === 'number') ? workingCaps[name] : DEFAULT_PREMIUM_CAP;
+  }
   function renderList() {
-    listEl.innerHTML = working.map((name, i) => `
+    listEl.innerHTML = working.map((name, i) => {
+      const cap = capFor(name);
+      const safeName = name.replace(/"/g, '&quot;');
+      return `
       <div class="roster-edit-row" data-i="${i}">
         <span class="drag-grip" aria-hidden="true">⋮⋮</span>
-        <input class="roster-edit-name" value="${name.replace(/"/g, '&quot;')}" data-i="${i}" maxlength="20">
+        <input class="roster-edit-name" value="${safeName}" data-i="${i}" maxlength="20">
+        <div class="cap-stepper" title="Max premium positions per game">
+          <span class="cap-label" aria-hidden="true">Prem</span>
+          <button data-action="cap-dec" data-i="${i}" ${cap <= 0 ? 'disabled' : ''} aria-label="Decrease premium cap">−</button>
+          <span class="cap-value${cap === 0 ? ' is-zero' : ''}">${cap}</span>
+          <button data-action="cap-inc" data-i="${i}" ${cap >= 6 ? 'disabled' : ''} aria-label="Increase premium cap">+</button>
+        </div>
         <div class="roster-edit-move">
           <button data-action="up" data-i="${i}" ${i === 0 ? 'disabled' : ''} aria-label="Move up">▲</button>
           <button data-action="down" data-i="${i}" ${i === working.length - 1 ? 'disabled' : ''} aria-label="Move down">▼</button>
         </div>
         <button class="roster-edit-delete" data-action="delete" data-i="${i}" aria-label="Remove">🗑</button>
       </div>
-    `).join('');
+    `;
+    }).join('');
   }
   function addPlayer() {
     const name = addInput.value.trim();
@@ -4999,7 +5071,17 @@ function playCardinalCall() {
     } else if (action === 'down' && i < working.length - 1) {
       [working[i + 1], working[i]] = [working[i], working[i + 1]];
     } else if (action === 'delete') {
+      const removed = working[i];
       working.splice(i, 1);
+      delete workingCaps[removed];
+    } else if (action === 'cap-inc') {
+      const name = working[i];
+      const cur = capFor(name);
+      workingCaps[name] = Math.min(6, cur + 1);
+    } else if (action === 'cap-dec') {
+      const name = working[i];
+      const cur = capFor(name);
+      workingCaps[name] = Math.max(0, cur - 1);
     }
     renderList();
   });
@@ -5072,6 +5154,15 @@ function playCardinalCall() {
       final.push(n);
     }
     saveRoster(final);
+    // Save premium caps for players still on the roster (drop any
+    // entries for deleted players so we don't accumulate cruft).
+    const cleanedCaps = {};
+    for (const name of final) {
+      if (typeof workingCaps[name] === 'number' && workingCaps[name] !== DEFAULT_PREMIUM_CAP) {
+        cleanedCaps[name] = workingCaps[name];
+      }
+    }
+    savePremiumCaps(cleanedCaps);
     // Trim state.present to only include players still on the roster
     state.present = new Set([...state.present].filter(p => final.includes(p)));
     // Auto-add brand-new players to present
