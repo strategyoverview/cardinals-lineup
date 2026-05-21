@@ -3113,7 +3113,14 @@ const PANTRY_BASKET = 'tm_state';
 // a different ID into the Sync modal; that override is stored locally.
 const DEFAULT_PANTRY_ID = 'a53410b0-2cad-40be-9743-5c64695d2c2e';
 const SYNC_PREFIXES = ['tm_teams', 'cardinals_', 'tm_t'];
+// Cleanup-only keys we delete on every boot. They start with a synced
+// prefix but they don't represent user data, so we must NOT trigger a
+// cloud push when they're touched — that push would race with the
+// boot-time cloudPull and could overwrite cloud's fresh data with
+// our stale local snapshot.
+const NO_SYNC_KEYS = new Set(['cardinals_view', 'cardinals_innings']);
 function shouldSyncKey(key) {
+  if (NO_SYNC_KEYS.has(key)) return false;
   return SYNC_PREFIXES.some(p => key === p || key.startsWith(p));
 }
 function getPantryId() {
@@ -3807,17 +3814,16 @@ function bindDeleteTeam() {
         } else if (typeof CURRENT_TEAM_ID === 'number') {
           // Team view: in-memory ROSTER / state were captured before
           // the pull landed. Re-read them from localStorage and
-          // re-render so phone-edited roster shows up on desktop.
+          // re-apply every team setting (background gradient, logo,
+          // color, name, sponsor) so a remote edit shows up without
+          // a second refresh.
           try {
             if (typeof loadRoster === 'function') ROSTER = loadRoster();
             if (typeof loadPresent === 'function') state.present = loadPresent();
             if (typeof loadManualRotation === 'function') state.manualRotation = loadManualRotation();
-            // Also re-apply the team object's name / logo / colors in
-            // case those changed too.
             const team = getTeamById(CURRENT_TEAM_ID);
-            if (team && typeof applyTeamLogo === 'function') applyTeamLogo();
+            if (team && typeof applyTeamConfig === 'function') applyTeamConfig(team);
             if (typeof render === 'function') render();
-            if (typeof applySponsorBlock === 'function' && team) applySponsorBlock(team);
           } catch (e) { console.warn('[cloudPull] refresh failed:', e); }
         }
       }).catch(() => {});
@@ -3847,79 +3853,88 @@ function bindDeleteTeam() {
   // We have a team id — show the existing app. Apply team config.
   document.body.classList.add('is-app');
   const team = getTeamById(CURRENT_TEAM_ID);
-  if (team) {
-    // Page title reflects the active team for every team (including #1).
-    document.title = `${team.name} — Game Day`;
-    // Apply per-team background gradient (default 'sky' matches the original look).
-    const bgCss = getBackgroundCss(team.background || 'sky');
-    if (bgCss) document.body.style.background = bgCss;
-    const tint = getBackgroundTint(team.background || 'sky');
-    if (tint) document.documentElement.style.setProperty('--team-tint', tint);
-    // Per-team favicon: use the team's logo if set.
-    if (team.logo) {
-      ['faviconPng', 'faviconSvg', 'faviconShortcut', 'faviconApple'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.href = team.logo;
-      });
-    }
-    // iOS Home Screen integration — the shortcut label uses the team name,
-    // the status-bar / chrome tint uses the team color.
-    const appTitleMeta = document.getElementById('appleAppTitle');
-    if (appTitleMeta) appTitleMeta.setAttribute('content', team.name || 'Team Manager');
-    const themeMeta = document.getElementById('themeColorMeta');
-    if (themeMeta && team.color) themeMeta.setAttribute('content', team.color);
-    // Apply name / color / logo overrides for ALL teams (including team 1)
-    // so that edits in the Edit Team modal visibly update the app.
-    if (team.color) {
-      document.documentElement.style.setProperty('--cardinal-red', team.color);
-    }
-    const h1 = document.querySelector('.brand-text h1');
-    if (h1) {
-      const words = (team.name || '').trim().split(/\s+/);
-      if (words.length >= 2) {
-        const half = Math.ceil(words.length / 2);
-        h1.innerHTML = `<span>${words.slice(0, half).join(' ').toUpperCase()}</span><span>${words.slice(half).join(' ').toUpperCase()}</span>`;
-      } else {
-        h1.innerHTML = `<span>${(team.name || '').toUpperCase()}</span>`;
-      }
-    }
-    const teamLogoEl = document.getElementById('teamLogo');
-    const footerLogoEl = document.getElementById('footerLogo');
-    const fb = document.getElementById('teamLogoFallback');
-    if (team.logo) {
-      if (teamLogoEl) {
-        teamLogoEl.style.backgroundImage = `url('${team.logo}')`;
-        teamLogoEl.classList.add('has-photo');
-        if (fb) fb.style.display = 'none';
-      }
-      if (footerLogoEl) footerLogoEl.style.backgroundImage = `url('${team.logo}')`;
-    } else {
-      if (teamLogoEl) teamLogoEl.style.display = 'none';
-      if (footerLogoEl) footerLogoEl.style.display = 'none';
-    }
-    // League + sponsor apply to ALL teams (including Team 1 if user edited them)
-    if (team.league) {
-      const sub = document.querySelector('.brand-text .subtitle');
-      if (sub) sub.textContent = team.league;
-    }
-    if (team.sponsor) {
-      const sponsorLine = document.querySelector('.brand-text .header-sponsor');
-      if (sponsorLine) {
-        if (team.sponsorUrl) {
-          sponsorLine.innerHTML = 'Sponsored by <a href="' + escapeHtml(team.sponsorUrl) + '" class="header-sponsor-link">' + escapeHtml(team.sponsor) + '</a>';
-        } else {
-          sponsorLine.textContent = 'Sponsored by ' + team.sponsor;
-        }
-      }
-    } else if (CURRENT_TEAM_ID !== 1) {
-      // Non-team-1 teams without a sponsor: hide the line entirely.
-      const sponsorLine = document.querySelector('.brand-text .header-sponsor');
-      if (sponsorLine) sponsorLine.style.display = 'none';
-    }
-    applySponsorBlock(team);
-  }
+  if (team) applyTeamConfig(team);
   clearTimeout(safetyShow);
 })();
+
+// Push every team-level setting (name, color, background, logo,
+// sponsor, page chrome) onto the DOM. Called once at boot and again
+// after cloudPull so a remote edit (e.g. background changed on the
+// phone) actually visually updates on the desktop without needing a
+// second refresh.
+function applyTeamConfig(team) {
+  if (!team) return;
+  document.title = `${team.name} — Game Day`;
+  // Background gradient
+  const bgCss = getBackgroundCss(team.background || 'sky');
+  if (bgCss) document.body.style.background = bgCss;
+  const tint = getBackgroundTint(team.background || 'sky');
+  if (tint) document.documentElement.style.setProperty('--team-tint', tint);
+  // Favicon / Home Screen icon
+  if (team.logo) {
+    ['faviconPng', 'faviconSvg', 'faviconShortcut', 'faviconApple'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.href = team.logo;
+    });
+  }
+  const appTitleMeta = document.getElementById('appleAppTitle');
+  if (appTitleMeta) appTitleMeta.setAttribute('content', team.name || 'Team Manager');
+  const themeMeta = document.getElementById('themeColorMeta');
+  if (themeMeta && team.color) themeMeta.setAttribute('content', team.color);
+  // Brand color CSS variable
+  if (team.color) {
+    document.documentElement.style.setProperty('--cardinal-red', team.color);
+  }
+  // Header H1 — two-line split for two-word names
+  const h1 = document.querySelector('.brand-text h1');
+  if (h1) {
+    const words = (team.name || '').trim().split(/\s+/);
+    if (words.length >= 2) {
+      const half = Math.ceil(words.length / 2);
+      h1.innerHTML = `<span>${words.slice(0, half).join(' ').toUpperCase()}</span><span>${words.slice(half).join(' ').toUpperCase()}</span>`;
+    } else {
+      h1.innerHTML = `<span>${(team.name || '').toUpperCase()}</span>`;
+    }
+  }
+  // Header + footer logo
+  const teamLogoEl = document.getElementById('teamLogo');
+  const footerLogoEl = document.getElementById('footerLogo');
+  const fb = document.getElementById('teamLogoFallback');
+  if (team.logo) {
+    if (teamLogoEl) {
+      teamLogoEl.style.backgroundImage = `url('${team.logo}')`;
+      teamLogoEl.classList.add('has-photo');
+      teamLogoEl.style.display = '';
+      if (fb) fb.style.display = 'none';
+    }
+    if (footerLogoEl) {
+      footerLogoEl.style.backgroundImage = `url('${team.logo}')`;
+      footerLogoEl.style.display = '';
+    }
+  } else {
+    if (teamLogoEl) teamLogoEl.style.display = 'none';
+    if (footerLogoEl) footerLogoEl.style.display = 'none';
+  }
+  // Subtitle (league) + header sponsor line
+  if (team.league) {
+    const sub = document.querySelector('.brand-text .subtitle');
+    if (sub) sub.textContent = team.league;
+  }
+  const sponsorLine = document.querySelector('.brand-text .header-sponsor');
+  if (sponsorLine) {
+    if (team.sponsor) {
+      sponsorLine.style.display = '';
+      if (team.sponsorUrl) {
+        sponsorLine.innerHTML = 'Sponsored by <a href="' + escapeHtml(team.sponsorUrl) + '" class="header-sponsor-link">' + escapeHtml(team.sponsor) + '</a>';
+      } else {
+        sponsorLine.textContent = 'Sponsored by ' + team.sponsor;
+      }
+    } else if (CURRENT_TEAM_ID !== 1) {
+      sponsorLine.style.display = 'none';
+    }
+  }
+  applySponsorBlock(team);
+}
 
 // Rebuild the .footer-sponsor card from team data. Team 1's hardcoded
 // Tabitha's card (with the SVG cone + dual locations) is preserved unless
