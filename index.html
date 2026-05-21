@@ -9,10 +9,10 @@
 <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
 <meta name="googlebot" content="noindex, nofollow">
 <meta name="referrer" content="no-referrer">
-<link rel="icon" type="image/png" href="LilCardinalFavicon.png?v=2" sizes="any">
-<link rel="icon" type="image/svg+xml" href="logo.svg?v=2">
-<link rel="shortcut icon" href="LilCardinalFavicon.png?v=2">
-<link rel="apple-touch-icon" href="LilCardinalFavicon.png?v=2">
+<link rel="icon" type="image/png" href="LilCardinalFavicon.png?v=2" sizes="any" id="faviconPng">
+<link rel="icon" type="image/svg+xml" href="logo.svg?v=2" id="faviconSvg">
+<link rel="shortcut icon" href="LilCardinalFavicon.png?v=2" id="faviconShortcut">
+<link rel="apple-touch-icon" href="LilCardinalFavicon.png?v=2" id="faviconApple">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap" rel="stylesheet">
@@ -91,35 +91,47 @@ button { font-family: inherit; }
   flex-direction: column;
   align-items: center;
   gap: 0.15rem;
-  background: white;
-  border: 1px solid rgba(10, 10, 10, 0.08);
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.7);
   border-radius: 999px;
-  padding: 0.55rem 1.25rem;
+  padding: 0.6rem 1.35rem;
   text-decoration: none;
   color: #0A0A0A;
   font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-  box-shadow: 0 2px 8px rgba(10, 10, 10, 0.08);
-  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.85) inset,
+    0 0 0 0.5px rgba(10, 10, 10, 0.04),
+    0 4px 14px rgba(10, 10, 10, 0.06);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
   text-align: center;
-  line-height: 1.15;
+  line-height: 1.2;
 }
 .sponsor-pill:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 14px rgba(10, 10, 10, 0.12);
+  background: rgba(255, 255, 255, 0.6);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.85) inset,
+    0 0 0 0.5px rgba(10, 10, 10, 0.06),
+    0 8px 22px rgba(10, 10, 10, 0.1);
 }
 .sponsor-pill-line {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
-  font-size: 0.78rem;
-  font-weight: 700;
+  gap: 0.4rem;
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: #0A0A0A;
 }
 .sponsor-pill-logo { display: inline-flex; align-items: center; line-height: 0; }
-.sponsor-pill-logo img { height: 14px; width: auto; }
+.sponsor-pill-logo img { height: 13px; width: auto; }
 .sponsor-pill-tagline {
-  font-size: 0.7rem;
-  font-weight: 600;
+  font-size: 0.66rem;
+  font-weight: 500;
   color: #525866;
+  letter-spacing: 0.01em;
 }
 @media (min-width: 600px) {
   .sponsor-pill-line { font-size: 0.92rem; }
@@ -381,8 +393,8 @@ body.is-app > .app-team-links {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 1.25rem;
-  padding: 0.75rem 1rem;
+  gap: 0.875rem;
+  padding: 0.875rem 1rem 0.5rem;
   padding-left: max(1rem, env(safe-area-inset-left));
   padding-right: max(1rem, env(safe-area-inset-right));
   flex-wrap: nowrap;
@@ -391,17 +403,30 @@ body.is-app > .app-team-links {
 .app-team-link {
   background: none;
   border: none;
-  padding: 0.25rem 0;
-  color: var(--navy-dark);
+  padding: 0.125rem 0;
+  color: #0A0A0A;
   text-decoration: none;
-  font-weight: 700;
-  font-size: 0.92rem;
+  font-weight: 500;
+  font-size: 0.88rem;
+  letter-spacing: 0.01em;
   cursor: pointer;
   font-family: inherit;
   box-shadow: none;
+  opacity: 0.78;
+  transition: opacity 0.18s ease;
 }
-.app-team-link:hover { text-decoration: underline; }
+.app-team-link:hover { opacity: 1; text-decoration: underline; text-underline-offset: 3px; }
 .app-team-link i { display: none; }
+.app-team-link-danger { color: #0A0A0A !important; }
+.app-team-link-danger:hover { color: #B91C1C !important; opacity: 1; }
+/* Bullet separators between links */
+body.is-app > .app-team-links > .app-team-link + .app-team-link::before {
+  content: '·';
+  display: inline-block;
+  margin-right: 0.875rem;
+  color: #0A0A0A;
+  opacity: 0.35;
+}
 
 /* Create Team modal field styling */
 .tm-field {
@@ -476,6 +501,56 @@ body.is-app > .app-team-links {
   color: #525866;
   letter-spacing: 0.04em;
 }
+
+.tm-logo-upload {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+}
+.tm-logo-preview {
+  width: 64px;
+  height: 64px;
+  border-radius: 14px;
+  background: #F4F4F5;
+  border: 1.5px dashed #D4D4D8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-size: cover;
+  background-position: center;
+  flex-shrink: 0;
+}
+.tm-logo-preview.has-image { border-style: solid; border-color: rgba(10, 10, 10, 0.12); background-color: white; }
+.tm-logo-preview.has-image .tm-logo-preview-fallback { display: none; }
+.tm-logo-preview-fallback { font-size: 0.7rem; color: #9CA3AF; font-weight: 600; }
+.tm-logo-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.tm-logo-pick {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--cardinal-red);
+  color: white;
+  padding: 0.5rem 0.875rem;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+}
+.tm-logo-pick:hover { background: var(--cardinal-red-dark); }
+.tm-logo-remove {
+  background: var(--gray-100);
+  color: var(--navy);
+  padding: 0.5rem 0.875rem;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+}
+.tm-logo-remove:hover { background: var(--gray-200); }
 
 /* ============ Header ============ */
 header {
@@ -1807,6 +1882,13 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
   color: var(--navy-dark);
   text-align: center;
 }
+.fairfield-icon {
+  width: 0.95em;
+  height: 1.2em;
+  vertical-align: -0.25em;
+  margin-right: 0.45em;
+  color: var(--cardinal-red);
+}
 .footer-feedback {
   margin-top: 2rem;
   padding: 1.25rem 1.5rem;
@@ -2305,10 +2387,6 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
 }
 .tm-delete-input:focus { border-color: #DC2626; }
 
-/* Danger variant of the bottom team-links bar */
-.app-team-link-danger { color: #B91C1C !important; }
-.app-team-link-danger i { color: #DC2626 !important; }
-.app-team-link-danger:hover { background: rgba(254, 226, 226, 0.85) !important; }
 
 /* ============ Outs counter ============ */
 .outs-section {
@@ -2648,10 +2726,22 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
         <span class="tm-field-label">Background</span>
         <div class="tm-bg-swatches" id="tmBgSwatches"></div>
       </div>
-      <label class="tm-field">
-        <span class="tm-field-label">Logo URL <span class="tm-field-hint">(optional — leave blank to show initial only)</span></span>
-        <input type="url" id="tmNewTeamLogo" placeholder="https://...">
-      </label>
+      <div class="tm-field">
+        <span class="tm-field-label">Team Logo <span class="tm-field-hint">(optional)</span></span>
+        <div class="tm-logo-upload">
+          <div class="tm-logo-preview" id="tmLogoPreview" aria-hidden="true">
+            <span class="tm-logo-preview-fallback">No logo</span>
+          </div>
+          <div class="tm-logo-actions">
+            <label class="tm-logo-pick" for="tmNewTeamLogoFile">
+              <i class="fa-solid fa-image" aria-hidden="true"></i> Choose image
+            </label>
+            <input type="file" id="tmNewTeamLogoFile" accept="image/*" hidden>
+            <button type="button" class="tm-logo-remove" id="tmNewTeamLogoRemove">Remove</button>
+          </div>
+        </div>
+        <input type="hidden" id="tmNewTeamLogo">
+      </div>
     </div>
     <div class="modal-footer">
       <button class="modal-btn-secondary" id="tmNewTeamCancelBtn">Cancel</button>
@@ -2817,7 +2907,18 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
     <div class="sponsor-locations">Fairfield · Bridgeport, CT</div>
   </div>
 
-  <div class="footer-made">Made in Fairfield</div>
+  <div class="footer-made">
+    <svg class="fairfield-icon" viewBox="0 0 20 26" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M0 24 Q5 22 10 23 Q15 22 20 24 L20 26 L0 26 Z" fill="currentColor"/>
+      <path d="M7 23 L7 10 L13 10 L13 23 Z" fill="currentColor"/>
+      <rect x="9" y="14" width="2" height="2" fill="white" opacity="0.85"/>
+      <rect x="9" y="18" width="2" height="2" fill="white" opacity="0.85"/>
+      <rect x="6" y="7" width="8" height="3.5" fill="currentColor"/>
+      <path d="M6 7 L10 3 L14 7 Z" fill="currentColor"/>
+      <circle cx="10" cy="2" r="1" fill="currentColor"/>
+    </svg>
+    Made in Fairfield
+  </div>
 
   <div class="footer-feedback">
     <h4>Feedback</h4>
@@ -3100,6 +3201,20 @@ function renderBgSwatches(activeId) {
     </div>
   `).join('');
 }
+function setLogoPreview(src) {
+  const preview = document.getElementById('tmLogoPreview');
+  const hidden = document.getElementById('tmNewTeamLogo');
+  if (!preview || !hidden) return;
+  if (src) {
+    preview.style.backgroundImage = `url('${src.replace(/'/g, "\\'")}')`;
+    preview.classList.add('has-image');
+    hidden.value = src;
+  } else {
+    preview.style.backgroundImage = '';
+    preview.classList.remove('has-image');
+    hidden.value = '';
+  }
+}
 function openNewTeamModal(teamToEdit) {
   const overlay = document.getElementById('tmNewTeamOverlay');
   const title = document.getElementById('tmNewTeamTitle');
@@ -3112,7 +3227,7 @@ function openNewTeamModal(teamToEdit) {
     document.getElementById('tmNewTeamSport').value = teamToEdit.sport || 'teeball';
     document.getElementById('tmNewTeamLeague').value = teamToEdit.league || '';
     document.getElementById('tmNewTeamSponsor').value = teamToEdit.sponsor || '';
-    document.getElementById('tmNewTeamLogo').value = teamToEdit.logo || '';
+    setLogoPreview(teamToEdit.logo || '');
     document.querySelectorAll('.tm-swatch').forEach(s => s.classList.toggle('active', s.dataset.color === (teamToEdit.color || '#C41E3A')));
     renderBgSwatches(teamToEdit.background || 'sky');
   } else {
@@ -3123,7 +3238,7 @@ function openNewTeamModal(teamToEdit) {
     document.getElementById('tmNewTeamSport').value = 'teeball';
     document.getElementById('tmNewTeamLeague').value = '';
     document.getElementById('tmNewTeamSponsor').value = '';
-    document.getElementById('tmNewTeamLogo').value = '';
+    setLogoPreview('');
     document.querySelectorAll('.tm-swatch').forEach(s => s.classList.toggle('active', s.dataset.color === '#C41E3A'));
     renderBgSwatches('sky');
   }
@@ -3195,6 +3310,20 @@ function bindTeamManager() {
     document.querySelectorAll('.tm-bg-swatch').forEach(s => s.classList.remove('active'));
     sw.classList.add('active');
   });
+  document.getElementById('tmNewTeamLogoFile')?.addEventListener('change', (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    if (file.size > 2 * 1024 * 1024) {
+      alert('Image is too large (max 2 MB). Pick a smaller file.');
+      e.target.value = '';
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => setLogoPreview(reader.result);
+    reader.readAsDataURL(file);
+    e.target.value = ''; // allow re-picking the same file
+  });
+  document.getElementById('tmNewTeamLogoRemove')?.addEventListener('click', () => setLogoPreview(''));
 }
 
 function bindAppTeamLinks() {
@@ -3296,6 +3425,14 @@ function bindDeleteTeam() {
     // Apply per-team background gradient (default 'sky' matches the original look).
     const bgCss = getBackgroundCss(team.background || 'sky');
     if (bgCss) document.body.style.background = bgCss;
+    // Per-team favicon: use the team's logo if set; team 1 keeps the baked-in
+    // Cardinals favicon as a sane default.
+    if (team.logo) {
+      ['faviconPng', 'faviconSvg', 'faviconShortcut', 'faviconApple'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.href = team.logo;
+      });
+    }
     // For non-default teams, apply name/color/logo overrides. Team 1's
     // baked-in HTML (FAIRFIELD LIL' / CARDINALS + Tabitha's footer block)
     // is left alone unless the user has explicitly edited those fields.
