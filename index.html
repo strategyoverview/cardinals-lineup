@@ -5,7 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#C41E3A">
+<meta name="apple-mobile-web-app-title" content="Team Manager" id="appleAppTitle">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#C41E3A" id="themeColorMeta">
 <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
 <meta name="googlebot" content="noindex, nofollow">
 <meta name="referrer" content="no-referrer">
@@ -279,11 +281,23 @@ body.is-manager { padding-bottom: 0 !important; }
     0 2px 4px rgba(10, 10, 10, 0.06);
 }
 .tm-card:active { transform: translateY(-2px); }
-.tm-card-logo {
+.tm-card-bg {
   position: absolute;
   inset: 0;
-  background-color: var(--tm-card-color, #0A0A0A);
-  background-size: cover;
+  background: var(--tm-card-bg, var(--tm-card-color, #0A0A0A));
+  z-index: 0;
+}
+.tm-card-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0%, transparent 40%);
+  pointer-events: none;
+}
+.tm-card-logo {
+  position: absolute;
+  inset: 8% 8% 28% 8%;
+  background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
   display: flex;
@@ -293,8 +307,9 @@ body.is-manager { padding-bottom: 0 !important; }
   font-weight: 900;
   font-size: clamp(3rem, 10vw, 5rem);
   letter-spacing: -0.03em;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.2));
+  z-index: 1;
 }
-.tm-card-logo.has-image { background-color: transparent; }
 .tm-card-footer {
   position: absolute;
   bottom: 0;
@@ -329,9 +344,10 @@ body.is-manager { padding-bottom: 0 !important; }
   color: rgba(255, 255, 255, 0.85);
   letter-spacing: 0.04em;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
-  z-index: 1;
+  z-index: 2;
   pointer-events: none;
 }
+.tm-card-footer { z-index: 2; }
 
 .tm-card.tm-card-add {
   align-items: center;
@@ -3183,7 +3199,7 @@ function getCurrentTeamId() {
   // ?team=1/lilcardinals → parseInt strips the slug suffix, leaving 1
   const v = parseInt(p.get(TEAM_QUERY), 10);
   if (!isNaN(v)) return v;
-  return 1; // default — Cardinals stays at the bare URL
+  return null; // no params → Team Manager landing
 }
 const CURRENT_TEAM_ID = getCurrentTeamId();
 
@@ -3261,7 +3277,14 @@ function loadTeams() {
   } catch (e) { return [SEED_TEAM_1]; }
 }
 function saveTeams(teams) {
-  localStorage.setItem('tm_teams', JSON.stringify(teams));
+  try {
+    localStorage.setItem('tm_teams', JSON.stringify(teams));
+    return true;
+  } catch (err) {
+    alert("Couldn't save — storage is full. Try a smaller logo image.");
+    console.warn('[saveTeams] localStorage quota error:', err);
+    return false;
+  }
 }
 function nextTeamId(teams) {
   let max = 0;
@@ -3280,16 +3303,20 @@ function renderTeamManager() {
   const cards = teams.map(team => {
     const initial = (team.name || '?').trim()[0].toUpperCase();
     const hasLogo = !!team.logo;
-    const logoClass = hasLogo ? 'tm-card-logo has-image' : 'tm-card-logo';
+    const bgCss = getBackgroundCss(team.background) || (team.color || '#0A0A0A');
     const logoStyle = hasLogo
       ? `background-image: url('${team.logo.replace(/'/g, "\\'")}');`
-      : `background-color: ${team.color || '#0A0A0A'};`;
+      : '';
+    const sportLabel = team.sport === 'softball' ? 'Softball'
+                       : team.sport === 'baseball' ? 'Baseball'
+                       : 'Tee Ball';
     return `
-      <a class="tm-card" href="${teamHref(team)}" data-team-id="${team.id}" style="--tm-card-color: ${team.color || '#0A0A0A'}">
-        <div class="${logoClass}" style="${logoStyle}">${hasLogo ? '' : initial}</div>
+      <a class="tm-card" href="${teamHref(team)}" data-team-id="${team.id}" style="--tm-card-color: ${team.color || '#0A0A0A'}; --tm-card-bg: ${bgCss}">
+        <div class="tm-card-bg" aria-hidden="true"></div>
+        <div class="tm-card-logo" style="${logoStyle}">${hasLogo ? '' : initial}</div>
         <div class="tm-card-footer">
           <div class="tm-card-name">${escapeHtml(team.name || 'Untitled Team')}</div>
-          <div class="tm-card-meta">${team.sport === 'softball' ? 'Softball' : 'Tee Ball'}${team.league ? ' · ' + escapeHtml(team.league) : ''}</div>
+          <div class="tm-card-meta">${sportLabel}${team.league ? ' · ' + escapeHtml(team.league) : ''}</div>
         </div>
         <span class="tm-card-num">#${team.id}</span>
       </a>
@@ -3349,6 +3376,39 @@ function selectedPositions() {
     .filter(i => i.checked)
     .map(i => i.dataset.posInput);
 }
+// Resize an uploaded image down to a max 512px box so it fits comfortably
+// in localStorage and works as a favicon / Home Screen icon. PNGs keep
+// their transparency; everything else is encoded as JPEG.
+function compressLogo(file) {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      try {
+        const MAX = 512;
+        const scale = Math.min(1, MAX / Math.max(img.width, img.height));
+        const w = Math.max(1, Math.round(img.width * scale));
+        const h = Math.max(1, Math.round(img.height * scale));
+        const canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.imageSmoothingQuality = 'high';
+        ctx.drawImage(img, 0, 0, w, h);
+        const isPng = (file.type || '').toLowerCase().includes('png');
+        const dataUrl = canvas.toDataURL(isPng ? 'image/png' : 'image/jpeg', isPng ? undefined : 0.9);
+        URL.revokeObjectURL(url);
+        resolve(dataUrl);
+      } catch (err) {
+        URL.revokeObjectURL(url);
+        reject(err);
+      }
+    };
+    img.onerror = (err) => { URL.revokeObjectURL(url); reject(err); };
+    img.src = url;
+  });
+}
+
 function setLogoPreview(src) {
   const preview = document.getElementById('tmLogoPreview');
   const hidden = document.getElementById('tmNewTeamLogo');
@@ -3436,7 +3496,7 @@ function saveNewTeam() {
     if (idx >= 0) {
       teams[idx] = Object.assign({}, teams[idx], { name, sport, innings, positions, league, sponsor, sponsorSlogan, sponsorEmoji, color, background, logo });
     }
-    saveTeams(teams);
+    if (!saveTeams(teams)) return; // storage full — leave modal open so user can fix
     const editedId = editingTeamId;
     closeNewTeamModal();
     const fresh = teams[teams.findIndex(t => t.id === editedId)];
@@ -3446,7 +3506,7 @@ function saveNewTeam() {
   const id = nextTeamId(teams);
   const newTeam = { id, name, sport, innings, positions, league, sponsor, sponsorSlogan, sponsorEmoji, color, background, logo };
   teams.push(newTeam);
-  saveTeams(teams);
+  if (!saveTeams(teams)) return;
   closeNewTeamModal();
   location.search = teamHref(newTeam);
 }
@@ -3480,14 +3540,19 @@ function bindTeamManager() {
   document.getElementById('tmNewTeamLogoFile')?.addEventListener('change', (e) => {
     const file = e.target.files && e.target.files[0];
     if (!file) return;
-    if (file.size > 4 * 1024 * 1024) {
-      alert('Image is too large (max 4 MB). Pick a smaller file.');
+    if (file.size > 12 * 1024 * 1024) {
+      alert('Image is too large (max 12 MB). Pick a smaller file.');
       e.target.value = '';
       return;
     }
-    const reader = new FileReader();
-    reader.onload = () => setLogoPreview(reader.result);
-    reader.readAsDataURL(file);
+    compressLogo(file).then(dataUrl => {
+      setLogoPreview(dataUrl);
+    }).catch(err => {
+      console.warn('[logo] compress failed, using raw file:', err);
+      const reader = new FileReader();
+      reader.onload = () => setLogoPreview(reader.result);
+      reader.readAsDataURL(file);
+    });
     e.target.value = ''; // allow re-picking the same file
   });
   document.getElementById('tmNewTeamLogoRemove')?.addEventListener('click', () => setLogoPreview(''));
@@ -3599,6 +3664,12 @@ function bindDeleteTeam() {
         if (el) el.href = team.logo;
       });
     }
+    // iOS Home Screen integration — the shortcut label uses the team name,
+    // the status-bar / chrome tint uses the team color.
+    const appTitleMeta = document.getElementById('appleAppTitle');
+    if (appTitleMeta) appTitleMeta.setAttribute('content', team.name || 'Team Manager');
+    const themeMeta = document.getElementById('themeColorMeta');
+    if (themeMeta && team.color) themeMeta.setAttribute('content', team.color);
     // Apply name / color / logo overrides for ALL teams (including team 1)
     // so that edits in the Edit Team modal visibly update the app.
     if (team.color) {
