@@ -934,6 +934,14 @@ main {
   body[data-page="batting"] header,
   body[data-page="fielding"] header,
   body[data-page="score"] header { display: none; }
+  /* Without the header, the section title sits directly under the
+     iPhone Dynamic Island / notch in full-screen mode. Push main
+     down by the safe-area inset on those pages. */
+  body[data-page="batting"] main,
+  body[data-page="fielding"] main,
+  body[data-page="score"] main {
+    padding-top: calc(1rem + env(safe-area-inset-top));
+  }
 }
 
 /* Desktop: all pages visible, nav at top with anchor highlight */
