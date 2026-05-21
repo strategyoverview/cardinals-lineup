@@ -227,7 +227,7 @@ body.is-manager { padding-bottom: 0 !important; }
     0 1px 0 rgba(255, 255, 255, 0.85) inset,
     0 6px 18px rgba(10, 10, 10, 0.1);
 }
-.tm-new-btn i { color: var(--cardinal-red); font-size: 0.85em; }
+.tm-new-btn i { color: var(--navy); font-size: 0.85em; }
 .tm-new-btn:active { transform: scale(0.96); }
 
 
@@ -3804,6 +3804,21 @@ function bindDeleteTeam() {
         if (!data) return;
         if (CURRENT_TEAM_ID === null && typeof renderTeamManager === 'function') {
           renderTeamManager();
+        } else if (typeof CURRENT_TEAM_ID === 'number') {
+          // Team view: in-memory ROSTER / state were captured before
+          // the pull landed. Re-read them from localStorage and
+          // re-render so phone-edited roster shows up on desktop.
+          try {
+            if (typeof loadRoster === 'function') ROSTER = loadRoster();
+            if (typeof loadPresent === 'function') state.present = loadPresent();
+            if (typeof loadManualRotation === 'function') state.manualRotation = loadManualRotation();
+            // Also re-apply the team object's name / logo / colors in
+            // case those changed too.
+            const team = getTeamById(CURRENT_TEAM_ID);
+            if (team && typeof applyTeamLogo === 'function') applyTeamLogo();
+            if (typeof render === 'function') render();
+            if (typeof applySponsorBlock === 'function' && team) applySponsorBlock(team);
+          } catch (e) { console.warn('[cloudPull] refresh failed:', e); }
         }
       }).catch(() => {});
     }
