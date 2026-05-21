@@ -378,14 +378,14 @@ body.is-manager { padding-bottom: 0 !important; }
 .tm-card.tm-card-add span { font-weight: 800; letter-spacing: 0.04em; font-size: 0.95rem; }
 
 /* Liquid Glass footer for Team Manager — mirrors the team-page bottom:
-   sponsor pill on top, "Feedback?" link below. */
+   sponsor pill on top, "Feedback?" link below. The inner
+   .sponsor-strip-wrap supplies the same padding/centering as on team
+   pages so both surfaces look identical. */
 .tm-glass-footer {
-  padding: 1.5rem 1rem 2rem;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 0.875rem;
+  align-items: stretch;
+  padding-bottom: max(1rem, env(safe-area-inset-bottom));
 }
 .tm-glass-card {
   background: rgba(255, 255, 255, 0.55);
@@ -1032,6 +1032,22 @@ h2 {
 @media (min-width: 768px) {
   h2 { font-size: 3.25rem; letter-spacing: 0.04em; }
 }
+/* Section header that pairs the title with an inline action button.
+   Shrinks on phones so both fit on one line with the shuffle. */
+h2.section-heading-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  flex-wrap: nowrap;
+}
+h2.section-heading-row > span {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+@media (max-width: 420px) {
+  h2.section-heading-row { font-size: 2rem; letter-spacing: 0; }
+}
 
 /* Inspirational quote at top of each view */
 .section-quote {
@@ -1367,8 +1383,8 @@ h2 .badge {
   width: 28px;
   height: 28px;
   border-radius: 999px;
-  background: var(--cardinal-red);
-  color: white;
+  background: var(--team-tint, #D6F3FB);
+  color: var(--cardinal-red);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1376,8 +1392,8 @@ h2 .badge {
   font-weight: 900;
   flex-shrink: 0;
   letter-spacing: -0.02em;
-  border: none;
-  box-shadow: 0 2px 6px color-mix(in srgb, var(--cardinal-red) 30%, transparent);
+  border: 1.5px solid color-mix(in srgb, var(--cardinal-red) 18%, transparent);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
 }
 @media (min-width: 768px) {
   .batting-num { width: 44px; height: 44px; font-size: 1.25rem; }
@@ -2708,13 +2724,16 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
   box-shadow: 0 1px 3px rgba(15,23,42,0.08);
 }
 .sc-btn[data-action="dec"]:hover { background: var(--gray-200); }
-/* Plus = team-colored solid button with white icon */
+/* Plus = soft team-background tint with the team color as the plus icon */
 .sc-btn[data-action="inc"] {
-  background: var(--cardinal-red);
-  color: white;
-  box-shadow: 0 3px 10px color-mix(in srgb, var(--cardinal-red) 35%, transparent);
+  background: var(--team-tint, #D6F3FB);
+  color: var(--cardinal-red);
+  border: 1.5px solid color-mix(in srgb, var(--cardinal-red) 22%, transparent);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
 }
-.sc-btn[data-action="inc"]:hover { background: var(--cardinal-red-dark); }
+.sc-btn[data-action="inc"]:hover {
+  background: color-mix(in srgb, var(--team-tint, #D6F3FB) 80%, var(--cardinal-red) 6%);
+}
 .sc-btn:active { transform: scale(0.9); }
 .sc-btn:disabled { opacity: 0.35; cursor: not-allowed; box-shadow: none; }
 .sc-value {
@@ -2799,16 +2818,20 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
     <div class="tm-grid" id="tmTeamsGrid"></div>
   </div>
   <div class="tm-glass-footer">
-    <a class="sponsor-pill" href="https://www.redkeysolutions.com/" target="_blank" rel="noopener">
-      <span class="sponsor-pill-line">
-        <span class="sponsor-pill-text">Team Manager built by</span>
-        <span class="sponsor-pill-logo">
-          <img src="https://www.redkeysolutions.com/wp-content/uploads/2025/06/logo-update-2025-V1.webp" alt="Red Key">
+    <div class="sponsor-strip-wrap">
+      <a class="sponsor-pill" href="https://www.redkeysolutions.com/" target="_blank" rel="noopener">
+        <span class="sponsor-pill-line">
+          <span class="sponsor-pill-text">Team Manager built by</span>
+          <span class="sponsor-pill-logo">
+            <img src="https://www.redkeysolutions.com/wp-content/uploads/2025/06/logo-update-2025-V1.webp" alt="Red Key" loading="lazy">
+          </span>
         </span>
-      </span>
-      <span class="sponsor-pill-tagline">your technology &amp; AI partner</span>
-    </a>
-    <a href="mailto:amarkov@redkeysolutions.com?subject=Team%20Manager%20Feedback" class="footer-feedback-link">Feedback?</a>
+        <span class="sponsor-pill-tagline">your technology &amp; AI partner</span>
+      </a>
+    </div>
+    <div class="footer-feedback-row">
+      <a href="mailto:amarkov@redkeysolutions.com?subject=Team%20Manager%20Feedback" class="footer-feedback-link">Feedback?</a>
+    </div>
   </div>
 </div>
 
@@ -2985,8 +3008,8 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
   </section>
 
   <section id="fieldingPage" class="page">
-    <h2>
-      Field Rotation
+    <h2 class="section-heading-row">
+      <span>Field Positions</span>
       <button class="rotation-shuffle-btn" id="rotationShuffleBtn" type="button" aria-label="Shuffle all innings">
         <i class="fa-solid fa-shuffle" aria-hidden="true"></i>
       </button>
@@ -3089,10 +3112,6 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
   </a>
 </div>
 
-<div class="footer-feedback-row">
-  <a href="mailto:amarkov@redkeysolutions.com?subject=Team%20Manager%20Feedback" class="footer-feedback-link">Feedback?</a>
-</div>
-
 <div class="sponsor-strip-wrap" id="sponsorStripWrap">
   <a class="sponsor-pill" href="https://www.redkeysolutions.com/" target="_blank" rel="noopener">
     <span class="sponsor-pill-line">
@@ -3103,6 +3122,10 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
     </span>
     <span class="sponsor-pill-tagline">your technology &amp; AI partner</span>
   </a>
+</div>
+
+<div class="footer-feedback-row">
+  <a href="mailto:amarkov@redkeysolutions.com?subject=Team%20Manager%20Feedback" class="footer-feedback-link">Feedback?</a>
 </div>
 
 <!-- ============ Delete Team confirmation modal ============ -->
@@ -3241,28 +3264,34 @@ function teamHref(team) {
   return slug ? `?team=${team.id}/${slug}` : `?team=${team.id}`;
 }
 
-// Background gradient presets — each team picks one (or none).
+// Background gradient presets — each team picks one (or none). `tint` is
+// the soft pale color used for batting-number circles and scorecard
+// plus buttons so they visually echo the team's background.
 const BACKGROUND_PRESETS = [
-  { id: 'sky',       label: 'Sky',       css: 'linear-gradient(180deg, #98effb 0%, #BFF4FB 35%, #98effb 75%, #7BD6E8 100%)' },
-  { id: 'sunset',    label: 'Sunset',    css: 'linear-gradient(180deg, #FFE4B5 0%, #FFB991 50%, #FF8B6E 100%)' },
-  { id: 'mint',      label: 'Mint',      css: 'linear-gradient(180deg, #D4F4DD 0%, #B8E0D2 100%)' },
-  { id: 'lavender',  label: 'Lavender',  css: 'linear-gradient(180deg, #E9D5FF 0%, #D8B4FE 100%)' },
-  { id: 'peach',     label: 'Peach',     css: 'linear-gradient(180deg, #FFE5D9 0%, #FFCAB1 100%)' },
-  { id: 'ocean',     label: 'Ocean',     css: 'linear-gradient(180deg, #A2D5F2 0%, #6FB1D2 50%, #4A90B8 100%)' },
-  { id: 'meadow',    label: 'Meadow',    css: 'linear-gradient(180deg, #DCFCE7 0%, #BBF7D0 50%, #86EFAC 100%)' },
-  { id: 'night',     label: 'Night',     css: 'linear-gradient(180deg, #1E293B 0%, #334155 50%, #475569 100%)' },
-  { id: 'white',     label: 'White',     css: 'linear-gradient(180deg, #FFFFFF 0%, #F5F5F4 100%)' },
-  { id: 'cream',     label: 'Cream',     css: 'linear-gradient(180deg, #FFFBEB 0%, #FEF3C7 100%)' },
-  { id: 'rose',      label: 'Rose',      css: 'linear-gradient(180deg, #FFE4E6 0%, #FECDD3 50%, #FDA4AF 100%)' },
-  { id: 'sand',      label: 'Sand',      css: 'linear-gradient(180deg, #FEF3E2 0%, #FDE4B7 50%, #F5C97E 100%)' },
-  { id: 'sage',      label: 'Sage',      css: 'linear-gradient(180deg, #ECFCCB 0%, #D9F99D 100%)' },
-  { id: 'fog',       label: 'Fog',       css: 'linear-gradient(180deg, #F8FAFC 0%, #E2E8F0 100%)' },
-  { id: 'berry',     label: 'Berry',     css: 'linear-gradient(180deg, #FCE7F3 0%, #F9A8D4 50%, #EC4899 100%)' },
-  { id: 'ice',       label: 'Ice',       css: 'linear-gradient(180deg, #F0F9FF 0%, #E0F2FE 100%)' },
+  { id: 'sky',       label: 'Sky',       css: 'linear-gradient(180deg, #98effb 0%, #BFF4FB 35%, #98effb 75%, #7BD6E8 100%)', tint: '#D6F3FB' },
+  { id: 'sunset',    label: 'Sunset',    css: 'linear-gradient(180deg, #FFE4B5 0%, #FFB991 50%, #FF8B6E 100%)', tint: '#FFEDD5' },
+  { id: 'mint',      label: 'Mint',      css: 'linear-gradient(180deg, #D4F4DD 0%, #B8E0D2 100%)', tint: '#E4F8EA' },
+  { id: 'lavender',  label: 'Lavender',  css: 'linear-gradient(180deg, #E9D5FF 0%, #D8B4FE 100%)', tint: '#F3E8FF' },
+  { id: 'peach',     label: 'Peach',     css: 'linear-gradient(180deg, #FFE5D9 0%, #FFCAB1 100%)', tint: '#FFEDE3' },
+  { id: 'ocean',     label: 'Ocean',     css: 'linear-gradient(180deg, #A2D5F2 0%, #6FB1D2 50%, #4A90B8 100%)', tint: '#D9ECF7' },
+  { id: 'meadow',    label: 'Meadow',    css: 'linear-gradient(180deg, #DCFCE7 0%, #BBF7D0 50%, #86EFAC 100%)', tint: '#E8FAEE' },
+  { id: 'night',     label: 'Night',     css: 'linear-gradient(180deg, #1E293B 0%, #334155 50%, #475569 100%)', tint: '#475569' },
+  { id: 'white',     label: 'White',     css: 'linear-gradient(180deg, #FFFFFF 0%, #F5F5F4 100%)', tint: '#F1F5F9' },
+  { id: 'cream',     label: 'Cream',     css: 'linear-gradient(180deg, #FFFBEB 0%, #FEF3C7 100%)', tint: '#FEF9DD' },
+  { id: 'rose',      label: 'Rose',      css: 'linear-gradient(180deg, #FFE4E6 0%, #FECDD3 50%, #FDA4AF 100%)', tint: '#FFEFF0' },
+  { id: 'sand',      label: 'Sand',      css: 'linear-gradient(180deg, #FEF3E2 0%, #FDE4B7 50%, #F5C97E 100%)', tint: '#FEF6E5' },
+  { id: 'sage',      label: 'Sage',      css: 'linear-gradient(180deg, #ECFCCB 0%, #D9F99D 100%)', tint: '#F3FDD9' },
+  { id: 'fog',       label: 'Fog',       css: 'linear-gradient(180deg, #F8FAFC 0%, #E2E8F0 100%)', tint: '#EEF2F6' },
+  { id: 'berry',     label: 'Berry',     css: 'linear-gradient(180deg, #FCE7F3 0%, #F9A8D4 50%, #EC4899 100%)', tint: '#FCE7F3' },
+  { id: 'ice',       label: 'Ice',       css: 'linear-gradient(180deg, #F0F9FF 0%, #E0F2FE 100%)', tint: '#EFF8FE' },
 ];
 function getBackgroundCss(id) {
   const p = BACKGROUND_PRESETS.find(x => x.id === id);
   return p ? p.css : null;
+}
+function getBackgroundTint(id) {
+  const p = BACKGROUND_PRESETS.find(x => x.id === id);
+  return p ? p.tint : null;
 }
 
 // Team 1 = the original Lil Cardinals app. Its data lives in the existing
@@ -3716,6 +3745,8 @@ function bindDeleteTeam() {
     // Apply per-team background gradient (default 'sky' matches the original look).
     const bgCss = getBackgroundCss(team.background || 'sky');
     if (bgCss) document.body.style.background = bgCss;
+    const tint = getBackgroundTint(team.background || 'sky');
+    if (tint) document.documentElement.style.setProperty('--team-tint', tint);
     // Per-team favicon: use the team's logo if set.
     if (team.logo) {
       ['faviconPng', 'faviconSvg', 'faviconShortcut', 'faviconApple'].forEach(id => {
@@ -3924,17 +3955,28 @@ const COACH_QUOTES = [
   "Swing like the dugout is watching."
 ];
 
+// Pop quips fire on logo click. Lines containing {team} or {sponsor}
+// are interpolated with the current team's name / sponsor at call time
+// so the easter eggs aren't hardcoded to Cardinals + Tabitha's.
 const POP_QUIPS = [
-  "Let's go Cardinals! ⚾",
+  "Let's go {team}! ⚾",
   "Bring the thunder! ⚡",
   "Sundae mode unlocked? 🍦",
   "Coach says: hustle.",
   "First pitch energy! 🔥",
-  "Tabitha's after the W 🏆🍦",
+  "{sponsor} after the W 🏆",
   "Eyes up, kids!",
-  "Cardinals nation rise up.",
+  "{team} nation rise up.",
   "Anyone seen the rosin bag?"
 ];
+function interpolateQuip(s) {
+  const team = (typeof CURRENT_TEAM_ID === 'number') ? getTeamById(CURRENT_TEAM_ID) : null;
+  const teamShortName = team
+    ? (team.name || '').replace(/^(fairfield|the)\s+/i, '').replace(/\bLil['']?\s*/i, '').trim() || team.name
+    : 'team';
+  const sponsorName = (team && team.sponsor) ? team.sponsor : 'the sponsor';
+  return s.replace(/\{team\}/g, teamShortName).replace(/\{sponsor\}/g, sponsorName);
+}
 
 const state = {
   present: loadPresent(),
@@ -5156,7 +5198,10 @@ if (sponsorWrap) {
     sponsorTimer = setTimeout(() => { sponsorClicks = 0; }, 1500);
     if (sponsorClicks >= 3) {
       iceCreamRain(20);
-      showBubble("Tabitha's sends their regards 🍦");
+      const team = (typeof CURRENT_TEAM_ID === 'number') ? getTeamById(CURRENT_TEAM_ID) : null;
+      const who = (team && team.sponsor) ? team.sponsor : 'Your sponsor';
+      const emoji = (team && team.sponsorEmoji) ? team.sponsorEmoji : '⭐';
+      showBubble(`${who} sends their regards ${emoji}`);
       sponsorClicks = 0;
     }
   });
@@ -5174,7 +5219,7 @@ if (footerLogoEl) {
       ],
       { duration: 700, easing: 'cubic-bezier(0.2, 0.7, 0.2, 1)' }
     );
-    showBubble(POP_QUIPS[Math.floor(Math.random() * POP_QUIPS.length)]);
+    showBubble(interpolateQuip(POP_QUIPS[Math.floor(Math.random() * POP_QUIPS.length)]));
   });
 }
 
