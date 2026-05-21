@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer">
-<title>Lil Cardinals — Game Day</title>
+<title>Team Manager</title>
 <style>
 :root {
   --cardinal-red: #C41E3A;
@@ -77,63 +77,54 @@ body {
 
 button { font-family: inherit; }
 
-/* ============ Sponsor strip ============ */
-.sponsor-strip {
-  background: white;
-  color: black;
-  padding: 0.75rem 0.875rem;
-  padding-left: max(0.875rem, env(safe-area-inset-left));
-  padding-right: max(0.875rem, env(safe-area-inset-right));
-  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0;
-  position: relative;
+/* ============ Sponsor pill (bottom) ============ */
+.sponsor-strip-wrap {
   display: flex;
-  align-items: center;
   justify-content: center;
-  gap: 0.4rem;
-  width: 100%;
-  box-sizing: border-box;
-  white-space: nowrap;
-  overflow: hidden;
+  padding: 0.75rem 1rem 1rem;
+  padding-left: max(1rem, env(safe-area-inset-left));
+  padding-right: max(1rem, env(safe-area-inset-right));
+  padding-bottom: max(1rem, env(safe-area-inset-bottom));
 }
-.sponsor-strip-text,
-.sponsor-strip-tagline,
-.sponsor-strip-logo {
+.sponsor-pill {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  background: white;
+  border: 1px solid rgba(10, 10, 10, 0.08);
+  border-radius: 999px;
+  padding: 0.55rem 1.25rem;
+  text-decoration: none;
+  color: #0A0A0A;
+  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  box-shadow: 0 2px 8px rgba(10, 10, 10, 0.08);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  text-align: center;
+  line-height: 1.15;
+}
+.sponsor-pill:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(10, 10, 10, 0.12);
+}
+.sponsor-pill-line {
   display: inline-flex;
   align-items: center;
-}
-.sponsor-strip-text,
-.sponsor-strip-tagline {
-  color: black;
+  gap: 0.35rem;
+  font-size: 0.78rem;
   font-weight: 700;
-  font-style: normal;
-  margin: 0;
+}
+.sponsor-pill-logo { display: inline-flex; align-items: center; line-height: 0; }
+.sponsor-pill-logo img { height: 14px; width: auto; }
+.sponsor-pill-tagline {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #525866;
 }
 @media (min-width: 600px) {
-  .sponsor-strip { font-size: 1rem; padding-top: 0.875rem; padding-bottom: 0.875rem; gap: 0.55rem; }
-}
-.sponsor-strip-logo {
-  display: inline-flex;
-  align-items: center;
-  line-height: 0;
-}
-.sponsor-strip-logo {
-  margin: 0 -0.15rem;
-}
-.sponsor-strip-logo img {
-  height: 14px;
-  width: auto;
-  display: inline-block;
-  vertical-align: middle;
-  transition: transform 0.2s ease;
-  margin: 0;
-  padding: 0;
-}
-.sponsor-strip-logo:hover img { transform: scale(1.06); }
-@media (min-width: 600px) {
-  .sponsor-strip-logo img { height: 22px; }
+  .sponsor-pill-line { font-size: 0.92rem; }
+  .sponsor-pill-logo img { height: 18px; }
+  .sponsor-pill-tagline { font-size: 0.8rem; }
 }
 
 /* ============ Team Manager landing — Liquid Glass, mostly white / black ============ */
@@ -151,6 +142,7 @@ body.is-manager #teamManagerView { display: block; }
 body.is-manager { padding-bottom: 0 !important; }
 
 .tm-view { min-height: 100vh; display: flex; flex-direction: column; }
+.tm-view[hidden] { display: none !important; }
 
 .tm-hero {
   padding: 3.5rem 1.5rem 2rem;
@@ -388,47 +380,28 @@ body.is-manager { padding-bottom: 0 !important; }
 body.is-app > .app-team-links {
   display: flex;
   justify-content: center;
-  gap: 0.5rem;
-  padding: 0.875rem 1rem;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 0.75rem 1rem;
   padding-left: max(1rem, env(safe-area-inset-left));
   padding-right: max(1rem, env(safe-area-inset-right));
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  white-space: nowrap;
 }
 .app-team-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  background: rgba(255, 255, 255, 0.58);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid rgba(10, 10, 10, 0.08);
+  background: none;
+  border: none;
+  padding: 0.25rem 0;
   color: var(--navy-dark);
   text-decoration: none;
-  padding: 0.5rem 0.875rem;
-  border-radius: 999px;
   font-weight: 700;
-  font-size: 0.85rem;
+  font-size: 0.92rem;
   cursor: pointer;
   font-family: inherit;
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.7) inset,
-    0 2px 6px rgba(10, 10, 10, 0.06);
-  transition: transform 0.18s ease, background 0.18s ease;
+  box-shadow: none;
 }
-.app-team-link:hover { transform: translateY(-1px); background: rgba(255, 255, 255, 0.88); }
-.app-team-link i { color: var(--cardinal-red); font-size: 0.85em; }
-
-/* Liquid-glass styling for the bottom sponsor strip when in app view */
-.sponsor-strip-glass {
-  background: rgba(255, 255, 255, 0.58) !important;
-  backdrop-filter: blur(28px) saturate(180%);
-  -webkit-backdrop-filter: blur(28px) saturate(180%);
-  border-top: 1px solid rgba(255, 255, 255, 0.7);
-  border-bottom: none !important;
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.7) inset,
-    0 -4px 14px rgba(10, 10, 10, 0.04);
-}
+.app-team-link:hover { text-decoration: underline; }
+.app-team-link i { display: none; }
 
 /* Create Team modal field styling */
 .tm-field {
@@ -478,6 +451,31 @@ body.is-app > .app-team-links {
 }
 .tm-swatch:hover { transform: scale(1.1); }
 .tm-swatch.active { outline-color: #111827; outline-width: 3px; transform: scale(1.08); }
+
+.tm-bg-swatches {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+}
+.tm-bg-option { display: flex; flex-direction: column; align-items: center; gap: 0.2rem; }
+.tm-bg-swatch {
+  width: 100%;
+  height: 44px;
+  border-radius: 12px;
+  border: 2.5px solid white;
+  outline: 2px solid #E5E7EB;
+  cursor: pointer;
+  padding: 0;
+  transition: transform 0.15s ease, outline-color 0.15s ease;
+}
+.tm-bg-swatch:hover { transform: scale(1.04); }
+.tm-bg-swatch.active { outline-color: #111827; outline-width: 3px; }
+.tm-bg-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #525866;
+  letter-spacing: 0.04em;
+}
 
 /* ============ Header ============ */
 header {
@@ -752,7 +750,7 @@ main {
      app-team-links pills and the glass sponsor strip beneath it. */
   body { padding-bottom: calc(180px + env(safe-area-inset-bottom)); }
   body.is-app > .app-team-links,
-  body.is-app > .sponsor-strip { position: relative; z-index: 2; }
+  body.is-app > .sponsor-strip-wrap { position: relative; z-index: 2; }
 
   /* Hide the giant team-logo header on batting / fielding / score pages
      so the content loads clean. Only roster keeps the team header. */
@@ -1937,7 +1935,7 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
   --cardinal-red-dark: #C2185B;
   --cardinal-red-soft: #FF8FAB;
 }
-.sundae-mode .sponsor-strip { animation: rainbow 3s infinite; }
+.sundae-mode .sponsor-pill { animation: rainbow 3s infinite; }
 @keyframes rainbow {
   0%, 100% { background: linear-gradient(90deg, var(--pink), #FF8FAB); }
   33% { background: linear-gradient(90deg, #FFC93C, #FF6B9D); }
@@ -1947,7 +1945,7 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
 /* ============ Print ============ */
 @media print {
   body { background: white; font-size: 12pt; }
-  .sponsor-strip { background: white !important; color: var(--pink) !important; border-bottom: 1px solid var(--gray-300); }
+  .sponsor-strip-wrap { display: none !important; }
   header {
     background: white !important;
     color: var(--cardinal-red);
@@ -1991,7 +1989,8 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
   .view-toggle button .toggle-icon { font-size: 1.2rem; }
   .footer-sponsor { padding: 1rem 1rem; }
   .footer-sponsor .sponsor-name { font-size: 1.25rem; }
-  .sponsor-strip { font-size: 0.72rem; padding: 0.45rem 0.5rem; }
+  .sponsor-pill-line { font-size: 0.72rem; }
+  .sponsor-pill-tagline { font-size: 0.66rem; }
   h2 { font-size: 2.25rem; }
 }
 
@@ -2645,6 +2644,10 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
           <button type="button" class="tm-swatch" data-color="#0E7490" style="background:#0E7490" aria-label="Teal"></button>
         </div>
       </div>
+      <div class="tm-field">
+        <span class="tm-field-label">Background</span>
+        <div class="tm-bg-swatches" id="tmBgSwatches"></div>
+      </div>
       <label class="tm-field">
         <span class="tm-field-label">Logo URL <span class="tm-field-hint">(optional — leave blank to show initial only)</span></span>
         <input type="url" id="tmNewTeamLogo" placeholder="https://...">
@@ -2856,12 +2859,16 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
   </div>
 </div>
 
-<div class="sponsor-strip sponsor-strip-glass" id="sponsorStrip">
-  <span class="sponsor-strip-text">Team Manager built by</span>
-  <a href="https://www.redkeysolutions.com/" target="_blank" rel="noopener" class="sponsor-strip-logo">
-    <img src="https://www.redkeysolutions.com/wp-content/uploads/2025/06/logo-update-2025-V1.webp" alt="Red Key" loading="lazy">
+<div class="sponsor-strip-wrap" id="sponsorStripWrap">
+  <a class="sponsor-pill" href="https://www.redkeysolutions.com/" target="_blank" rel="noopener">
+    <span class="sponsor-pill-line">
+      <span class="sponsor-pill-text">Team Manager built by</span>
+      <span class="sponsor-pill-logo">
+        <img src="https://www.redkeysolutions.com/wp-content/uploads/2025/06/logo-update-2025-V1.webp" alt="Red Key" loading="lazy">
+      </span>
+    </span>
+    <span class="sponsor-pill-tagline">your technology &amp; AI partner</span>
   </a>
-  <span class="sponsor-strip-tagline">your technology &amp; AI partner</span>
 </div>
 
 <script>
@@ -2958,11 +2965,41 @@ const TEAM_QUERY = 'team';
 function getCurrentTeamId() {
   const p = new URLSearchParams(location.search);
   if (p.has('manager')) return null;
+  // ?team=1/lilcardinals → parseInt strips the slug suffix, leaving 1
   const v = parseInt(p.get(TEAM_QUERY), 10);
   if (!isNaN(v)) return v;
   return 1; // default — Cardinals stays at the bare URL
 }
 const CURRENT_TEAM_ID = getCurrentTeamId();
+
+// Slugify a team name for URLs (lowercase, hyphenated, ascii-only).
+function slugify(s) {
+  return String(s || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 60);
+}
+function teamHref(team) {
+  const slug = slugify(team.name);
+  return slug ? `?team=${team.id}/${slug}` : `?team=${team.id}`;
+}
+
+// Background gradient presets — each team picks one (or none).
+const BACKGROUND_PRESETS = [
+  { id: 'sky',      label: 'Sky',      css: 'linear-gradient(180deg, #98effb 0%, #BFF4FB 35%, #98effb 75%, #7BD6E8 100%)' },
+  { id: 'sunset',   label: 'Sunset',   css: 'linear-gradient(180deg, #FFE4B5 0%, #FFB991 50%, #FF8B6E 100%)' },
+  { id: 'mint',     label: 'Mint',     css: 'linear-gradient(180deg, #D4F4DD 0%, #B8E0D2 100%)' },
+  { id: 'lavender', label: 'Lavender', css: 'linear-gradient(180deg, #E9D5FF 0%, #D8B4FE 100%)' },
+  { id: 'peach',    label: 'Peach',    css: 'linear-gradient(180deg, #FFE5D9 0%, #FFCAB1 100%)' },
+  { id: 'ocean',    label: 'Ocean',    css: 'linear-gradient(180deg, #A2D5F2 0%, #6FB1D2 50%, #4A90B8 100%)' },
+  { id: 'meadow',   label: 'Meadow',   css: 'linear-gradient(180deg, #DCFCE7 0%, #BBF7D0 50%, #86EFAC 100%)' },
+  { id: 'night',    label: 'Night',    css: 'linear-gradient(180deg, #1E293B 0%, #334155 50%, #475569 100%)' },
+];
+function getBackgroundCss(id) {
+  const p = BACKGROUND_PRESETS.find(x => x.id === id);
+  return p ? p.css : null;
+}
 
 // Team 1 = the original Lil Cardinals app. Its data lives in the existing
 // "cardinals_*" localStorage keys (no migration needed). Other teams use
@@ -3017,7 +3054,7 @@ function renderTeamManager() {
       ? `background-image: url('${team.logo.replace(/'/g, "\\'")}');`
       : `background-color: ${team.color || '#0A0A0A'};`;
     return `
-      <a class="tm-card" href="?team=${team.id}" data-team-id="${team.id}" style="--tm-card-color: ${team.color || '#0A0A0A'}">
+      <a class="tm-card" href="${teamHref(team)}" data-team-id="${team.id}" style="--tm-card-color: ${team.color || '#0A0A0A'}">
         <div class="${logoClass}" style="${logoStyle}">${hasLogo ? '' : initial}</div>
         <div class="tm-card-footer">
           <div class="tm-card-name">${escapeHtml(team.name || 'Untitled Team')}</div>
@@ -3053,6 +3090,16 @@ function escapeHtml(s) {
 
 /* ============ New / Edit Team modal ============ */
 let editingTeamId = null;
+function renderBgSwatches(activeId) {
+  const c = document.getElementById('tmBgSwatches');
+  if (!c) return;
+  c.innerHTML = BACKGROUND_PRESETS.map(p => `
+    <div class="tm-bg-option">
+      <button type="button" class="tm-bg-swatch ${p.id === activeId ? 'active' : ''}" data-bg="${p.id}" style="background: ${p.css}" aria-label="${p.label}"></button>
+      <span class="tm-bg-label">${p.label}</span>
+    </div>
+  `).join('');
+}
 function openNewTeamModal(teamToEdit) {
   const overlay = document.getElementById('tmNewTeamOverlay');
   const title = document.getElementById('tmNewTeamTitle');
@@ -3067,6 +3114,7 @@ function openNewTeamModal(teamToEdit) {
     document.getElementById('tmNewTeamSponsor').value = teamToEdit.sponsor || '';
     document.getElementById('tmNewTeamLogo').value = teamToEdit.logo || '';
     document.querySelectorAll('.tm-swatch').forEach(s => s.classList.toggle('active', s.dataset.color === (teamToEdit.color || '#C41E3A')));
+    renderBgSwatches(teamToEdit.background || 'sky');
   } else {
     editingTeamId = null;
     title.textContent = 'Create New Team';
@@ -3077,6 +3125,7 @@ function openNewTeamModal(teamToEdit) {
     document.getElementById('tmNewTeamSponsor').value = '';
     document.getElementById('tmNewTeamLogo').value = '';
     document.querySelectorAll('.tm-swatch').forEach(s => s.classList.toggle('active', s.dataset.color === '#C41E3A'));
+    renderBgSwatches('sky');
   }
   overlay.hidden = false;
   setTimeout(() => document.getElementById('tmNewTeamName').focus(), 80);
@@ -3089,6 +3138,10 @@ function selectedSwatch() {
   const s = document.querySelector('.tm-swatch.active');
   return s ? s.dataset.color : '#C41E3A';
 }
+function selectedBackground() {
+  const s = document.querySelector('.tm-bg-swatch.active');
+  return s ? s.dataset.bg : 'sky';
+}
 function saveNewTeam() {
   const name = document.getElementById('tmNewTeamName').value.trim();
   if (!name) {
@@ -3099,30 +3152,27 @@ function saveNewTeam() {
   const league = document.getElementById('tmNewTeamLeague').value.trim() || null;
   const sponsor = document.getElementById('tmNewTeamSponsor').value.trim() || null;
   const color = selectedSwatch();
+  const background = selectedBackground();
   const logo = document.getElementById('tmNewTeamLogo').value.trim() || null;
   const teams = loadTeams();
   if (editingTeamId !== null) {
     const idx = teams.findIndex(t => t.id === editingTeamId);
     if (idx >= 0) {
-      teams[idx] = Object.assign({}, teams[idx], { name, sport, league, sponsor, color, logo });
+      teams[idx] = Object.assign({}, teams[idx], { name, sport, league, sponsor, color, background, logo });
     }
     saveTeams(teams);
     const editedId = editingTeamId;
     closeNewTeamModal();
-    if (CURRENT_TEAM_ID === editedId) {
-      // Editing the team we're currently viewing — reload to apply changes.
-      location.reload();
-    } else {
-      // Editing from Team Manager — jump into the team we just edited.
-      location.search = `?team=${editedId}`;
-    }
+    const fresh = teams[teams.findIndex(t => t.id === editedId)];
+    location.search = teamHref(fresh);
     return;
   }
   const id = nextTeamId(teams);
-  teams.push({ id, name, sport, league, sponsor, color, logo });
+  const newTeam = { id, name, sport, league, sponsor, color, background, logo };
+  teams.push(newTeam);
   saveTeams(teams);
   closeNewTeamModal();
-  location.search = `?team=${id}`;
+  location.search = teamHref(newTeam);
 }
 
 function bindTeamManager() {
@@ -3137,6 +3187,12 @@ function bindTeamManager() {
     const sw = e.target.closest('.tm-swatch');
     if (!sw) return;
     document.querySelectorAll('.tm-swatch').forEach(s => s.classList.remove('active'));
+    sw.classList.add('active');
+  });
+  document.getElementById('tmBgSwatches')?.addEventListener('click', (e) => {
+    const sw = e.target.closest('.tm-bg-swatch');
+    if (!sw) return;
+    document.querySelectorAll('.tm-bg-swatch').forEach(s => s.classList.remove('active'));
     sw.classList.add('active');
   });
 }
@@ -3235,6 +3291,11 @@ function bindDeleteTeam() {
   document.body.classList.add('is-app');
   const team = getTeamById(CURRENT_TEAM_ID);
   if (team) {
+    // Page title reflects the active team for every team (including #1).
+    document.title = `${team.name} — Game Day`;
+    // Apply per-team background gradient (default 'sky' matches the original look).
+    const bgCss = getBackgroundCss(team.background || 'sky');
+    if (bgCss) document.body.style.background = bgCss;
     // For non-default teams, apply name/color/logo overrides. Team 1's
     // baked-in HTML (FAIRFIELD LIL' / CARDINALS + Tabitha's footer block)
     // is left alone unless the user has explicitly edited those fields.
@@ -3242,7 +3303,6 @@ function bindDeleteTeam() {
       if (team.color) {
         document.documentElement.style.setProperty('--cardinal-red', team.color);
       }
-      document.title = `${team.name} — Game Day`;
       const h1 = document.querySelector('.brand-text h1');
       if (h1) {
         const words = (team.name || '').trim().split(/\s+/);
@@ -4249,20 +4309,23 @@ function iceCreamRain(count) {
 
 // (footer heart removed — keeping no-op anchor here for ordering)
 
-// Click sponsor strip 3x → mini sundae shower
+// Click sponsor pill 3x → mini sundae shower
 let sponsorClicks = 0;
 let sponsorTimer = null;
-document.getElementById('sponsorStrip').addEventListener('click', (e) => {
-  if (e.target.tagName === 'A') return;
-  sponsorClicks++;
-  clearTimeout(sponsorTimer);
-  sponsorTimer = setTimeout(() => { sponsorClicks = 0; }, 1500);
-  if (sponsorClicks >= 3) {
-    iceCreamRain(20);
-    showBubble("Tabitha's sends their regards 🍦");
-    sponsorClicks = 0;
-  }
-});
+const sponsorWrap = document.getElementById('sponsorStripWrap');
+if (sponsorWrap) {
+  sponsorWrap.addEventListener('click', (e) => {
+    if (e.target.closest('a')) return;
+    sponsorClicks++;
+    clearTimeout(sponsorTimer);
+    sponsorTimer = setTimeout(() => { sponsorClicks = 0; }, 1500);
+    if (sponsorClicks >= 3) {
+      iceCreamRain(20);
+      showBubble("Tabitha's sends their regards 🍦");
+      sponsorClicks = 0;
+    }
+  });
+}
 
 // Footer logo: click for fly-around + cardinal-call
 const footerLogoEl = document.getElementById('footerLogo');
