@@ -95,42 +95,27 @@ button { font-family: inherit; }
 .sponsor-pill {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  background: rgba(255, 255, 255, 0.45);
-  backdrop-filter: blur(28px) saturate(180%);
-  -webkit-backdrop-filter: blur(28px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.7);
-  border-radius: 999px;
-  padding: 0.45rem 1.1rem;
+  gap: 0.45rem;
+  background: transparent;
+  border: none;
+  padding: 0.25rem 0.5rem;
   text-decoration: none;
-  color: #0A0A0A;
+  color: #525866;
   font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.85) inset,
-    0 0 0 0.5px rgba(10, 10, 10, 0.04),
-    0 4px 14px rgba(10, 10, 10, 0.06);
-  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
   white-space: nowrap;
+  transition: color 0.18s ease;
 }
-.sponsor-pill:hover {
-  transform: translateY(-1px);
-  background: rgba(255, 255, 255, 0.65);
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.85) inset,
-    0 0 0 0.5px rgba(10, 10, 10, 0.06),
-    0 8px 22px rgba(10, 10, 10, 0.1);
-}
+.sponsor-pill:hover { color: #0A0A0A; }
 .sponsor-pill-logo { display: inline-flex; align-items: center; line-height: 0; }
-.sponsor-pill-logo img { height: 14px; width: auto; }
+.sponsor-pill-logo img { height: 13px; width: auto; opacity: 0.85; }
 .sponsor-pill-tagline {
-  font-size: 0.74rem;
-  font-weight: 600;
-  color: #0A0A0A;
+  font-size: 0.72rem;
+  font-weight: 500;
   letter-spacing: 0.01em;
 }
 @media (min-width: 600px) {
-  .sponsor-pill-logo img { height: 18px; }
-  .sponsor-pill-tagline { font-size: 0.85rem; }
+  .sponsor-pill-logo img { height: 16px; }
+  .sponsor-pill-tagline { font-size: 0.8rem; }
 }
 
 /* ============ Team Manager landing — Liquid Glass, mostly white / black ============ */
@@ -3169,8 +3154,31 @@ async function cloudPull() {
     if (data && typeof data === 'object') {
       for (const [k, v] of Object.entries(data)) {
         if (!shouldSyncKey(k)) continue;
-        try { localStorage.setItem(k, typeof v === 'string' ? v : JSON.stringify(v)); }
-        catch (e) { console.warn('[cloudPull] storage write failed for', k, e); }
+        try {
+          // tm_teams gets a smart per-team merge so a stale cloud
+          // (e.g. our sendBeacon was dropped, or another device's
+          // older state) can't clobber a fresh local edit. Each team
+          // carries an `updatedAt` timestamp; the newer wins.
+          if (k === 'tm_teams' && Array.isArray(v)) {
+            const localTeams = JSON.parse(localStorage.getItem('tm_teams') || '[]');
+            const byId = new Map();
+            for (const t of (Array.isArray(localTeams) ? localTeams : [])) {
+              if (t && typeof t === 'object' && typeof t.id === 'number') byId.set(t.id, t);
+            }
+            for (const ct of v) {
+              if (!ct || typeof ct !== 'object' || typeof ct.id !== 'number') continue;
+              const lt = byId.get(ct.id);
+              if (!lt) { byId.set(ct.id, ct); continue; }
+              const ltAt = (typeof lt.updatedAt === 'number') ? lt.updatedAt : 0;
+              const ctAt = (typeof ct.updatedAt === 'number') ? ct.updatedAt : 0;
+              if (ctAt > ltAt) byId.set(ct.id, ct);
+            }
+            const merged = [...byId.values()].sort((a, b) => a.id - b.id);
+            localStorage.setItem('tm_teams', JSON.stringify(merged));
+          } else {
+            localStorage.setItem(k, typeof v === 'string' ? v : JSON.stringify(v));
+          }
+        } catch (e) { console.warn('[cloudPull] storage write failed for', k, e); }
       }
     }
     return data;
@@ -3597,7 +3605,7 @@ async function saveNewTeam() {
   if (editingTeamId !== null) {
     const idx = teams.findIndex(t => t.id === editingTeamId);
     if (idx >= 0) {
-      teams[idx] = Object.assign({}, teams[idx], { name, sport, innings, positions, league, sponsor, sponsorUrl, sponsorSlogan, sponsorEmoji, color, background, logo });
+      teams[idx] = Object.assign({}, teams[idx], { name, sport, innings, positions, league, sponsor, sponsorUrl, sponsorSlogan, sponsorEmoji, color, background, logo, updatedAt: Date.now() });
     }
     if (!saveTeams(teams)) return; // storage full — leave modal open so user can fix
     const editedId = editingTeamId;
@@ -3610,7 +3618,7 @@ async function saveNewTeam() {
     return;
   }
   const id = nextTeamId(teams);
-  const newTeam = { id, name, sport, innings, positions, league, sponsor, sponsorUrl, sponsorSlogan, sponsorEmoji, color, background, logo };
+  const newTeam = { id, name, sport, innings, positions, league, sponsor, sponsorUrl, sponsorSlogan, sponsorEmoji, color, background, logo, updatedAt: Date.now() };
   teams.push(newTeam);
   if (!saveTeams(teams)) return;
   closeNewTeamModal();
