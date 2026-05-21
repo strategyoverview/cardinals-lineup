@@ -769,6 +769,12 @@ header::before {
   font-style: italic;
   letter-spacing: 0.02em;
 }
+.header-sponsor-link {
+  color: var(--cardinal-red);
+  text-decoration: none;
+  border-bottom: 1.5px solid var(--cardinal-red-soft);
+}
+.header-sponsor-link:hover { border-bottom-color: var(--cardinal-red); }
 
 @media (min-width: 600px) {
   .brand-text h1 { letter-spacing: 0.05em; }
@@ -1974,42 +1980,17 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
   margin-right: 0.45em;
   color: var(--cardinal-red);
 }
-.footer-feedback {
-  padding: 1.25rem 1.5rem;
-  background: rgba(255, 255, 255, 0.55);
-  backdrop-filter: blur(16px) saturate(160%);
-  -webkit-backdrop-filter: blur(16px) saturate(160%);
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  border-radius: 18px;
-  max-width: 460px;
-  margin-left: auto;
-  margin-right: auto;
-  text-align: center;
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
-}
-.footer-feedback h4 {
+.footer-feedback-link {
+  display: inline-block;
   font-size: 0.85rem;
-  font-weight: 900;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--cardinal-red);
-  margin-bottom: 0.5rem;
-}
-.footer-feedback p {
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: var(--navy);
-  line-height: 1.4;
-}
-.footer-feedback a {
-  color: var(--cardinal-red);
-  font-weight: 800;
+  font-weight: 500;
+  color: var(--gray-500);
   text-decoration: none;
-  border-bottom: 2px solid var(--cardinal-red-soft);
+  letter-spacing: 0.02em;
+  opacity: 0.7;
+  transition: opacity 0.18s ease;
 }
-.footer-feedback a:hover {
-  border-bottom-color: var(--cardinal-red);
-}
+.footer-feedback-link:hover { opacity: 1; text-decoration: underline; }
 
 .footer-made::before, .footer-made::after {
   content: '·';
@@ -2218,28 +2199,36 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
 
 /* ============ Roster edit + modal ============ */
 #rosterPage { position: relative; }
-.roster-edit-btn {
+.roster-actions {
   position: absolute;
   bottom: 0.75rem;
   right: 0.75rem;
-  width: 44px;
-  height: 44px;
+  display: flex;
+  gap: 0.5rem;
+  z-index: 2;
+}
+.roster-icon-btn {
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
-  background: var(--cardinal-red);
-  color: white;
-  border: 2.5px solid white;
+  background: rgba(255, 255, 255, 0.7);
+  color: var(--gray-500);
+  border: 1px solid var(--gray-200);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1rem;
-  box-shadow: 0 6px 18px rgba(196, 30, 58, 0.4), 0 2px 4px rgba(196, 30, 58, 0.2);
-  transition: transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1);
+  font-size: 0.95rem;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.06);
+  transition: transform 0.18s ease, color 0.18s ease, background 0.18s ease;
   padding: 0;
-  z-index: 2;
 }
-.roster-edit-btn:hover { transform: scale(1.08) rotate(-6deg); }
-.roster-edit-btn:active { transform: scale(0.95); }
+.roster-icon-btn:hover {
+  color: var(--gray-700);
+  background: white;
+  transform: scale(1.08);
+}
+.roster-icon-btn:active { transform: scale(0.95); }
 
 .rotation-shuffle-btn {
   display: inline-flex;
@@ -2855,6 +2844,7 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
         <span class="tm-field-label">Team Sponsor <span class="tm-field-hint">(optional)</span></span>
         <div class="tm-sponsor-grid">
           <input type="text" id="tmNewTeamSponsor" maxlength="60" placeholder="Sponsor name (e.g. Tabitha's Ice Cream)">
+          <input type="url" id="tmNewTeamSponsorUrl" placeholder="Sponsor website (https://...)">
           <input type="text" id="tmNewTeamSponsorSlogan" maxlength="80" placeholder="Slogan (e.g. Classic parlor feel · Treat the team)">
           <input type="text" id="tmNewTeamSponsorEmoji" maxlength="4" placeholder="Emoji (e.g. 🍨)" class="tm-sponsor-emoji-input">
         </div>
@@ -2953,9 +2943,14 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
       </div>
     </div>
     <input type="file" id="logoInput" class="hidden-input" accept="image/*">
-    <button class="roster-edit-btn" id="rosterEditBtn" aria-label="Edit roster">
-      <i class="fa-solid fa-pen"></i>
-    </button>
+    <div class="roster-actions">
+      <button class="roster-icon-btn" id="rosterAddBtnIcon" aria-label="Add player" title="Add player">
+        <i class="fa-solid fa-plus"></i>
+      </button>
+      <button class="roster-icon-btn" id="rosterEditBtn" aria-label="Edit roster" title="Edit roster">
+        <i class="fa-solid fa-pen"></i>
+      </button>
+    </div>
   </section>
 
   <div class="modal-overlay" id="rosterModalOverlay" hidden>
@@ -3062,11 +3057,6 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
     <div class="sponsor-locations">Fairfield · Bridgeport, CT</div>
   </div>
 
-  <div class="footer-feedback">
-    <h4>Feedback</h4>
-    <p>Have feedback on the app? <a href="mailto:amarkov@redkeysolutions.com?subject=Lil%20Cardinals%20App%20Feedback">Email me</a> — I'd love to hear it.</p>
-  </div>
-
   <div class="footer-made">
     <svg class="fairfield-icon" viewBox="0 0 20 26" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <path d="M0 24 Q5 22 10 23 Q15 22 20 24 L20 26 L0 26 Z" fill="currentColor"/>
@@ -3079,19 +3069,9 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
     </svg>
     Made in Fairfield
   </div>
-</footer>
 
-<div class="sponsor-strip-wrap" id="sponsorStripWrap">
-  <a class="sponsor-pill" href="https://www.redkeysolutions.com/" target="_blank" rel="noopener">
-    <span class="sponsor-pill-line">
-      <span class="sponsor-pill-text">Team Manager built by</span>
-      <span class="sponsor-pill-logo">
-        <img src="https://www.redkeysolutions.com/wp-content/uploads/2025/06/logo-update-2025-V1.webp" alt="Red Key" loading="lazy">
-      </span>
-    </span>
-    <span class="sponsor-pill-tagline">your technology &amp; AI partner</span>
-  </a>
-</div>
+  <a href="mailto:amarkov@redkeysolutions.com?subject=Team%20Manager%20Feedback" class="footer-feedback-link">Feedback?</a>
+</footer>
 
 <div class="app-team-links">
   <button class="app-team-link" id="appEditTeamBtn">
@@ -3102,6 +3082,18 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
   </button>
   <a class="app-team-link" href="?manager">
     <i class="fa-solid fa-grip" aria-hidden="true"></i> Team Manager
+  </a>
+</div>
+
+<div class="sponsor-strip-wrap" id="sponsorStripWrap">
+  <a class="sponsor-pill" href="https://www.redkeysolutions.com/" target="_blank" rel="noopener">
+    <span class="sponsor-pill-line">
+      <span class="sponsor-pill-text">Team Manager built by</span>
+      <span class="sponsor-pill-logo">
+        <img src="https://www.redkeysolutions.com/wp-content/uploads/2025/06/logo-update-2025-V1.webp" alt="Red Key" loading="lazy">
+      </span>
+    </span>
+    <span class="sponsor-pill-tagline">your technology &amp; AI partner</span>
   </a>
 </div>
 
@@ -3459,6 +3451,7 @@ function openNewTeamModal(teamToEdit) {
     document.getElementById('tmNewTeamInnings').value = teamToEdit.innings || 4;
     document.getElementById('tmNewTeamLeague').value = teamToEdit.league || '';
     document.getElementById('tmNewTeamSponsor').value = teamToEdit.sponsor || '';
+    document.getElementById('tmNewTeamSponsorUrl').value = teamToEdit.sponsorUrl || '';
     document.getElementById('tmNewTeamSponsorSlogan').value = teamToEdit.sponsorSlogan || '';
     document.getElementById('tmNewTeamSponsorEmoji').value = teamToEdit.sponsorEmoji || '';
     setLogoPreview(teamToEdit.logo || '');
@@ -3474,6 +3467,7 @@ function openNewTeamModal(teamToEdit) {
     document.getElementById('tmNewTeamInnings').value = 4;
     document.getElementById('tmNewTeamLeague').value = '';
     document.getElementById('tmNewTeamSponsor').value = '';
+    document.getElementById('tmNewTeamSponsorUrl').value = '';
     document.getElementById('tmNewTeamSponsorSlogan').value = '';
     document.getElementById('tmNewTeamSponsorEmoji').value = '';
     setLogoPreview('');
@@ -3507,6 +3501,10 @@ function saveNewTeam() {
   const innings = Math.max(1, Math.min(9, isNaN(inningsRaw) ? 4 : inningsRaw));
   const league = document.getElementById('tmNewTeamLeague').value.trim() || null;
   const sponsor = document.getElementById('tmNewTeamSponsor').value.trim() || null;
+  const sponsorUrlRaw = document.getElementById('tmNewTeamSponsorUrl').value.trim();
+  const sponsorUrl = sponsorUrlRaw
+    ? (/^https?:\/\//i.test(sponsorUrlRaw) ? sponsorUrlRaw : 'https://' + sponsorUrlRaw)
+    : null;
   const sponsorSlogan = document.getElementById('tmNewTeamSponsorSlogan').value.trim() || null;
   const sponsorEmoji = document.getElementById('tmNewTeamSponsorEmoji').value.trim() || null;
   const color = selectedSwatch();
@@ -3517,7 +3515,7 @@ function saveNewTeam() {
   if (editingTeamId !== null) {
     const idx = teams.findIndex(t => t.id === editingTeamId);
     if (idx >= 0) {
-      teams[idx] = Object.assign({}, teams[idx], { name, sport, innings, positions, league, sponsor, sponsorSlogan, sponsorEmoji, color, background, logo });
+      teams[idx] = Object.assign({}, teams[idx], { name, sport, innings, positions, league, sponsor, sponsorUrl, sponsorSlogan, sponsorEmoji, color, background, logo });
     }
     if (!saveTeams(teams)) return; // storage full — leave modal open so user can fix
     const editedId = editingTeamId;
@@ -3759,7 +3757,13 @@ function bindDeleteTeam() {
     }
     if (team.sponsor) {
       const sponsorLine = document.querySelector('.brand-text .header-sponsor');
-      if (sponsorLine) sponsorLine.textContent = 'Sponsored by ' + team.sponsor;
+      if (sponsorLine) {
+        if (team.sponsorUrl) {
+          sponsorLine.innerHTML = 'Sponsored by <a href="' + escapeHtml(team.sponsorUrl) + '" class="header-sponsor-link">' + escapeHtml(team.sponsor) + '</a>';
+        } else {
+          sponsorLine.textContent = 'Sponsored by ' + team.sponsor;
+        }
+      }
     } else if (CURRENT_TEAM_ID !== 1) {
       // Non-team-1 teams without a sponsor: hide the line entirely.
       const sponsorLine = document.querySelector('.brand-text .header-sponsor');
@@ -3791,11 +3795,14 @@ function applySponsorBlock(team) {
   const emoji = team.sponsorEmoji || '⭐';
   const safeEmoji = escapeHtml(emoji);
   const safeName = escapeHtml(team.sponsor);
+  const nameHtml = team.sponsorUrl
+    ? `<a href="${escapeHtml(team.sponsorUrl)}">${safeName}</a>`
+    : safeName;
   const slogan = team.sponsorSlogan ? `<div class="sponsor-tagline">${escapeHtml(team.sponsorSlogan)}</div>` : '';
   block.innerHTML = `
     <div class="sponsor-title">${safeEmoji} Today's game brought to you by ${safeEmoji}</div>
     <div class="sponsor-emoji-large" aria-hidden="true">${safeEmoji}</div>
-    <div class="sponsor-name">${safeName}</div>
+    <div class="sponsor-name">${nameHtml}</div>
     ${slogan}
   `;
 }
@@ -4751,14 +4758,16 @@ function playCardinalCall() {
   const cancelBtn = document.getElementById('rosterCancelBtn');
   const closeBtn = document.getElementById('rosterModalCloseBtn');
   const editBtn = document.getElementById('rosterEditBtn');
+  const addBtnIcon = document.getElementById('rosterAddBtnIcon');
   if (!overlay || !editBtn) return;
 
   let working = [];
 
-  function open() {
+  function open(focusAdd) {
     working = ROSTER.slice();
     renderList();
     overlay.hidden = false;
+    if (focusAdd) setTimeout(() => addInput?.focus(), 80);
   }
   function close() {
     overlay.hidden = true;
@@ -4787,7 +4796,8 @@ function playCardinalCall() {
     listEl.scrollTop = listEl.scrollHeight;
   }
 
-  editBtn.addEventListener('click', open);
+  editBtn.addEventListener('click', () => open(false));
+  addBtnIcon?.addEventListener('click', () => open(true));
   closeBtn.addEventListener('click', close);
   cancelBtn.addEventListener('click', close);
   overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
