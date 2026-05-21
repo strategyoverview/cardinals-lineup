@@ -377,11 +377,15 @@ body.is-manager { padding-bottom: 0 !important; }
 .tm-card.tm-card-add i { font-size: 1.75rem; color: #B22234; }
 .tm-card.tm-card-add span { font-weight: 800; letter-spacing: 0.04em; font-size: 0.95rem; }
 
-/* Liquid Glass footer for Team Manager */
+/* Liquid Glass footer for Team Manager — mirrors the team-page bottom:
+   sponsor pill on top, "Feedback?" link below. */
 .tm-glass-footer {
   padding: 1.5rem 1rem 2rem;
   display: flex;
+  flex-direction: column;
   justify-content: center;
+  align-items: center;
+  gap: 0.875rem;
 }
 .tm-glass-card {
   background: rgba(255, 255, 255, 0.55);
@@ -1363,8 +1367,8 @@ h2 .badge {
   width: 28px;
   height: 28px;
   border-radius: 999px;
-  background: var(--navy);
-  color: var(--gold);
+  background: var(--cardinal-red);
+  color: white;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1372,8 +1376,8 @@ h2 .badge {
   font-weight: 900;
   flex-shrink: 0;
   letter-spacing: -0.02em;
-  border: 1.5px solid var(--navy-dark);
-  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.18);
+  border: none;
+  box-shadow: 0 2px 6px color-mix(in srgb, var(--cardinal-red) 30%, transparent);
 }
 @media (min-width: 768px) {
   .batting-num { width: 44px; height: 44px; font-size: 1.25rem; }
@@ -1980,14 +1984,19 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
   margin-right: 0.45em;
   color: var(--cardinal-red);
 }
+.footer-feedback-row {
+  display: flex;
+  justify-content: center;
+  padding: 0.5rem 1rem 0.25rem;
+}
 .footer-feedback-link {
   display: inline-block;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   font-weight: 500;
   color: var(--gray-500);
   text-decoration: none;
   letter-spacing: 0.02em;
-  opacity: 0.7;
+  opacity: 0.65;
   transition: opacity 0.18s ease;
 }
 .footer-feedback-link:hover { opacity: 1; text-decoration: underline; }
@@ -2680,9 +2689,6 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
   width: 38px;
   height: 38px;
   border-radius: 50%;
-  background: white;
-  color: var(--navy);
-  border: 2px solid var(--gray-300);
   font-size: 1.2rem;
   font-weight: 800;
   cursor: pointer;
@@ -2692,23 +2698,25 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
   line-height: 1;
   padding: 0;
   flex-shrink: 0;
-  box-shadow: 0 2px 6px rgba(15,23,42,0.1);
   transition: transform 0.1s ease;
+  border: none;
 }
-.sc-btn[data-metric="assists"] {
-  background: white;
-  color: var(--navy);
-  border: 2px solid var(--gray-300);
-  box-shadow: 0 2px 6px rgba(15,23,42,0.1);
+/* Minus = subtle gray pill */
+.sc-btn[data-action="dec"] {
+  background: var(--gray-100);
+  color: var(--gray-500);
+  box-shadow: 0 1px 3px rgba(15,23,42,0.08);
 }
-.sc-btn[data-metric="outs"] {
-  background: #1F9B4D;
+.sc-btn[data-action="dec"]:hover { background: var(--gray-200); }
+/* Plus = team-colored solid button with white icon */
+.sc-btn[data-action="inc"] {
+  background: var(--cardinal-red);
   color: white;
-  border: 2px solid #135E2C;
-  box-shadow: 0 2px 8px rgba(31,155,77,0.35);
+  box-shadow: 0 3px 10px color-mix(in srgb, var(--cardinal-red) 35%, transparent);
 }
+.sc-btn[data-action="inc"]:hover { background: var(--cardinal-red-dark); }
 .sc-btn:active { transform: scale(0.9); }
-.sc-btn:disabled { opacity: 0.3; cursor: not-allowed; box-shadow: none; }
+.sc-btn:disabled { opacity: 0.35; cursor: not-allowed; box-shadow: none; }
 .sc-value {
   min-width: 1.5rem;
   text-align: center;
@@ -2791,18 +2799,16 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
     <div class="tm-grid" id="tmTeamsGrid"></div>
   </div>
   <div class="tm-glass-footer">
-    <div class="tm-glass-card">
-      <div class="tm-glass-row">
-        <span class="tm-glass-label">Team Manager built by</span>
-        <a href="https://www.redkeysolutions.com/" target="_blank" rel="noopener" class="tm-glass-logo">
+    <a class="sponsor-pill" href="https://www.redkeysolutions.com/" target="_blank" rel="noopener">
+      <span class="sponsor-pill-line">
+        <span class="sponsor-pill-text">Team Manager built by</span>
+        <span class="sponsor-pill-logo">
           <img src="https://www.redkeysolutions.com/wp-content/uploads/2025/06/logo-update-2025-V1.webp" alt="Red Key">
-        </a>
-        <span class="tm-glass-label">your technology &amp; AI partner</span>
-      </div>
-      <div class="tm-glass-feedback">
-        Have feedback? <a href="mailto:amarkov@redkeysolutions.com?subject=Team%20Manager%20Feedback">amarkov@redkeysolutions.com</a>
-      </div>
-    </div>
+        </span>
+      </span>
+      <span class="sponsor-pill-tagline">your technology &amp; AI partner</span>
+    </a>
+    <a href="mailto:amarkov@redkeysolutions.com?subject=Team%20Manager%20Feedback" class="footer-feedback-link">Feedback?</a>
   </div>
 </div>
 
@@ -3069,8 +3075,6 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
     </svg>
     Made in Fairfield
   </div>
-
-  <a href="mailto:amarkov@redkeysolutions.com?subject=Team%20Manager%20Feedback" class="footer-feedback-link">Feedback?</a>
 </footer>
 
 <div class="app-team-links">
@@ -3083,6 +3087,10 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
   <a class="app-team-link" href="?manager">
     <i class="fa-solid fa-grip" aria-hidden="true"></i> Team Manager
   </a>
+</div>
+
+<div class="footer-feedback-row">
+  <a href="mailto:amarkov@redkeysolutions.com?subject=Team%20Manager%20Feedback" class="footer-feedback-link">Feedback?</a>
 </div>
 
 <div class="sponsor-strip-wrap" id="sponsorStripWrap">
@@ -4605,14 +4613,25 @@ function setTeamLogo(dataUrl) {
 function applyTeamLogo() {
   const el = document.getElementById('teamLogo');
   const fb = document.getElementById('teamLogoFallback');
-  if (state.teamLogo) {
-    el.style.backgroundImage = `url('${state.teamLogo}')`;
+  if (!el) return;
+  // The team object's logo is authoritative — if the user uploaded one
+  // via Edit Team it lives in tm_teams. The legacy state.teamLogo (set
+  // by the older "tap the logo to upload" path) acts as a per-team
+  // override only when team.logo is empty.
+  const team = (typeof CURRENT_TEAM_ID === 'number') ? getTeamById(CURRENT_TEAM_ID) : null;
+  const src = (team && team.logo) || state.teamLogo;
+  if (src) {
+    el.style.backgroundImage = `url('${src.replace(/'/g, "\\'")}')`;
     el.classList.add('has-photo');
-    fb.style.display = 'none';
-    applyFooterLogo(state.teamLogo);
-    return;
+    if (fb) fb.style.display = 'none';
+    applyFooterLogo(src);
+  } else {
+    el.style.backgroundImage = '';
+    el.classList.remove('has-photo');
+    if (fb) fb.style.display = '';
+    const fl = document.getElementById('footerLogo');
+    if (fl) fl.style.display = 'none';
   }
-  tryLoadLogo(['LilCardinalsLogo.png', 'LittleCardinalsLogo.png', 'logo.png', 'logo.svg']);
 }
 function applyFooterLogo(src) {
   const fl = document.getElementById('footerLogo');
