@@ -136,74 +136,76 @@ button { font-family: inherit; }
   .sponsor-strip-logo img { height: 22px; }
 }
 
-/* ============ Team Manager landing ============ */
+/* ============ Team Manager landing — Liquid Glass, mostly white / black ============ */
 body.is-manager {
   background:
-    linear-gradient(180deg, #FFFFFF 0%, #F0F6FF 60%, #E5EDFF 100%);
+    radial-gradient(ellipse 80% 50% at 20% 0%, rgba(178, 34, 52, 0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 80% 50% at 80% 100%, rgba(60, 59, 110, 0.06) 0%, transparent 60%),
+    #FFFFFF;
   background-attachment: fixed;
+  color: #0A0A0A;
 }
 body.is-manager > header,
 body.is-manager > nav.page-nav,
 body.is-manager > main,
 body.is-manager > footer,
-body.is-manager > .sponsor-strip { display: none !important; }
+body.is-manager > .sponsor-strip,
+body.is-manager > .app-team-links { display: none !important; }
 body.is-manager #teamManagerView { display: block; }
 body.is-manager { padding-bottom: 0 !important; }
 
-.tm-view { min-height: 100vh; }
+.tm-view { min-height: 100vh; display: flex; flex-direction: column; }
 
 .tm-flag {
   display: flex;
   width: 100%;
-  height: 6px;
+  height: 4px;
 }
 .tm-flag-stripe { flex: 1; }
 .tm-flag-stripe.red { background: #B22234; }
-.tm-flag-stripe.white { background: #FFFFFF; border-top: 1px solid #E5E7EB; border-bottom: 1px solid #E5E7EB; }
 .tm-flag-stripe.blue { background: #3C3B6E; }
 
 .tm-hero {
-  padding: 2.5rem 1.25rem 2rem;
+  padding: 3.5rem 1.5rem 2rem;
   text-align: center;
-  background: linear-gradient(135deg, #B22234 0%, #C41E3A 35%, #3C3B6E 100%);
-  color: white;
+  background: transparent;
+  color: #0A0A0A;
   position: relative;
-  overflow: hidden;
-}
-.tm-hero::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image:
-    radial-gradient(circle at 15% 25%, rgba(255,255,255,0.15) 0%, transparent 40%),
-    radial-gradient(circle at 85% 75%, rgba(255,255,255,0.1) 0%, transparent 40%);
-  pointer-events: none;
 }
 .tm-title {
-  font-size: clamp(2.25rem, 7vw, 3.75rem);
+  font-size: clamp(2.5rem, 8vw, 4.5rem);
   font-weight: 900;
-  letter-spacing: 0.08em;
-  line-height: 1;
-  text-shadow: 2px 3px 6px rgba(0,0,0,0.3);
-  position: relative;
-  margin-top: 0.75rem;
+  letter-spacing: -0.02em;
+  line-height: 0.95;
+  color: #0A0A0A;
+}
+.tm-title::after {
+  content: '';
+  display: block;
+  width: 56px;
+  height: 4px;
+  margin: 1rem auto 0;
+  background: linear-gradient(90deg, #B22234 0%, #B22234 50%, #3C3B6E 50%, #3C3B6E 100%);
+  border-radius: 2px;
 }
 .tm-tagline {
-  margin-top: 0.875rem;
-  font-size: clamp(0.95rem, 2.5vw, 1.2rem);
-  font-weight: 600;
-  opacity: 0.95;
-  max-width: 540px;
+  margin-top: 1rem;
+  font-size: clamp(1rem, 2.3vw, 1.2rem);
+  font-weight: 500;
+  color: #525866;
+  max-width: 560px;
   margin-left: auto;
   margin-right: auto;
-  line-height: 1.4;
-  position: relative;
+  line-height: 1.5;
 }
 
 .tm-container {
   max-width: 1100px;
   margin: 0 auto;
-  padding: 2rem 1.25rem 3rem;
+  padding: 1rem 1.25rem 3rem;
+  width: 100%;
+  box-sizing: border-box;
+  flex: 1;
 }
 .tm-section-head {
   display: flex;
@@ -213,131 +215,230 @@ body.is-manager { padding-bottom: 0 !important; }
   gap: 0.75rem;
 }
 .tm-section-title {
-  font-size: clamp(1.5rem, 4vw, 2rem);
-  font-weight: 900;
-  color: #1F2937;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
+  font-size: clamp(1.25rem, 3.5vw, 1.625rem);
+  font-weight: 800;
+  color: #0A0A0A;
+  letter-spacing: -0.01em;
 }
 .tm-new-btn {
-  background: linear-gradient(135deg, #B22234 0%, #C41E3A 100%);
-  color: white;
-  border: none;
-  padding: 0.75rem 1.25rem;
+  background: rgba(255, 255, 255, 0.7);
+  color: #0A0A0A;
+  border: 1px solid rgba(10, 10, 10, 0.12);
+  padding: 0.625rem 1.125rem;
   border-radius: 999px;
-  font-weight: 800;
-  font-size: 0.95rem;
+  font-weight: 700;
+  font-size: 0.92rem;
   cursor: pointer;
   font-family: inherit;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  box-shadow: 0 6px 16px rgba(178, 34, 52, 0.35);
-  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.7) inset,
+    0 1px 2px rgba(10, 10, 10, 0.04),
+    0 4px 12px rgba(10, 10, 10, 0.08);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
 }
-.tm-new-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 22px rgba(178, 34, 52, 0.4); }
+.tm-new-btn:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.7) inset,
+    0 6px 18px rgba(10, 10, 10, 0.1);
+}
+.tm-new-btn i { color: #B22234; }
 .tm-new-btn:active { transform: translateY(0); }
 
 .tm-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 1rem;
 }
 .tm-card {
-  background: white;
-  border: 1.5px solid rgba(15, 23, 42, 0.08);
-  border-radius: 18px;
-  padding: 1.25rem;
+  position: relative;
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(10, 10, 10, 0.08);
+  border-radius: 22px;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
-  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
-  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.6) inset,
+    0 4px 18px rgba(10, 10, 10, 0.06),
+    0 1px 2px rgba(10, 10, 10, 0.04);
+  transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.2s ease;
   cursor: pointer;
   text-decoration: none;
   color: inherit;
+  aspect-ratio: 1;
 }
-.tm-card:hover { transform: translateY(-3px); box-shadow: 0 12px 28px rgba(15, 23, 42, 0.12); }
+.tm-card:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.6) inset,
+    0 18px 36px rgba(10, 10, 10, 0.12),
+    0 2px 4px rgba(10, 10, 10, 0.06);
+}
 .tm-card-logo {
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  background: var(--tm-card-color, #C41E3A);
+  position: absolute;
+  inset: 0;
+  background-color: var(--tm-card-color, #0A0A0A);
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
   font-weight: 900;
-  font-size: 1.5rem;
-  box-shadow: 0 3px 8px rgba(15, 23, 42, 0.15);
+  font-size: clamp(3rem, 10vw, 5rem);
+  letter-spacing: -0.03em;
+}
+.tm-card-logo.has-image { background-color: transparent; }
+.tm-card-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.55) 100%);
+  padding: 0.875rem 1rem 0.875rem;
+  color: white;
 }
 .tm-card-name {
-  font-size: 1.25rem;
-  font-weight: 900;
-  color: #1F2937;
+  font-size: 1.1rem;
+  font-weight: 800;
   letter-spacing: -0.01em;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  line-height: 1.15;
 }
 .tm-card-meta {
-  font-size: 0.85rem;
+  font-size: 0.72rem;
   font-weight: 700;
-  color: #6B7280;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
+  opacity: 0.9;
+  margin-top: 0.2rem;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
 }
-.tm-card-link {
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: #B22234;
-  letter-spacing: 0.04em;
-  font-family: -apple-system, ui-monospace, monospace;
-}
-.tm-card-id {
-  position: absolute;
-  top: 0.875rem;
-  right: 1rem;
-  background: rgba(15, 23, 42, 0.05);
-  color: #6B7280;
-  font-weight: 800;
-  font-size: 0.7rem;
-  padding: 3px 8px;
-  border-radius: 999px;
-  letter-spacing: 0.05em;
-}
-.tm-card { position: relative; }
 
 .tm-card.tm-card-add {
   align-items: center;
   justify-content: center;
   text-align: center;
-  border: 2.5px dashed rgba(178, 34, 52, 0.35);
-  background: rgba(255, 255, 255, 0.6);
-  color: #B22234;
-  min-height: 180px;
+  border: 1.5px dashed rgba(10, 10, 10, 0.2);
+  background: rgba(255, 255, 255, 0.4);
+  color: #0A0A0A;
+  gap: 0.5rem;
 }
 .tm-card.tm-card-add:hover {
-  background: rgba(255, 255, 255, 0.9);
-  border-color: #B22234;
+  background: rgba(255, 255, 255, 0.8);
+  border-color: #0A0A0A;
 }
-.tm-card.tm-card-add i { font-size: 2rem; }
-.tm-card.tm-card-add span { font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; }
+.tm-card.tm-card-add i { font-size: 1.75rem; color: #B22234; }
+.tm-card.tm-card-add span { font-weight: 800; letter-spacing: 0.04em; font-size: 0.95rem; }
 
-.tm-footer {
-  text-align: center;
-  padding: 2rem 1rem;
-  border-top: 1px solid rgba(15, 23, 42, 0.06);
-  background: rgba(255, 255, 255, 0.5);
+/* Liquid Glass footer for Team Manager */
+.tm-glass-footer {
+  padding: 1.5rem 1rem 2rem;
+  display: flex;
+  justify-content: center;
 }
-.tm-footer-feedback {
-  font-size: 0.85rem;
-  color: #6B7280;
+.tm-glass-card {
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(28px) saturate(200%);
+  -webkit-backdrop-filter: blur(28px) saturate(200%);
+  border: 1px solid rgba(10, 10, 10, 0.06);
+  border-radius: 22px;
+  padding: 1rem 1.25rem;
+  max-width: 600px;
+  width: 100%;
+  text-align: center;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.7) inset,
+    0 6px 18px rgba(10, 10, 10, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  align-items: center;
+}
+.tm-glass-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  font-family: 'Montserrat', -apple-system, system-ui, sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #0A0A0A;
+}
+.tm-glass-label { color: #0A0A0A; }
+.tm-glass-logo { display: inline-flex; align-items: center; line-height: 0; }
+.tm-glass-logo img { height: 14px; width: auto; display: inline-block; vertical-align: middle; }
+@media (min-width: 600px) {
+  .tm-glass-row { font-size: 0.95rem; }
+  .tm-glass-logo img { height: 20px; }
+}
+.tm-glass-feedback {
+  font-size: 0.75rem;
+  color: #525866;
   font-weight: 600;
 }
-.tm-footer-feedback a { color: #B22234; font-weight: 800; text-decoration: none; }
-.tm-footer-feedback a:hover { text-decoration: underline; }
+.tm-glass-feedback a { color: #B22234; font-weight: 800; text-decoration: none; }
+.tm-glass-feedback a:hover { text-decoration: underline; }
+
+/* App-side: Edit Team / Manage Teams quick links above the sponsor strip.
+   Default hidden so it doesn't flash on the Team Manager landing before
+   JS adds body.is-app. */
+.app-team-links { display: none; }
+body.is-app > .app-team-links {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1rem;
+  padding-left: max(1rem, env(safe-area-inset-left));
+  padding-right: max(1rem, env(safe-area-inset-right));
+  flex-wrap: wrap;
+}
+.app-team-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: rgba(255, 255, 255, 0.58);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(10, 10, 10, 0.08);
+  color: var(--navy-dark);
+  text-decoration: none;
+  padding: 0.5rem 0.875rem;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  font-family: inherit;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.7) inset,
+    0 2px 6px rgba(10, 10, 10, 0.06);
+  transition: transform 0.18s ease, background 0.18s ease;
+}
+.app-team-link:hover { transform: translateY(-1px); background: rgba(255, 255, 255, 0.88); }
+.app-team-link i { color: var(--cardinal-red); font-size: 0.85em; }
+
+/* Liquid-glass styling for the bottom sponsor strip when in app view */
+.sponsor-strip-glass {
+  background: rgba(255, 255, 255, 0.58) !important;
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border-top: 1px solid rgba(255, 255, 255, 0.7);
+  border-bottom: none !important;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.7) inset,
+    0 -4px 14px rgba(10, 10, 10, 0.04);
+}
 
 /* Create Team modal field styling */
 .tm-field {
@@ -657,7 +758,11 @@ main {
     from { opacity: 0; transform: translateY(8px); }
     to { opacity: 1; transform: translateY(0); }
   }
-  body { padding-bottom: calc(96px + env(safe-area-inset-bottom)); }
+  /* Reserve enough room at the bottom for the floating nav PLUS the
+     app-team-links pills and the glass sponsor strip beneath it. */
+  body { padding-bottom: calc(180px + env(safe-area-inset-bottom)); }
+  body.is-app > .app-team-links,
+  body.is-app > .sponsor-strip { position: relative; z-index: 2; }
 
   /* Hide the giant team-logo header on batting / fielding / score pages
      so the content loads clean. Only roster keeps the team header. */
@@ -2421,29 +2526,37 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
   <div class="tm-hero">
     <div class="tm-flag">
       <span class="tm-flag-stripe red"></span>
-      <span class="tm-flag-stripe white"></span>
       <span class="tm-flag-stripe blue"></span>
     </div>
-    <h1 class="tm-title">TEAM MANAGER</h1>
-    <p class="tm-tagline">Build, share, and run your team's lineup, fielding, and scorecard.</p>
+    <h1 class="tm-title">Team Manager</h1>
+    <p class="tm-tagline">Build your lineup, run your scorecard, and enjoy the golden years of coaching.</p>
   </div>
   <div class="tm-container">
     <div class="tm-section-head">
-      <h2 class="tm-section-title">Your Teams</h2>
+      <h2 class="tm-section-title">My Teams</h2>
       <button class="tm-new-btn" id="tmNewTeamBtn">
         <i class="fa-solid fa-plus" aria-hidden="true"></i> New Team
       </button>
     </div>
     <div class="tm-grid" id="tmTeamsGrid"></div>
   </div>
-  <div class="tm-footer">
-    <div class="tm-footer-feedback">
-      Built by <a href="https://www.redkeysolutions.com/" target="_blank" rel="noopener">Red Key</a> · Have feedback? <a href="mailto:amarkov@redkeysolutions.com?subject=Team%20Manager%20Feedback">amarkov@redkeysolutions.com</a>
+  <div class="tm-glass-footer">
+    <div class="tm-glass-card">
+      <div class="tm-glass-row">
+        <span class="tm-glass-label">Team Manager built by</span>
+        <a href="https://www.redkeysolutions.com/" target="_blank" rel="noopener" class="tm-glass-logo">
+          <img src="https://www.redkeysolutions.com/wp-content/uploads/2025/06/logo-update-2025-V1.webp" alt="Red Key">
+        </a>
+        <span class="tm-glass-label">your technology &amp; AI partner</span>
+      </div>
+      <div class="tm-glass-feedback">
+        Have feedback? <a href="mailto:amarkov@redkeysolutions.com?subject=Team%20Manager%20Feedback">amarkov@redkeysolutions.com</a>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- ============ New Team modal ============ -->
+<!-- ============ New / Edit Team modal ============ -->
 <div class="modal-overlay" id="tmNewTeamOverlay" hidden>
   <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="tmNewTeamTitle">
     <div class="modal-header">
@@ -2462,6 +2575,14 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
           <option value="softball">Softball</option>
         </select>
       </label>
+      <label class="tm-field">
+        <span class="tm-field-label">League <span class="tm-field-hint">(optional)</span></span>
+        <input type="text" id="tmNewTeamLeague" maxlength="60" placeholder="e.g. Fairfield Little League Nationals">
+      </label>
+      <label class="tm-field">
+        <span class="tm-field-label">Team Sponsor <span class="tm-field-hint">(optional)</span></span>
+        <input type="text" id="tmNewTeamSponsor" maxlength="60" placeholder="e.g. Tabitha's Ice Cream">
+      </label>
       <div class="tm-field">
         <span class="tm-field-label">Team Color</span>
         <div class="tm-color-swatches" id="tmColorSwatches">
@@ -2476,7 +2597,7 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
         </div>
       </div>
       <label class="tm-field">
-        <span class="tm-field-label">Logo URL <span class="tm-field-hint">(optional)</span></span>
+        <span class="tm-field-label">Logo URL <span class="tm-field-hint">(optional — leave blank to show initial only)</span></span>
         <input type="url" id="tmNewTeamLogo" placeholder="https://...">
       </label>
     </div>
@@ -2652,12 +2773,21 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
   </div>
 </footer>
 
-<div class="sponsor-strip sponsor-strip-bottom" id="sponsorStrip">
-  <span class="sponsor-strip-text">Built by</span>
+<div class="app-team-links">
+  <button class="app-team-link" id="appEditTeamBtn">
+    <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i> Edit Team
+  </button>
+  <a class="app-team-link" href="/">
+    <i class="fa-solid fa-grip" aria-hidden="true"></i> Manage Teams
+  </a>
+</div>
+
+<div class="sponsor-strip sponsor-strip-glass" id="sponsorStrip">
+  <span class="sponsor-strip-text">Team Manager built by</span>
   <a href="https://www.redkeysolutions.com/" target="_blank" rel="noopener" class="sponsor-strip-logo">
     <img src="https://www.redkeysolutions.com/wp-content/uploads/2025/06/logo-update-2025-V1.webp" alt="Red Key" loading="lazy">
   </a>
-  <span class="sponsor-strip-tagline">your technology and AI partner</span>
+  <span class="sponsor-strip-tagline">your technology &amp; AI partner</span>
 </div>
 
 <script>
@@ -2716,18 +2846,19 @@ function renderTeamManager() {
   if (!grid) return;
   const teams = loadTeams();
   const cards = teams.map(team => {
-    const linkHref = `?team=${team.id}`;
     const initial = (team.name || '?').trim()[0].toUpperCase();
-    const logoStyle = team.logo
+    const hasLogo = !!team.logo;
+    const logoClass = hasLogo ? 'tm-card-logo has-image' : 'tm-card-logo';
+    const logoStyle = hasLogo
       ? `background-image: url('${team.logo.replace(/'/g, "\\'")}');`
-      : `background-color: ${team.color || '#C41E3A'};`;
+      : `background-color: ${team.color || '#0A0A0A'};`;
     return `
-      <a class="tm-card" href="${linkHref}" style="--tm-card-color: ${team.color || '#C41E3A'}">
-        <span class="tm-card-id">#${team.id}</span>
-        <div class="tm-card-logo" style="${logoStyle}">${team.logo ? '' : initial}</div>
-        <div class="tm-card-name">${team.name || 'Untitled Team'}</div>
-        <div class="tm-card-meta">${team.sport === 'softball' ? 'Softball' : 'Tee Ball'}</div>
-        <div class="tm-card-link">?team=${team.id}</div>
+      <a class="tm-card" href="?team=${team.id}" data-team-id="${team.id}" style="--tm-card-color: ${team.color || '#0A0A0A'}">
+        <div class="${logoClass}" style="${logoStyle}">${hasLogo ? '' : initial}</div>
+        <div class="tm-card-footer">
+          <div class="tm-card-name">${escapeHtml(team.name || 'Untitled Team')}</div>
+          <div class="tm-card-meta">${team.sport === 'softball' ? 'Softball' : 'Tee Ball'}${team.league ? ' · ' + escapeHtml(team.league) : ''}</div>
+        </div>
       </a>
     `;
   }).join('');
@@ -2739,20 +2870,55 @@ function renderTeamManager() {
   `;
   grid.innerHTML = cards + addCard;
   document.getElementById('tmAddCard')?.addEventListener('click', openNewTeamModal);
+
+  // When user clicks a team card, clear that team's saved page so the
+  // team app opens on the Roster tab by default (per request).
+  grid.addEventListener('click', (e) => {
+    const card = e.target.closest('.tm-card[data-team-id]');
+    if (!card) return;
+    const id = parseInt(card.dataset.teamId, 10);
+    const pageKey = (id === 1) ? 'cardinals_page' : `tm_t${id}_cardinals_page`;
+    localStorage.removeItem(pageKey);
+  });
 }
 
-/* ============ New Team modal ============ */
-function openNewTeamModal() {
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+/* ============ New / Edit Team modal ============ */
+let editingTeamId = null;
+function openNewTeamModal(teamToEdit) {
   const overlay = document.getElementById('tmNewTeamOverlay');
-  document.getElementById('tmNewTeamName').value = '';
-  document.getElementById('tmNewTeamSport').value = 'teeball';
-  document.getElementById('tmNewTeamLogo').value = '';
-  document.querySelectorAll('.tm-swatch').forEach(s => s.classList.toggle('active', s.dataset.color === '#C41E3A'));
+  const title = document.getElementById('tmNewTeamTitle');
+  const saveBtn = document.getElementById('tmNewTeamSaveBtn');
+  if (teamToEdit) {
+    editingTeamId = teamToEdit.id;
+    title.textContent = 'Edit Team';
+    saveBtn.textContent = 'Save Team';
+    document.getElementById('tmNewTeamName').value = teamToEdit.name || '';
+    document.getElementById('tmNewTeamSport').value = teamToEdit.sport || 'teeball';
+    document.getElementById('tmNewTeamLeague').value = teamToEdit.league || '';
+    document.getElementById('tmNewTeamSponsor').value = teamToEdit.sponsor || '';
+    document.getElementById('tmNewTeamLogo').value = teamToEdit.logo || '';
+    document.querySelectorAll('.tm-swatch').forEach(s => s.classList.toggle('active', s.dataset.color === (teamToEdit.color || '#C41E3A')));
+  } else {
+    editingTeamId = null;
+    title.textContent = 'Create New Team';
+    saveBtn.textContent = 'Create Team';
+    document.getElementById('tmNewTeamName').value = '';
+    document.getElementById('tmNewTeamSport').value = 'teeball';
+    document.getElementById('tmNewTeamLeague').value = '';
+    document.getElementById('tmNewTeamSponsor').value = '';
+    document.getElementById('tmNewTeamLogo').value = '';
+    document.querySelectorAll('.tm-swatch').forEach(s => s.classList.toggle('active', s.dataset.color === '#C41E3A'));
+  }
   overlay.hidden = false;
   setTimeout(() => document.getElementById('tmNewTeamName').focus(), 80);
 }
 function closeNewTeamModal() {
   document.getElementById('tmNewTeamOverlay').hidden = true;
+  editingTeamId = null;
 }
 function selectedSwatch() {
   const s = document.querySelector('.tm-swatch.active');
@@ -2765,19 +2931,34 @@ function saveNewTeam() {
     return;
   }
   const sport = document.getElementById('tmNewTeamSport').value;
+  const league = document.getElementById('tmNewTeamLeague').value.trim() || null;
+  const sponsor = document.getElementById('tmNewTeamSponsor').value.trim() || null;
   const color = selectedSwatch();
   const logo = document.getElementById('tmNewTeamLogo').value.trim() || null;
   const teams = loadTeams();
+  if (editingTeamId !== null) {
+    const idx = teams.findIndex(t => t.id === editingTeamId);
+    if (idx >= 0) {
+      teams[idx] = Object.assign({}, teams[idx], { name, sport, league, sponsor, color, logo });
+    }
+    saveTeams(teams);
+    closeNewTeamModal();
+    if (CURRENT_TEAM_ID === editingTeamId) {
+      location.reload();
+    } else {
+      renderTeamManager();
+    }
+    return;
+  }
   const id = nextTeamId(teams);
-  teams.push({ id, name, sport, color, logo });
+  teams.push({ id, name, sport, league, sponsor, color, logo });
   saveTeams(teams);
   closeNewTeamModal();
-  // Jump straight into the newly-created team
   location.search = `?team=${id}`;
 }
 
 function bindTeamManager() {
-  document.getElementById('tmNewTeamBtn')?.addEventListener('click', openNewTeamModal);
+  document.getElementById('tmNewTeamBtn')?.addEventListener('click', () => openNewTeamModal());
   document.getElementById('tmNewTeamCloseBtn')?.addEventListener('click', closeNewTeamModal);
   document.getElementById('tmNewTeamCancelBtn')?.addEventListener('click', closeNewTeamModal);
   document.getElementById('tmNewTeamSaveBtn')?.addEventListener('click', saveNewTeam);
@@ -2792,48 +2973,84 @@ function bindTeamManager() {
   });
 }
 
+function bindAppTeamLinks() {
+  const editBtn = document.getElementById('appEditTeamBtn');
+  if (editBtn) {
+    editBtn.addEventListener('click', () => {
+      const team = getTeamById(CURRENT_TEAM_ID);
+      if (team) openNewTeamModal(team);
+    });
+  }
+}
+
 /* ============ Boot: route between manager and team app ============ */
 (function bootRouter() {
+  // Modal exists in both views — bind its events unconditionally
+  bindTeamManager();
+
   if (CURRENT_TEAM_ID === null) {
     // No ?team= → Team Manager landing
     document.body.classList.add('is-manager');
     document.getElementById('teamManagerView').hidden = false;
     renderTeamManager();
-    bindTeamManager();
     return;
   }
 
-  // We have a team id — show the existing app. Apply team config if not Team 1.
+  // App view: bind the Edit Team link
+  bindAppTeamLinks();
+
+  // We have a team id — show the existing app. Apply team config.
   document.body.classList.add('is-app');
   const team = getTeamById(CURRENT_TEAM_ID);
-  if (team && CURRENT_TEAM_ID !== 1) {
-    // Apply custom color
-    if (team.color) {
-      document.documentElement.style.setProperty('--cardinal-red', team.color);
-    }
-    // Apply custom name (split on space for the two-line header)
-    document.title = `${team.name} — Game Day`;
-    const h1 = document.querySelector('.brand-text h1');
-    if (h1) {
-      const words = (team.name || '').trim().split(/\s+/);
-      if (words.length >= 2) {
-        const half = Math.ceil(words.length / 2);
-        h1.innerHTML = `<span>${words.slice(0, half).join(' ').toUpperCase()}</span><span>${words.slice(half).join(' ').toUpperCase()}</span>`;
-      } else {
-        h1.innerHTML = `<span>${(team.name || '').toUpperCase()}</span>`;
+  if (team) {
+    // For non-default teams, apply name/color/logo overrides. Team 1's
+    // baked-in HTML (FAIRFIELD LIL' / CARDINALS + Tabitha's footer block)
+    // is left alone unless the user has explicitly edited those fields.
+    if (CURRENT_TEAM_ID !== 1) {
+      if (team.color) {
+        document.documentElement.style.setProperty('--cardinal-red', team.color);
       }
-    }
-    // Apply custom logo
-    if (team.logo) {
+      document.title = `${team.name} — Game Day`;
+      const h1 = document.querySelector('.brand-text h1');
+      if (h1) {
+        const words = (team.name || '').trim().split(/\s+/);
+        if (words.length >= 2) {
+          const half = Math.ceil(words.length / 2);
+          h1.innerHTML = `<span>${words.slice(0, half).join(' ').toUpperCase()}</span><span>${words.slice(half).join(' ').toUpperCase()}</span>`;
+        } else {
+          h1.innerHTML = `<span>${(team.name || '').toUpperCase()}</span>`;
+        }
+      }
       const teamLogoEl = document.getElementById('teamLogo');
       const footerLogoEl = document.getElementById('footerLogo');
       const fb = document.getElementById('teamLogoFallback');
-      if (teamLogoEl) {
-        teamLogoEl.style.backgroundImage = `url('${team.logo}')`;
-        teamLogoEl.classList.add('has-photo');
-        if (fb) fb.style.display = 'none';
+      if (team.logo) {
+        if (teamLogoEl) {
+          teamLogoEl.style.backgroundImage = `url('${team.logo}')`;
+          teamLogoEl.classList.add('has-photo');
+          if (fb) fb.style.display = 'none';
+        }
+        if (footerLogoEl) footerLogoEl.style.backgroundImage = `url('${team.logo}')`;
+      } else {
+        if (teamLogoEl) teamLogoEl.style.display = 'none';
+        if (footerLogoEl) footerLogoEl.style.display = 'none';
       }
-      if (footerLogoEl) footerLogoEl.style.backgroundImage = `url('${team.logo}')`;
+      // Hide the hardcoded Tabitha's pink footer card — it's Lil-Cardinals-specific
+      const tabithaCard = document.querySelector('.footer-sponsor');
+      if (tabithaCard) tabithaCard.style.display = 'none';
+    }
+    // League + sponsor apply to ALL teams (including Team 1 if user edited them)
+    if (team.league) {
+      const sub = document.querySelector('.brand-text .subtitle');
+      if (sub) sub.textContent = team.league;
+    }
+    if (team.sponsor) {
+      const sponsorLine = document.querySelector('.brand-text .header-sponsor');
+      if (sponsorLine) sponsorLine.textContent = 'Sponsored by ' + team.sponsor;
+    } else if (CURRENT_TEAM_ID !== 1) {
+      // Non-team-1 teams without a sponsor: hide the line entirely.
+      const sponsorLine = document.querySelector('.brand-text .header-sponsor');
+      if (sponsorLine) sponsorLine.style.display = 'none';
     }
   }
 })();
