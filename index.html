@@ -15,6 +15,7 @@
 <link rel="icon" type="image/svg+xml" href="logo.svg?v=2" id="faviconSvg">
 <link rel="shortcut icon" href="LilCardinalFavicon.png?v=2" id="faviconShortcut">
 <link rel="apple-touch-icon" href="LilCardinalFavicon.png?v=2" id="faviconApple">
+<link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Pacifico&display=swap" rel="stylesheet">
@@ -5520,6 +5521,17 @@ rotateSectionQuotes();
 render();
 bindBattingDrag();
 bindFieldingDrag();
+
+// PWA: register the service worker so the app installs to the iOS / iPad
+// Home Screen with offline support and instant launch from cache. Skipped
+// silently on browsers that don't support it.
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(err => {
+      console.warn('[pwa] service worker registration failed:', err);
+    });
+  });
+}
 
 // Reset / shuffle button on the Field Rotation header. Bumps the salt so
 // the rotation re-randomizes and clears any manual overrides.
