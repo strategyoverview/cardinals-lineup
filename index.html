@@ -466,8 +466,10 @@ body.is-app > .app-team-links {
 }
 .tm-field-hint { font-weight: 500; text-transform: none; letter-spacing: 0; color: #9CA3AF; }
 .tm-field input,
-.tm-field select {
+.tm-field select,
+.tm-field textarea {
   width: 100%;
+  max-width: 100%;
   padding: 0.625rem 0.875rem;
   border: 1.5px solid #E5E7EB;
   border-radius: 10px;
@@ -478,9 +480,12 @@ body.is-app > .app-team-links {
   background: white;
   outline: none;
   box-sizing: border-box;
+  display: block;
 }
+.tm-field textarea { resize: vertical; line-height: 1.4; }
 .tm-field input:focus,
-.tm-field select:focus { border-color: #C41E3A; }
+.tm-field select:focus,
+.tm-field textarea:focus { border-color: #C41E3A; }
 .tm-color-swatches {
   display: flex;
   gap: 0.5rem;
@@ -2327,6 +2332,7 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
 .modal-body {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 1rem 1.25rem;
 }
 
@@ -3144,7 +3150,7 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
   border-radius: 999px;
   white-space: nowrap;
 }
-.schedule-status.active   { background: color-mix(in srgb, var(--cardinal-red) 14%, white); color: var(--cardinal-red-dark); }
+.schedule-status.active   { background: #DCFCE7; color: #15803D; }
 .schedule-status.complete { background: var(--gray-100); color: var(--gray-500); }
 .schedule-status.future   { background: #DBEAFE; color: #1D4ED8; }
 
@@ -3243,6 +3249,115 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
   overflow: hidden;
   text-align: center;
   opacity: 0.85;
+}
+.cal-day .cal-day-num { line-height: 1; }
+/* Day-of-week label on cells with a game — desktop only */
+.cal-day .cal-dow-inline { display: none; }
+@media (min-width: 720px) {
+  .cal-day {
+    font-size: 0.95rem;
+    padding: 0.4rem 0.5rem;
+  }
+  .cal-day .cal-dow-inline {
+    display: block;
+    position: absolute;
+    top: 0.3rem;
+    left: 0.4rem;
+    font-size: 0.6rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    opacity: 0.7;
+  }
+}
+
+/* Calendar games-for-month list (above the grid) */
+.cal-month-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+.cal-month-empty {
+  text-align: center;
+  padding: 0.85rem 1rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--gray-500);
+  background: rgba(255, 255, 255, 0.5);
+  border: 1.5px dashed rgba(15, 23, 42, 0.12);
+  border-radius: 12px;
+}
+.cal-month-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.6rem 0.85rem 0.6rem 1rem;
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(8px) saturate(140%);
+  -webkit-backdrop-filter: blur(8px) saturate(140%);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+.cal-month-row:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(15,23,42,0.06); }
+.cal-month-row.is-current { border-color: var(--cardinal-red); box-shadow: 0 0 0 2px color-mix(in srgb, var(--cardinal-red) 25%, transparent); }
+.cal-month-stripe {
+  position: absolute;
+  left: 0; top: 8px; bottom: 8px;
+  width: 4px;
+  border-radius: 4px;
+  background: var(--opp-primary, var(--cardinal-red));
+}
+.cal-month-date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 2.4rem;
+  line-height: 1;
+}
+.cal-month-date-dow {
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gray-400);
+  margin-bottom: 0.15rem;
+}
+.cal-month-date-day {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--navy-dark);
+  line-height: 1;
+}
+.cal-month-date-mon {
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gray-500);
+  margin-top: 0.1rem;
+}
+.cal-month-main { min-width: 0; }
+.cal-month-opp {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--navy-dark);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cal-month-notes {
+  font-size: 0.78rem;
+  color: var(--gray-500);
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .game-modal-status {
@@ -4694,6 +4809,7 @@ function bindDeleteTeam() {
 /* ============ Schedule page ============ */
 const MONTH_LABELS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const MONTH_LONG = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const DOW_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 function parseDateKey(dk) {
   // 'YYYY-MM-DD' → Date in local time (avoid UTC shift)
   const [y, m, d] = (dk || '').split('-').map(n => parseInt(n, 10));
@@ -4786,20 +4902,24 @@ function renderScheduleCalendar() {
   const startWeekday = firstOfMonth.getDay(); // 0=Sun
   const daysInMonth = new Date(yy, mm, 0).getDate();
   const today = todayKey();
+  const currentId = currentGameId;
   // Build a map of dateKey → array of games
   const byDay = new Map();
+  const monthGames = [];
   for (const g of games) {
     if (g.date.slice(0, 7) === calendarMonth) {
       if (!byDay.has(g.date)) byDay.set(g.date, []);
       byDay.get(g.date).push(g);
+      monthGames.push(g);
     }
   }
+  monthGames.sort((a, b) => a.date.localeCompare(b.date) || (a.id - b.id));
   // 6 rows of 7 = 42 cells; fill with leading/trailing month blanks
   const cells = [];
   for (let i = 0; i < startWeekday; i++) cells.push({ blank: true });
   for (let d = 1; d <= daysInMonth; d++) {
     const dk = `${yy}-${String(mm).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-    cells.push({ blank: false, d, dk, games: byDay.get(dk) || [] });
+    cells.push({ blank: false, d, dk, games: byDay.get(dk) || [], dow: new Date(yy, mm - 1, d).getDay() });
   }
   while (cells.length % 7 !== 0) cells.push({ blank: true });
   const dows = ['S','M','T','W','T','F','S'];
@@ -4808,6 +4928,37 @@ function renderScheduleCalendar() {
     <span class="cal-title">${MONTH_LONG[mm - 1]} ${yy}</span>
     <button id="calNextBtn" type="button" aria-label="Next month">›</button>
   </div>`;
+
+  // Month games list (above grid). Updates as the user navigates months.
+  if (monthGames.length) {
+    html += '<div class="cal-month-list">';
+    for (const g of monthGames) {
+      const status = gameStatus(g);
+      const isCurrent = String(g.id) === String(currentId);
+      const { day, mon } = fmtDateRow(g.date);
+      const dowShort = DOW_SHORT[(parseDateKey(g.date) || new Date()).getDay()];
+      const colors = g.colors || {};
+      const styleVars = colors.primary ? `style="--opp-primary:${colors.primary}"` : '';
+      html += `
+        <div class="cal-month-row${status === 'active' ? ' is-active' : ''}${isCurrent ? ' is-current' : ''}" data-game-id="${g.id}" ${styleVars}>
+          <div class="cal-month-stripe" aria-hidden="true"></div>
+          <div class="cal-month-date">
+            <span class="cal-month-date-dow">${dowShort}</span>
+            <span class="cal-month-date-day">${day}</span>
+            <span class="cal-month-date-mon">${mon}</span>
+          </div>
+          <div class="cal-month-main">
+            <div class="cal-month-opp">${g.opponent ? escapeHtml('vs ' + g.opponent) : 'Game'}</div>
+            ${g.notes ? `<div class="cal-month-notes">${escapeHtml(g.notes)}</div>` : ''}
+          </div>
+          <span class="schedule-status ${status}">${statusLabel(status)}</span>
+        </div>`;
+    }
+    html += '</div>';
+  } else {
+    html += `<div class="cal-month-empty">No games in ${MONTH_LONG[mm - 1]}.</div>`;
+  }
+
   html += '<div class="cal-grid">';
   for (const dow of dows) html += `<div class="cal-dow">${dow}</div>`;
   for (const c of cells) {
@@ -4817,18 +4968,23 @@ function renderScheduleCalendar() {
     let cls = 'cal-day';
     let style = '';
     let opp = '';
+    let dowLabel = '';
     if (hasGame) {
       cls += ' has-game';
       // Use the first game's data for cell tinting + opponent label.
       const g = c.games[0];
       const s = gameStatus(g);
       if (s === 'complete') cls += ' is-complete';
+      if (s === 'active') cls += ' is-active';
+      if (s === 'future') cls += ' is-future';
       const col = (g.colors && g.colors.primary) || null;
       if (col) style = `style="--game-color:${col}"`;
       if (g.opponent) opp = `<span class="cal-opp">${escapeHtml(g.opponent)}</span>`;
+      // Day-of-week label (desktop only via CSS) for any day that has a game.
+      dowLabel = `<span class="cal-dow-inline">${DOW_SHORT[c.dow]}</span>`;
     }
     if (isToday) cls += ' is-today';
-    html += `<div class="${cls}" data-date="${c.dk}" ${style}>${c.d}${opp}</div>`;
+    html += `<div class="${cls}" data-date="${c.dk}" ${style}>${dowLabel}<span class="cal-day-num">${c.d}</span>${opp}</div>`;
   }
   html += '</div>';
   calEl.innerHTML = html;
@@ -4851,6 +5007,14 @@ function renderScheduleCalendar() {
       const g = (byDay.get(dk) || [])[0];
       if (g) openGameModal(g);
       else openGameModal(null, dk);
+    });
+  });
+  // Tap a month-list row: open Edit modal for that game.
+  calEl.querySelectorAll('.cal-month-row[data-game-id]').forEach(row => {
+    row.addEventListener('click', () => {
+      const id = row.dataset.gameId;
+      const g = games.find(x => String(x.id) === String(id));
+      if (g) openGameModal(g);
     });
   });
 }
