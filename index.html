@@ -2653,6 +2653,253 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
   .scorecard-header, .scorecard-row { grid-template-columns: 1fr 92px 92px !important; }
 }
 
+/* ============ Baseball card ============ */
+.bb-card-modal-card { max-width: 460px; max-height: 92dvh; }
+.bb-card-modal-body { padding: 1rem 1rem 1.5rem; }
+.bb-card-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+.bb-card-upload-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: var(--cardinal-red);
+  color: white;
+  padding: 0.5rem 0.9rem;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.bb-card-upload-btn:hover { background: var(--cardinal-red-dark); }
+.bb-card-upload-clear {
+  background: var(--gray-100);
+  color: var(--gray-700);
+  border: none;
+  padding: 0.45rem 0.85rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.bb-card-upload-clear:hover { background: var(--gray-200); }
+.bb-card-controls-note {
+  font-size: 0.72rem;
+  color: var(--gray-500);
+  font-weight: 500;
+}
+.bb-card-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  align-items: center;
+}
+.bb-card {
+  width: 100%;
+  max-width: 300px;
+  aspect-ratio: 5 / 7;
+  border-radius: 14px;
+  overflow: hidden;
+  position: relative;
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.6) inset,
+    0 0 0 4px var(--card-color, #C41E3A),
+    0 0 0 6px rgba(0,0,0,0.06),
+    0 14px 38px rgba(0,0,0,0.25);
+  background: #FFFEF6;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Impact', 'Anton', 'Arial Black', 'Helvetica Neue', system-ui, sans-serif;
+  color: #1a1a1a;
+}
+/* Front */
+.bb-card-front {
+  background:
+    repeating-linear-gradient(135deg, rgba(0,0,0,0.025) 0 1px, transparent 1px 6px),
+    #FFFEF6;
+}
+.bb-card-banner {
+  background: var(--card-color, #C41E3A);
+  color: white;
+  padding: 0.4rem 0.65rem;
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  font-family: 'Impact', 'Anton', sans-serif;
+  border-bottom: 2px solid rgba(0,0,0,0.18);
+}
+.bb-card-banner-emoji { font-family: -apple-system, system-ui; }
+.bb-card-photo {
+  flex: 1;
+  background:
+    radial-gradient(ellipse at 50% 70%, rgba(255, 255, 255, 0.4) 0%, transparent 60%),
+    linear-gradient(180deg, color-mix(in srgb, var(--card-color, #C41E3A) 35%, white) 0%, color-mix(in srgb, var(--card-color, #C41E3A) 12%, white) 100%);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+  border-bottom: 3px solid var(--card-color, #C41E3A);
+}
+.bb-card-photo-hint {
+  font-family: -apple-system, system-ui, sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.9);
+  text-shadow: 0 1px 2px rgba(0,0,0,0.25);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  background: rgba(0,0,0,0.18);
+  padding: 0.4rem 0.7rem;
+  border-radius: 999px;
+  pointer-events: none;
+}
+.bb-card-photo.has-photo .bb-card-photo-hint { display: none; }
+.bb-card-name {
+  background: white;
+  text-align: center;
+  padding: 0.55rem 0.5rem 0.55rem;
+}
+.bb-card-name-text {
+  font-family: 'Impact', 'Anton', sans-serif;
+  font-size: 1.35rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  color: #111;
+}
+.bb-card-team {
+  font-size: 0.65rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--card-color, #C41E3A);
+  margin-top: 0.25rem;
+  font-family: -apple-system, system-ui, sans-serif;
+}
+.bb-card-logo {
+  position: absolute;
+  bottom: 56px;
+  right: 6px;
+  width: 38px;
+  height: 38px;
+  background-color: white;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+/* Back */
+.bb-card-back {
+  background:
+    repeating-linear-gradient(0deg, rgba(0,0,0,0.04) 0 1px, transparent 1px 4px),
+    #FFFEF6;
+  padding: 0;
+}
+.bb-card-back-header {
+  background: var(--card-color, #C41E3A);
+  color: white;
+  padding: 0.55rem 0.75rem;
+  font-family: 'Impact', 'Anton', sans-serif;
+  text-align: center;
+  border-bottom: 2px solid rgba(0,0,0,0.18);
+}
+.bb-card-back-name {
+  font-size: 1.1rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  line-height: 1;
+}
+.bb-card-back-sub {
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  opacity: 0.85;
+  margin-top: 0.2rem;
+  font-family: -apple-system, system-ui, sans-serif;
+}
+.bb-card-stats {
+  flex: 1;
+  padding: 0.625rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-family: -apple-system, system-ui, sans-serif;
+}
+.bb-card-stats h4 {
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--card-color, #C41E3A);
+  margin-bottom: 0.15rem;
+}
+.bb-card-stats table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+}
+.bb-card-stats th, .bb-card-stats td {
+  padding: 0.22rem 0.1rem;
+  text-align: left;
+  border-bottom: 1px dashed rgba(0,0,0,0.18);
+}
+.bb-card-stats th {
+  font-weight: 600;
+  color: #555;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  width: 50%;
+}
+.bb-card-stats td {
+  font-weight: 800;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.bb-card-back-footer {
+  text-align: center;
+  padding: 0.4rem 0.5rem;
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: var(--gray-500);
+  text-transform: uppercase;
+  border-top: 1px dashed rgba(0,0,0,0.12);
+  font-family: -apple-system, system-ui, sans-serif;
+}
+
+/* Print: only the two cards, side-by-side if room. */
+@media print {
+  body { background: white !important; }
+  body * { visibility: hidden !important; }
+  .bb-card-modal-card, .bb-card-modal-card * { visibility: visible !important; }
+  .bb-card-modal-card { position: absolute; inset: 0; max-width: 100% !important; max-height: none !important; background: white !important; box-shadow: none !important; border: 0 !important; }
+  .modal-overlay { background: white !important; backdrop-filter: none !important; padding: 0 !important; }
+  .modal-header, .modal-footer, .bb-card-controls { display: none !important; }
+  .bb-card-modal-body { padding: 0.5in !important; }
+  .bb-card-stack { gap: 0.5in !important; flex-direction: row !important; flex-wrap: wrap !important; justify-content: center !important; }
+  .bb-card { box-shadow: 0 0 0 4px var(--card-color, #C41E3A) !important; width: 2.5in !important; max-width: 2.5in !important; height: 3.5in !important; aspect-ratio: auto !important; }
+}
+
 /* ============ Schedule ============ */
 .schedule-view-toggle {
   display: inline-flex;
@@ -2700,12 +2947,23 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
   align-items: center;
   gap: 0.875rem;
   padding: 0.75rem 0.875rem;
+  padding-left: 1.125rem;
   background: rgba(255, 255, 255, 0.65);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(10, 10, 10, 0.06);
   border-radius: 14px;
   cursor: pointer;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
+  position: relative;
+  overflow: hidden;
+}
+.schedule-row .schedule-stripe {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 5px;
+  background: linear-gradient(180deg, var(--opp-primary, transparent) 0%, var(--opp-secondary, var(--opp-primary, transparent)) 100%);
 }
 .schedule-row:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08); }
 .schedule-row.is-active { border-color: var(--cardinal-red); box-shadow: 0 2px 8px color-mix(in srgb, var(--cardinal-red) 14%, transparent); }
@@ -2857,12 +3115,49 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
   margin-top: 0.5rem;
   min-height: 1.2em;
 }
+.game-color-row { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+.game-color-swatch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--navy-dark);
+  cursor: pointer;
+}
+.game-color-swatch input[type="color"] {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1.5px solid var(--gray-200);
+  padding: 0;
+  cursor: pointer;
+  background: transparent;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.game-color-swatch input[type="color"].is-empty {
+  background: repeating-linear-gradient(45deg, #fff 0 4px, #e5e7eb 4px 8px);
+}
+.game-color-swatch input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; border-radius: 50%; }
+.game-color-swatch input[type="color"]::-webkit-color-swatch { border: none; border-radius: 50%; }
+.game-color-clear {
+  background: var(--gray-100);
+  color: var(--gray-500);
+  border: none;
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.game-color-clear:hover { background: var(--gray-200); }
 
 /* Current-game banner on roster page */
 .current-game-banner {
   display: flex;
-  align-items: center;
-  gap: 0.875rem;
+  flex-direction: column;
+  gap: 0.625rem;
   background: rgba(255, 255, 255, 0.5);
   backdrop-filter: blur(12px) saturate(160%);
   -webkit-backdrop-filter: blur(12px) saturate(160%);
@@ -2870,31 +3165,73 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
   border-radius: 14px;
   padding: 0.65rem 0.875rem;
   margin-bottom: 0.875rem;
+  position: relative;
+  overflow: hidden;
+}
+.cgb-row {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+}
+.cgb-opponent-stripe {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 6px;
+  background: linear-gradient(180deg, var(--opp-primary, transparent) 0%, var(--opp-secondary, var(--opp-primary, transparent)) 100%);
 }
 .current-game-empty {
   font-size: 0.92rem;
   font-weight: 600;
   color: var(--gray-500);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
 }
 .cgb-date {
   display: flex; flex-direction: column; align-items: center;
   min-width: 50px;
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+}
+.cgb-date input.cgb-date-input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  border: 0;
+  background: transparent;
+  font: inherit;
 }
 .cgb-date .cgb-d { font-size: 1.35rem; font-weight: 900; color: var(--navy-dark); line-height: 1; }
 .cgb-date .cgb-m { font-size: 0.6rem; font-weight: 800; letter-spacing: 0.1em; color: var(--gray-500); text-transform: uppercase; margin-top: 0.1rem; }
 .cgb-body { flex: 1; min-width: 0; }
-.cgb-opp { font-size: 1rem; font-weight: 800; color: var(--navy-dark); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.cgb-meta { font-size: 0.72rem; color: var(--gray-500); font-weight: 600; margin-top: 0.1rem; }
-.cgb-actions { display: flex; gap: 0.4rem; }
+.cgb-opp { font-size: 1rem; font-weight: 800; color: var(--navy-dark); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: flex; align-items: center; gap: 0.4rem; }
+.cgb-opp-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--opp-primary, transparent);
+  border: 1.5px solid var(--opp-secondary, var(--opp-primary, var(--gray-300)));
+  flex-shrink: 0;
+}
+.cgb-meta { font-size: 0.72rem; color: var(--gray-500); font-weight: 600; margin-top: 0.1rem; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+.cgb-actions { display: flex; gap: 0.4rem; flex-wrap: wrap; }
 .cgb-action {
   background: rgba(255, 255, 255, 0.7);
   border: 1px solid var(--gray-200);
   color: var(--navy);
-  padding: 0.35rem 0.7rem;
+  padding: 0.4rem 0.85rem;
   border-radius: 999px;
-  font-size: 0.78rem;
+  font-size: 0.82rem;
   font-weight: 700;
   cursor: pointer;
+  flex: 1 1 auto;
+  white-space: nowrap;
 }
 .cgb-action.primary { background: var(--cardinal-red); color: white; border-color: var(--cardinal-red); }
 .cgb-action.primary:hover { background: var(--cardinal-red-dark); }
@@ -2904,9 +3241,29 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
 .scorecard-header,
 .scorecard-row {
   display: grid;
-  grid-template-columns: 1fr 116px 116px;
+  grid-template-columns: 24px 1fr 116px 116px;
   align-items: center;
   gap: 0.5rem;
+}
+.scorecard-header { padding-left: 30px; }
+.bb-card-trigger {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid var(--gray-200);
+  color: var(--gray-500);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.78rem;
+  padding: 0;
+  flex-shrink: 0;
+}
+.bb-card-trigger:hover {
+  color: var(--cardinal-red);
+  border-color: color-mix(in srgb, var(--cardinal-red) 30%, transparent);
 }
 .scorecard-header {
   font-size: 0.72rem;
@@ -3212,13 +3569,7 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
 <main>
   <section id="rosterPage" class="page active">
     <div class="current-game-banner" id="currentGameBanner" style="display:none"></div>
-    <h2>
-      Today's Roster
-      <label class="roster-date-wrap" title="Pick game date">
-        <span class="roster-date" id="rosterDateLabel">—</span>
-        <input type="date" id="rosterDateInput" class="roster-date-input" />
-      </label>
-    </h2>
+    <h2>Today's Roster</h2>
     <div class="roster-body" id="rosterBody">
       <div class="roster-grid" id="rosterGrid"></div>
       <div class="roster-status">
@@ -3413,6 +3764,31 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
   </div>
 </div>
 
+<!-- ============ Baseball Card modal ============ -->
+<div class="modal-overlay" id="bbCardOverlay" hidden>
+  <div class="modal-card bb-card-modal-card" role="dialog" aria-modal="true" aria-labelledby="bbCardTitle">
+    <div class="modal-header">
+      <h3 id="bbCardTitle">Baseball Card</h3>
+      <button class="modal-close" id="bbCardCloseBtn" aria-label="Close">×</button>
+    </div>
+    <div class="modal-body bb-card-modal-body">
+      <div class="bb-card-controls">
+        <label class="bb-card-upload-btn">
+          <i class="fa-solid fa-camera" aria-hidden="true"></i> <span id="bbCardUploadLabel">Upload Photo</span>
+          <input type="file" accept="image/*" id="bbCardPhotoInput" class="tm-visually-hidden">
+        </label>
+        <button class="bb-card-upload-clear" type="button" id="bbCardClearPhotoBtn" hidden>Clear</button>
+        <span class="bb-card-controls-note">Photo is not saved.</span>
+      </div>
+      <div class="bb-card-stack" id="bbCardStack"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn-secondary" id="bbCardCloseBtn2" type="button">Close</button>
+      <button class="modal-btn-primary" id="bbCardPrintBtn" type="button"><i class="fa-solid fa-print" aria-hidden="true"></i> Print / Save PDF</button>
+    </div>
+  </div>
+</div>
+
 <!-- ============ Add / Edit Game modal ============ -->
 <div class="modal-overlay" id="gameModalOverlay" hidden>
   <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="gameModalTitle">
@@ -3429,6 +3805,20 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
         <span class="tm-field-label">Opponent <span class="tm-field-hint">(optional)</span></span>
         <input type="text" id="gameModalOpponent" maxlength="60" placeholder="e.g. Westport Wildcats">
       </label>
+      <div class="tm-field">
+        <span class="tm-field-label">Opponent colors <span class="tm-field-hint">(optional)</span></span>
+        <div class="game-color-row">
+          <label class="game-color-swatch">
+            <input type="color" id="gameModalColorPrimary" value="#1D4ED8">
+            <span>Primary</span>
+          </label>
+          <label class="game-color-swatch">
+            <input type="color" id="gameModalColorSecondary" value="#FACC15">
+            <span>Accent</span>
+          </label>
+          <button type="button" class="game-color-clear" id="gameModalColorClear">Clear</button>
+        </div>
+      </div>
       <label class="tm-field">
         <span class="tm-field-label">Notes <span class="tm-field-hint">(optional)</span></span>
         <textarea id="gameModalNotes" rows="3" maxlength="280" placeholder="Field, weather, line-up reminders…"></textarea>
@@ -4182,8 +4572,14 @@ function renderScheduleList() {
       const status = gameStatus(g);
       const isCurrent = String(g.id) === String(currentId);
       const { day, mon } = fmtDateRow(g.date);
+      const colors = g.colors || {};
+      const styleVars = [
+        colors.primary ? `--opp-primary:${colors.primary}` : '',
+        colors.secondary ? `--opp-secondary:${colors.secondary}` : ''
+      ].filter(Boolean).join(';');
       html.push(`
-        <div class="schedule-row${status === 'active' ? ' is-active' : ''}${isCurrent ? ' is-current' : ''}" data-game-id="${g.id}">
+        <div class="schedule-row${status === 'active' ? ' is-active' : ''}${isCurrent ? ' is-current' : ''}" data-game-id="${g.id}"${styleVars ? ` style="${styleVars}"` : ''}>
+          <div class="schedule-stripe" aria-hidden="true"></div>
           <div class="schedule-date"><span class="schedule-date-day">${day}</span><span class="schedule-date-mon">${mon}</span></div>
           <div class="schedule-row-main">
             <div class="schedule-opponent">${g.opponent ? escapeHtml('vs ' + g.opponent) : 'Game'}</div>
@@ -4273,6 +4669,11 @@ function openGameModal(game, defaultDate) {
   document.getElementById('gameModalDate').value = game ? game.date : (defaultDate || todayKey());
   document.getElementById('gameModalOpponent').value = (game && game.opponent) || '';
   document.getElementById('gameModalNotes').value = (game && game.notes) || '';
+  const colors = (game && game.colors) || {};
+  document.getElementById('gameModalColorPrimary').value = colors.primary || '#1D4ED8';
+  document.getElementById('gameModalColorSecondary').value = colors.secondary || '#FACC15';
+  document.getElementById('gameModalColorPrimary').classList.toggle('is-empty', !colors.primary);
+  document.getElementById('gameModalColorSecondary').classList.toggle('is-empty', !colors.secondary);
   document.getElementById('gameModalDeleteBtn').hidden = !game;
   const statusLine = document.getElementById('gameModalStatusLine');
   if (statusLine) {
@@ -4291,13 +4692,18 @@ function saveGameModal() {
   if (!date) { document.getElementById('gameModalDate').focus(); return; }
   const opponent = document.getElementById('gameModalOpponent').value.trim() || null;
   const notes = document.getElementById('gameModalNotes').value.trim() || null;
+  const primaryEl = document.getElementById('gameModalColorPrimary');
+  const secondaryEl = document.getElementById('gameModalColorSecondary');
+  const primary = primaryEl.classList.contains('is-empty') ? null : primaryEl.value;
+  const secondary = secondaryEl.classList.contains('is-empty') ? null : secondaryEl.value;
+  const colors = (primary || secondary) ? { primary, secondary } : null;
   const games = loadGames();
   if (editingGameId !== null) {
     const idx = games.findIndex(g => String(g.id) === String(editingGameId));
-    if (idx >= 0) games[idx] = Object.assign({}, games[idx], { date, opponent, notes });
+    if (idx >= 0) games[idx] = Object.assign({}, games[idx], { date, opponent, notes, colors });
   } else {
     const id = Date.now();
-    games.push({ id, date, opponent, notes, createdAt: Date.now(), completedAt: null });
+    games.push({ id, date, opponent, notes, colors, createdAt: Date.now(), completedAt: null });
     setCurrentGameId(id); // jump to the freshly added game
   }
   saveGames(games);
@@ -4334,6 +4740,124 @@ function reloadGameState() {
   if (typeof renderCurrentGameBanner === 'function') renderCurrentGameBanner();
 }
 
+/* ============ Baseball card ============ */
+let bbCardPlayer = null;
+let bbCardPhotoDataUrl = null; // in-memory only; never persisted
+
+function openBaseballCard(player) {
+  if (!player) return;
+  bbCardPlayer = player;
+  bbCardPhotoDataUrl = null;
+  document.getElementById('bbCardTitle').textContent = `${player} — Baseball Card`;
+  document.getElementById('bbCardClearPhotoBtn').hidden = true;
+  document.getElementById('bbCardUploadLabel').textContent = 'Upload Photo';
+  renderBaseballCard();
+  document.getElementById('bbCardOverlay').hidden = false;
+}
+function closeBaseballCard() {
+  document.getElementById('bbCardOverlay').hidden = true;
+  bbCardPlayer = null;
+  bbCardPhotoDataUrl = null;
+  // Reset the file input so the same file can be picked again later.
+  const fi = document.getElementById('bbCardPhotoInput');
+  if (fi) fi.value = '';
+}
+function renderBaseballCard() {
+  const host = document.getElementById('bbCardStack');
+  if (!host || !bbCardPlayer) return;
+  const team = (typeof CURRENT_TEAM_ID === 'number') ? getTeamById(CURRENT_TEAM_ID) : null;
+  const teamName = (team && team.name) || 'Team';
+  const teamLeague = (team && team.league) || '';
+  const teamColor = (team && team.color) || '#C41E3A';
+  const teamLogo = (team && team.logo) || '';
+  const assists = getStat(bbCardPlayer, 'assists');
+  const outs = getStat(bbCardPlayer, 'outs');
+  const cur = getGameById(currentGameId);
+  const gameDate = cur ? cur.date : '—';
+  const opponent = cur && cur.opponent ? cur.opponent : '—';
+  const status = cur ? statusLabel(gameStatus(cur)) : '';
+  const photoStyle = bbCardPhotoDataUrl ? `background-image:url('${bbCardPhotoDataUrl.replace(/'/g, "\\'")}');` : '';
+  const logoStyle = teamLogo ? `background-image:url('${teamLogo.replace(/'/g, "\\'")}');` : '';
+  const cardVarStyle = `--card-color:${teamColor};`;
+  host.innerHTML = `
+    <div class="bb-card bb-card-front" style="${cardVarStyle}">
+      <div class="bb-card-banner"><span class="bb-card-banner-emoji">⚾</span>${escapeHtml(teamName)}</div>
+      <div class="bb-card-photo${bbCardPhotoDataUrl ? ' has-photo' : ''}" id="bbCardPhoto" style="${photoStyle}">
+        <span class="bb-card-photo-hint">Tap to upload photo</span>
+        ${teamLogo ? `<div class="bb-card-logo" style="${logoStyle}"></div>` : ''}
+      </div>
+      <div class="bb-card-name">
+        <div class="bb-card-name-text">${escapeHtml(bbCardPlayer)}</div>
+        <div class="bb-card-team">${escapeHtml(teamLeague || teamName)}</div>
+      </div>
+    </div>
+    <div class="bb-card bb-card-back" style="${cardVarStyle}">
+      <div class="bb-card-back-header">
+        <div class="bb-card-back-name">${escapeHtml(bbCardPlayer)}</div>
+        <div class="bb-card-back-sub">${escapeHtml(teamName)}</div>
+      </div>
+      <div class="bb-card-stats">
+        <h4>Game Stats</h4>
+        <table>
+          <tr><th>Date</th><td>${escapeHtml(gameDate)}</td></tr>
+          <tr><th>Opponent</th><td>${escapeHtml(opponent)}</td></tr>
+          <tr><th>Status</th><td>${escapeHtml(status)}</td></tr>
+          <tr><th>Assists</th><td>${assists}</td></tr>
+          <tr><th>Outs</th><td>${outs}</td></tr>
+        </table>
+      </div>
+      <div class="bb-card-back-footer">${escapeHtml(teamLeague || 'Team Manager')}</div>
+    </div>
+  `;
+  // Tap the photo area to open the file picker.
+  document.getElementById('bbCardPhoto')?.addEventListener('click', () => {
+    document.getElementById('bbCardPhotoInput')?.click();
+  });
+}
+function bindBaseballCardUi() {
+  document.getElementById('bbCardCloseBtn')?.addEventListener('click', closeBaseballCard);
+  document.getElementById('bbCardCloseBtn2')?.addEventListener('click', closeBaseballCard);
+  document.getElementById('bbCardOverlay')?.addEventListener('click', (e) => {
+    if (e.target.id === 'bbCardOverlay') closeBaseballCard();
+  });
+  document.getElementById('bbCardPrintBtn')?.addEventListener('click', () => window.print());
+  document.getElementById('bbCardPhotoInput')?.addEventListener('change', (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    if (file.size > 12 * 1024 * 1024) { alert('Image too large (max 12 MB).'); e.target.value = ''; return; }
+    // Compress the same way we do team logos so the in-memory bytes
+    // stay reasonable and the card renders quickly.
+    compressLogo(file).then(dataUrl => {
+      bbCardPhotoDataUrl = dataUrl;
+      document.getElementById('bbCardClearPhotoBtn').hidden = false;
+      document.getElementById('bbCardUploadLabel').textContent = 'Change Photo';
+      renderBaseballCard();
+    }).catch(() => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        bbCardPhotoDataUrl = reader.result;
+        document.getElementById('bbCardClearPhotoBtn').hidden = false;
+        renderBaseballCard();
+      };
+      reader.readAsDataURL(file);
+    });
+    e.target.value = '';
+  });
+  document.getElementById('bbCardClearPhotoBtn')?.addEventListener('click', () => {
+    bbCardPhotoDataUrl = null;
+    document.getElementById('bbCardClearPhotoBtn').hidden = true;
+    document.getElementById('bbCardUploadLabel').textContent = 'Upload Photo';
+    renderBaseballCard();
+  });
+  // Delegated handler for the icon next to each kid on the scorecard.
+  document.getElementById('scorecardList')?.addEventListener('click', (e) => {
+    const t = e.target.closest('.bb-card-trigger[data-card-player]');
+    if (!t) return;
+    e.stopPropagation();
+    openBaseballCard(t.dataset.cardPlayer);
+  });
+}
+
 function bindScheduleUi() {
   document.getElementById('scheduleAddBtn')?.addEventListener('click', () => openGameModal(null));
   document.getElementById('scheduleViewToggle')?.addEventListener('click', (e) => {
@@ -4355,6 +4879,14 @@ function bindScheduleUi() {
   });
   document.getElementById('gameModalSaveBtn')?.addEventListener('click', saveGameModal);
   document.getElementById('gameModalDeleteBtn')?.addEventListener('click', deleteGameFromModal);
+  // Color inputs: clicking unsets the "empty" state so the picked
+  // value sticks; Clear puts both pickers back into empty mode.
+  document.getElementById('gameModalColorPrimary')?.addEventListener('input', (e) => e.target.classList.remove('is-empty'));
+  document.getElementById('gameModalColorSecondary')?.addEventListener('input', (e) => e.target.classList.remove('is-empty'));
+  document.getElementById('gameModalColorClear')?.addEventListener('click', () => {
+    document.getElementById('gameModalColorPrimary').classList.add('is-empty');
+    document.getElementById('gameModalColorSecondary').classList.add('is-empty');
+  });
 }
 
 /* Current-game banner on the roster page. */
@@ -4363,10 +4895,14 @@ function renderCurrentGameBanner() {
   if (!host) return;
   const games = loadGames();
   if (!games.length) {
-    host.innerHTML = `<div class="current-game-empty">No games scheduled.</div>
-      <div class="cgb-actions"><button class="cgb-action primary" id="cgbNewBtn">New Game</button></div>`;
+    host.innerHTML = `<div class="current-game-empty">
+        <span>No games scheduled.</span>
+        <button class="cgb-action primary" id="cgbNewBtn">New Game</button>
+      </div>`;
     host.style.display = 'flex';
     document.getElementById('cgbNewBtn')?.addEventListener('click', () => openGameModal(null));
+    host.style.removeProperty('--opp-primary');
+    host.style.removeProperty('--opp-secondary');
     return;
   }
   const cur = getGameById(currentGameId);
@@ -4377,19 +4913,52 @@ function renderCurrentGameBanner() {
   const status = gameStatus(cur);
   const { day, mon } = fmtDateRow(cur.date);
   const isActive = status === 'active';
+  const colors = cur.colors || {};
+  if (colors.primary) host.style.setProperty('--opp-primary', colors.primary);
+  else host.style.removeProperty('--opp-primary');
+  if (colors.secondary) host.style.setProperty('--opp-secondary', colors.secondary);
+  else host.style.removeProperty('--opp-secondary');
+  const hasColors = !!(colors.primary || colors.secondary);
   host.innerHTML = `
-    <div class="cgb-date"><span class="cgb-d">${day}</span><span class="cgb-m">${mon}</span></div>
-    <div class="cgb-body">
-      <div class="cgb-opp">${cur.opponent ? escapeHtml('vs ' + cur.opponent) : 'Game'}</div>
-      <div class="cgb-meta"><span class="schedule-status ${status}">${statusLabel(status)}</span>${cur.notes ? ' · ' + escapeHtml(cur.notes) : ''}</div>
+    <div class="cgb-opponent-stripe" aria-hidden="true"></div>
+    <div class="cgb-row">
+      <div class="cgb-date" title="Tap to change date">
+        <span class="cgb-d">${day}</span>
+        <span class="cgb-m">${mon}</span>
+        <input type="date" id="cgbDateInput" class="cgb-date-input" value="${cur.date}" aria-label="Change game date">
+      </div>
+      <div class="cgb-body">
+        <div class="cgb-opp">
+          ${hasColors ? '<span class="cgb-opp-dot" aria-hidden="true"></span>' : ''}
+          <span>${cur.opponent ? escapeHtml('vs ' + cur.opponent) : 'Game'}</span>
+        </div>
+        <div class="cgb-meta">
+          <span class="schedule-status ${status}">${statusLabel(status)}</span>
+          ${cur.notes ? '<span>' + escapeHtml(cur.notes) + '</span>' : ''}
+        </div>
+      </div>
     </div>
     <div class="cgb-actions">
       ${isActive ? '<button class="cgb-action primary" id="cgbCompleteBtn" title="Mark this game complete">Mark Complete</button>' : ''}
+      <button class="cgb-action" id="cgbEditBtn" title="Edit this game">Edit Game</button>
       <button class="cgb-action" id="cgbNewBtn" title="Create a new game">New Game</button>
     </div>
   `;
   host.style.display = 'flex';
   document.getElementById('cgbNewBtn')?.addEventListener('click', () => openGameModal(null));
+  document.getElementById('cgbEditBtn')?.addEventListener('click', () => openGameModal(cur));
+  document.getElementById('cgbDateInput')?.addEventListener('change', (e) => {
+    const newDate = e.target.value;
+    if (!newDate || newDate === cur.date) return;
+    const games = loadGames();
+    const idx = games.findIndex(g => String(g.id) === String(cur.id));
+    if (idx < 0) return;
+    games[idx] = Object.assign({}, games[idx], { date: newDate });
+    saveGames(games);
+    refreshCurrentGameId();
+    reloadGameState();
+    cloudBeacon();
+  });
   document.getElementById('cgbCompleteBtn')?.addEventListener('click', () => {
     const games = loadGames();
     const idx = games.findIndex(g => String(g.id) === String(cur.id));
@@ -5933,6 +6502,9 @@ function renderScorecard() {
   const container = document.getElementById('scorecardList');
   container.innerHTML = ROSTER.map(player => `
     <div class="scorecard-row" data-player="${player}">
+      <button class="bb-card-trigger" data-card-player="${player}" type="button" aria-label="Open baseball card for ${player}" title="Baseball card">
+        <i class="fa-solid fa-id-card" aria-hidden="true"></i>
+      </button>
       <span class="scorecard-name">${player}</span>
       <div class="scorecard-metric">
         <button class="sc-btn" data-action="dec" data-metric="assists" ${getStat(player, 'assists') <= 0 ? 'disabled' : ''}>−</button>
@@ -6225,6 +6797,7 @@ render();
 bindBattingDrag();
 bindFieldingDrag();
 bindScheduleUi();
+bindBaseballCardUi();
 renderSchedule();
 renderCurrentGameBanner();
 
