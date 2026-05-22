@@ -930,25 +930,28 @@ main {
   body.is-app > .app-team-links,
   body.is-app > .sponsor-strip-wrap { position: relative; z-index: 2; }
 
-  /* Hide the giant team-logo header on batting / fielding / score pages
-     so the content loads clean. Only roster keeps the team header. */
+  /* Hide the giant team-logo header on non-roster pages so the
+     content loads clean. Only roster keeps the team header. */
   body[data-page="batting"] header,
   body[data-page="fielding"] header,
-  body[data-page="score"] header { display: none; }
+  body[data-page="score"] header,
+  body[data-page="schedule"] header { display: none; }
   /* Without the header, the section title sits directly under the
      iPhone Dynamic Island / notch in full-screen mode. Use max() so
      we always reserve enough room for the iOS status bar even when
      env(safe-area-inset-top) reports 0 (e.g. Safari tab, desktop). */
   body[data-page="batting"] main,
   body[data-page="fielding"] main,
-  body[data-page="score"] main {
+  body[data-page="score"] main,
+  body[data-page="schedule"] main {
     padding-top: max(3rem, calc(env(safe-area-inset-top) + 1.5rem)) !important;
   }
 }
 @media (max-width: 600px) {
   body[data-page="batting"] main,
   body[data-page="fielding"] main,
-  body[data-page="score"] main {
+  body[data-page="score"] main,
+  body[data-page="schedule"] main {
     padding-top: max(3rem, calc(env(safe-area-inset-top) + 1.5rem)) !important;
   }
 }
@@ -2650,6 +2653,253 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
   .scorecard-header, .scorecard-row { grid-template-columns: 1fr 92px 92px !important; }
 }
 
+/* ============ Schedule ============ */
+.schedule-view-toggle {
+  display: inline-flex;
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(10, 10, 10, 0.08);
+  border-radius: 999px;
+  padding: 3px;
+  margin-bottom: 1rem;
+}
+.schedule-view-toggle button {
+  background: transparent;
+  border: none;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: var(--gray-500);
+  padding: 0.4rem 1rem;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.schedule-view-toggle button.active {
+  background: white;
+  color: var(--navy-dark);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.1);
+}
+.schedule-list-view { display: flex; flex-direction: column; gap: 1.25rem; }
+.schedule-month {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.schedule-month-label {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gray-500);
+  padding-left: 0.25rem;
+}
+.schedule-row {
+  display: grid;
+  grid-template-columns: 64px 1fr auto;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 0.75rem 0.875rem;
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(10, 10, 10, 0.06);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.schedule-row:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08); }
+.schedule-row.is-active { border-color: var(--cardinal-red); box-shadow: 0 2px 8px color-mix(in srgb, var(--cardinal-red) 14%, transparent); }
+.schedule-row.is-current::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background: var(--cardinal-red);
+  border-radius: 50%;
+  position: absolute;
+  margin-left: -10px;
+  margin-top: 0.6rem;
+}
+.schedule-date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.schedule-date-day {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: var(--navy-dark);
+  line-height: 1;
+}
+.schedule-date-mon {
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gray-500);
+  margin-top: 0.15rem;
+}
+.schedule-row-main { display: flex; flex-direction: column; gap: 0.15rem; min-width: 0; }
+.schedule-opponent {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--navy-dark);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.schedule-notes {
+  font-size: 0.78rem;
+  color: var(--gray-500);
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.schedule-status {
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  padding: 0.22rem 0.55rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.schedule-status.active   { background: color-mix(in srgb, var(--cardinal-red) 14%, white); color: var(--cardinal-red-dark); }
+.schedule-status.complete { background: var(--gray-100); color: var(--gray-500); }
+.schedule-status.future   { background: #DBEAFE; color: #1D4ED8; }
+
+.schedule-empty {
+  text-align: center;
+  padding: 2rem 1rem;
+  font-weight: 600;
+  color: var(--gray-500);
+  background: rgba(255, 255, 255, 0.4);
+  border: 1.5px dashed rgba(15, 23, 42, 0.15);
+  border-radius: var(--radius-md);
+}
+
+/* Calendar view */
+.cal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+.cal-header button {
+  background: white;
+  border: 1px solid var(--gray-200);
+  color: var(--navy-dark);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 1rem;
+  cursor: pointer;
+}
+.cal-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--navy-dark);
+}
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+.cal-dow {
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gray-400);
+  text-align: center;
+  padding: 0.25rem 0;
+}
+.cal-day {
+  aspect-ratio: 1;
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--navy-dark);
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding: 0.25rem;
+  cursor: pointer;
+}
+.cal-day.is-other { opacity: 0.35; cursor: default; }
+.cal-day.is-today { border-color: var(--cardinal-red); color: var(--cardinal-red-dark); }
+.cal-day .cal-dot {
+  position: absolute;
+  bottom: 0.3rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 2px;
+}
+.cal-day .cal-dot span {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--cardinal-red);
+}
+.cal-day .cal-dot span.future { background: #3B82F6; }
+.cal-day .cal-dot span.complete { background: var(--gray-400); }
+
+.game-modal-status {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--gray-500);
+  margin-top: 0.5rem;
+  min-height: 1.2em;
+}
+
+/* Current-game banner on roster page */
+.current-game-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(12px) saturate(160%);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 14px;
+  padding: 0.65rem 0.875rem;
+  margin-bottom: 0.875rem;
+}
+.current-game-empty {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--gray-500);
+}
+.cgb-date {
+  display: flex; flex-direction: column; align-items: center;
+  min-width: 50px;
+}
+.cgb-date .cgb-d { font-size: 1.35rem; font-weight: 900; color: var(--navy-dark); line-height: 1; }
+.cgb-date .cgb-m { font-size: 0.6rem; font-weight: 800; letter-spacing: 0.1em; color: var(--gray-500); text-transform: uppercase; margin-top: 0.1rem; }
+.cgb-body { flex: 1; min-width: 0; }
+.cgb-opp { font-size: 1rem; font-weight: 800; color: var(--navy-dark); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cgb-meta { font-size: 0.72rem; color: var(--gray-500); font-weight: 600; margin-top: 0.1rem; }
+.cgb-actions { display: flex; gap: 0.4rem; }
+.cgb-action {
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid var(--gray-200);
+  color: var(--navy);
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.cgb-action.primary { background: var(--cardinal-red); color: white; border-color: var(--cardinal-red); }
+.cgb-action.primary:hover { background: var(--cardinal-red-dark); }
+.cgb-action:hover { background: white; }
+
 /* ============ Scorecard ============ */
 .scorecard-header,
 .scorecard-row {
@@ -2953,10 +3203,15 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
     <i class="nav-icon fa-solid fa-chart-simple" aria-hidden="true"></i>
     <span class="nav-label">Score</span>
   </button>
+  <button data-page="schedule">
+    <i class="nav-icon fa-solid fa-calendar-days" aria-hidden="true"></i>
+    <span class="nav-label">Schedule</span>
+  </button>
 </nav>
 
 <main>
   <section id="rosterPage" class="page active">
+    <div class="current-game-banner" id="currentGameBanner" style="display:none"></div>
     <h2>
       Today's Roster
       <label class="roster-date-wrap" title="Pick game date">
@@ -3031,6 +3286,21 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
       <span><span class="pos-pill premium">SS</span> Premium (Pitcher / Infield / Shortstop)</span>
       <span><span class="pos-pill outfield">LF</span> Outfield</span>
     </div>
+  </section>
+
+  <section id="schedulePage" class="page">
+    <h2 class="section-heading-row">
+      <span>Schedule</span>
+      <button class="rotation-shuffle-btn" id="scheduleAddBtn" type="button" aria-label="Add game">
+        <i class="fa-solid fa-plus" aria-hidden="true"></i>
+      </button>
+    </h2>
+    <div class="schedule-view-toggle" id="scheduleViewToggle">
+      <button data-view="list" class="active">List</button>
+      <button data-view="calendar">Calendar</button>
+    </div>
+    <div id="scheduleListView" class="schedule-list-view"></div>
+    <div id="scheduleCalendarView" class="schedule-calendar-view" hidden></div>
   </section>
 
   <section id="scorePage" class="page">
@@ -3143,6 +3413,36 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
   </div>
 </div>
 
+<!-- ============ Add / Edit Game modal ============ -->
+<div class="modal-overlay" id="gameModalOverlay" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="gameModalTitle">
+    <div class="modal-header">
+      <h3 id="gameModalTitle">New Game</h3>
+      <button class="modal-close" id="gameModalCloseBtn" aria-label="Close">×</button>
+    </div>
+    <div class="modal-body">
+      <label class="tm-field">
+        <span class="tm-field-label">Date</span>
+        <input type="date" id="gameModalDate">
+      </label>
+      <label class="tm-field">
+        <span class="tm-field-label">Opponent <span class="tm-field-hint">(optional)</span></span>
+        <input type="text" id="gameModalOpponent" maxlength="60" placeholder="e.g. Westport Wildcats">
+      </label>
+      <label class="tm-field">
+        <span class="tm-field-label">Notes <span class="tm-field-hint">(optional)</span></span>
+        <textarea id="gameModalNotes" rows="3" maxlength="280" placeholder="Field, weather, line-up reminders…"></textarea>
+      </label>
+      <p class="game-modal-status" id="gameModalStatusLine"></p>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn-danger" id="gameModalDeleteBtn" type="button" hidden>Delete</button>
+      <button class="modal-btn-secondary" id="gameModalCancelBtn" type="button">Cancel</button>
+      <button class="modal-btn-primary" id="gameModalSaveBtn" type="button">Save</button>
+    </div>
+  </div>
+</div>
+
 <script>
 /* ============ Cross-device sync (Pantry) ============
    Pantry (https://getpantry.cloud) gives us a tiny no-cost JSON
@@ -3158,7 +3458,7 @@ const PANTRY_BASKET = 'tm_state';
 // without any setup. A user who wants their own private pantry can paste
 // a different ID into the Sync modal; that override is stored locally.
 const DEFAULT_PANTRY_ID = 'a53410b0-2cad-40be-9743-5c64695d2c2e';
-const SYNC_PREFIXES = ['tm_teams', 'cardinals_', 'tm_t'];
+const SYNC_PREFIXES = ['tm_teams', 'cardinals_', 'tm_t', 'game_'];
 // Cleanup-only keys we delete on every boot. They start with a synced
 // prefix but they don't represent user data, so we must NOT trigger a
 // cloud push when they're touched — that push would race with the
@@ -3819,6 +4119,290 @@ function bindDeleteTeam() {
   });
 }
 
+/* ============ Schedule page ============ */
+const MONTH_LABELS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const MONTH_LONG = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+function parseDateKey(dk) {
+  // 'YYYY-MM-DD' → Date in local time (avoid UTC shift)
+  const [y, m, d] = (dk || '').split('-').map(n => parseInt(n, 10));
+  if (!y || !m || !d) return null;
+  return new Date(y, m - 1, d);
+}
+function fmtMonthYear(dk) {
+  const d = parseDateKey(dk);
+  return d ? `${MONTH_LONG[d.getMonth()]} ${d.getFullYear()}` : '';
+}
+function fmtDateRow(dk) {
+  const d = parseDateKey(dk);
+  if (!d) return { day: '?', mon: '?' };
+  return { day: String(d.getDate()), mon: MONTH_LABELS[d.getMonth()] };
+}
+
+let scheduleView = 'list'; // 'list' | 'calendar'
+let calendarMonth = null;  // YYYY-MM, set on first calendar render
+
+function renderSchedule() {
+  const listEl = document.getElementById('scheduleListView');
+  const calEl = document.getElementById('scheduleCalendarView');
+  if (!listEl || !calEl) return;
+  const toggle = document.getElementById('scheduleViewToggle');
+  if (toggle) {
+    toggle.querySelectorAll('button').forEach(b => b.classList.toggle('active', b.dataset.view === scheduleView));
+  }
+  listEl.hidden = scheduleView !== 'list';
+  calEl.hidden = scheduleView !== 'calendar';
+  if (scheduleView === 'list') renderScheduleList();
+  else renderScheduleCalendar();
+}
+
+function renderScheduleList() {
+  const listEl = document.getElementById('scheduleListView');
+  const games = loadGames();
+  if (!games.length) {
+    listEl.innerHTML = '<div class="schedule-empty">No games yet. Tap the + above to add one.</div>';
+    return;
+  }
+  // Sort: future first (asc), then past (desc) — feels natural for coaches
+  const today = todayKey();
+  const future = games.filter(g => g.date >= today).sort((a, b) => a.date.localeCompare(b.date));
+  const past = games.filter(g => g.date < today).sort((a, b) => b.date.localeCompare(a.date));
+  const ordered = [...future, ...past];
+  // Group by month
+  const byMonth = new Map();
+  for (const g of ordered) {
+    const key = g.date.slice(0, 7);
+    if (!byMonth.has(key)) byMonth.set(key, []);
+    byMonth.get(key).push(g);
+  }
+  const currentId = currentGameId;
+  const html = [];
+  for (const [key, gs] of byMonth) {
+    html.push(`<div class="schedule-month"><div class="schedule-month-label">${fmtMonthYear(gs[0].date)}</div>`);
+    for (const g of gs) {
+      const status = gameStatus(g);
+      const isCurrent = String(g.id) === String(currentId);
+      const { day, mon } = fmtDateRow(g.date);
+      html.push(`
+        <div class="schedule-row${status === 'active' ? ' is-active' : ''}${isCurrent ? ' is-current' : ''}" data-game-id="${g.id}">
+          <div class="schedule-date"><span class="schedule-date-day">${day}</span><span class="schedule-date-mon">${mon}</span></div>
+          <div class="schedule-row-main">
+            <div class="schedule-opponent">${g.opponent ? escapeHtml('vs ' + g.opponent) : 'Game'}</div>
+            ${g.notes ? `<div class="schedule-notes">${escapeHtml(g.notes)}</div>` : ''}
+          </div>
+          <span class="schedule-status ${status}">${statusLabel(status)}</span>
+        </div>
+      `);
+    }
+    html.push(`</div>`);
+  }
+  listEl.innerHTML = html.join('');
+}
+
+function renderScheduleCalendar() {
+  const calEl = document.getElementById('scheduleCalendarView');
+  const games = loadGames();
+  if (!calendarMonth) calendarMonth = todayKey().slice(0, 7);
+  const [yy, mm] = calendarMonth.split('-').map(n => parseInt(n, 10));
+  const firstOfMonth = new Date(yy, mm - 1, 1);
+  const startWeekday = firstOfMonth.getDay(); // 0=Sun
+  const daysInMonth = new Date(yy, mm, 0).getDate();
+  const today = todayKey();
+  // Build a map of dateKey → array of games
+  const byDay = new Map();
+  for (const g of games) {
+    if (g.date.slice(0, 7) === calendarMonth) {
+      if (!byDay.has(g.date)) byDay.set(g.date, []);
+      byDay.get(g.date).push(g);
+    }
+  }
+  // 6 rows of 7 = 42 cells; fill with leading/trailing month blanks
+  const cells = [];
+  for (let i = 0; i < startWeekday; i++) cells.push({ blank: true });
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dk = `${yy}-${String(mm).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+    cells.push({ blank: false, d, dk, games: byDay.get(dk) || [] });
+  }
+  while (cells.length % 7 !== 0) cells.push({ blank: true });
+  const dows = ['S','M','T','W','T','F','S'];
+  let html = `<div class="cal-header">
+    <button id="calPrevBtn" type="button" aria-label="Previous month">‹</button>
+    <span class="cal-title">${MONTH_LONG[mm - 1]} ${yy}</span>
+    <button id="calNextBtn" type="button" aria-label="Next month">›</button>
+  </div>`;
+  html += '<div class="cal-grid">';
+  for (const dow of dows) html += `<div class="cal-dow">${dow}</div>`;
+  for (const c of cells) {
+    if (c.blank) { html += '<div class="cal-day is-other"></div>'; continue; }
+    const isToday = c.dk === today;
+    const dots = c.games.map(g => {
+      const s = gameStatus(g);
+      return `<span class="${s}"></span>`;
+    }).join('');
+    html += `<div class="cal-day${isToday ? ' is-today' : ''}" data-date="${c.dk}">${c.d}${c.games.length ? `<div class="cal-dot">${dots}</div>` : ''}</div>`;
+  }
+  html += '</div>';
+  calEl.innerHTML = html;
+  document.getElementById('calPrevBtn')?.addEventListener('click', () => {
+    let m = mm - 1, y = yy;
+    if (m < 1) { m = 12; y -= 1; }
+    calendarMonth = `${y}-${String(m).padStart(2, '0')}`;
+    renderScheduleCalendar();
+  });
+  document.getElementById('calNextBtn')?.addEventListener('click', () => {
+    let m = mm + 1, y = yy;
+    if (m > 12) { m = 1; y += 1; }
+    calendarMonth = `${y}-${String(m).padStart(2, '0')}`;
+    renderScheduleCalendar();
+  });
+  // Tap a day cell: if it has a game, open the first; otherwise open Add modal pre-filled.
+  calEl.querySelectorAll('.cal-day[data-date]').forEach(cell => {
+    cell.addEventListener('click', () => {
+      const dk = cell.dataset.date;
+      const g = (byDay.get(dk) || [])[0];
+      if (g) openGameModal(g);
+      else openGameModal(null, dk);
+    });
+  });
+}
+
+/* ============ Game modal (add / edit) ============ */
+let editingGameId = null;
+function openGameModal(game, defaultDate) {
+  editingGameId = game ? game.id : null;
+  document.getElementById('gameModalTitle').textContent = game ? 'Edit Game' : 'New Game';
+  document.getElementById('gameModalDate').value = game ? game.date : (defaultDate || todayKey());
+  document.getElementById('gameModalOpponent').value = (game && game.opponent) || '';
+  document.getElementById('gameModalNotes').value = (game && game.notes) || '';
+  document.getElementById('gameModalDeleteBtn').hidden = !game;
+  const statusLine = document.getElementById('gameModalStatusLine');
+  if (statusLine) {
+    if (game) statusLine.textContent = `Status: ${statusLabel(gameStatus(game))}`;
+    else statusLine.textContent = '';
+  }
+  document.getElementById('gameModalOverlay').hidden = false;
+  setTimeout(() => document.getElementById('gameModalDate').focus(), 60);
+}
+function closeGameModal() {
+  document.getElementById('gameModalOverlay').hidden = true;
+  editingGameId = null;
+}
+function saveGameModal() {
+  const date = document.getElementById('gameModalDate').value;
+  if (!date) { document.getElementById('gameModalDate').focus(); return; }
+  const opponent = document.getElementById('gameModalOpponent').value.trim() || null;
+  const notes = document.getElementById('gameModalNotes').value.trim() || null;
+  const games = loadGames();
+  if (editingGameId !== null) {
+    const idx = games.findIndex(g => String(g.id) === String(editingGameId));
+    if (idx >= 0) games[idx] = Object.assign({}, games[idx], { date, opponent, notes });
+  } else {
+    const id = Date.now();
+    games.push({ id, date, opponent, notes, createdAt: Date.now(), completedAt: null });
+    setCurrentGameId(id); // jump to the freshly added game
+  }
+  saveGames(games);
+  refreshCurrentGameId();
+  closeGameModal();
+  // Re-load per-game state and re-render everything visible.
+  reloadGameState();
+  cloudBeacon();
+}
+function deleteGameFromModal() {
+  if (editingGameId == null) return;
+  const games = loadGames().filter(g => String(g.id) !== String(editingGameId));
+  const deletedId = editingGameId;
+  saveGames(games);
+  // Drop per-game data for the deleted game.
+  ['present', 'manual_rotation', 'rotation_salt', 'batting', 'scorecard'].forEach(suffix => {
+    localStorage.removeItem(tk(`game_${deletedId}_${suffix}`));
+  });
+  // If the current game was the one we deleted, clear the pointer.
+  const curSel = localStorage.getItem(tk('cardinals_current_game_id'));
+  if (curSel && String(curSel) === String(deletedId)) setCurrentGameId(null);
+  refreshCurrentGameId();
+  closeGameModal();
+  reloadGameState();
+  cloudBeacon();
+}
+
+function reloadGameState() {
+  state.present = loadPresent();
+  state.manualRotation = loadManualRotation();
+  scorecard = loadScorecard();
+  if (typeof render === 'function') render();
+  if (typeof renderSchedule === 'function') renderSchedule();
+  if (typeof renderCurrentGameBanner === 'function') renderCurrentGameBanner();
+}
+
+function bindScheduleUi() {
+  document.getElementById('scheduleAddBtn')?.addEventListener('click', () => openGameModal(null));
+  document.getElementById('scheduleViewToggle')?.addEventListener('click', (e) => {
+    const btn = e.target.closest('button[data-view]');
+    if (!btn) return;
+    scheduleView = btn.dataset.view;
+    renderSchedule();
+  });
+  document.getElementById('scheduleListView')?.addEventListener('click', (e) => {
+    const row = e.target.closest('.schedule-row[data-game-id]');
+    if (!row) return;
+    const g = getGameById(row.dataset.gameId);
+    if (g) openGameModal(g);
+  });
+  document.getElementById('gameModalCloseBtn')?.addEventListener('click', closeGameModal);
+  document.getElementById('gameModalCancelBtn')?.addEventListener('click', closeGameModal);
+  document.getElementById('gameModalOverlay')?.addEventListener('click', (e) => {
+    if (e.target.id === 'gameModalOverlay') closeGameModal();
+  });
+  document.getElementById('gameModalSaveBtn')?.addEventListener('click', saveGameModal);
+  document.getElementById('gameModalDeleteBtn')?.addEventListener('click', deleteGameFromModal);
+}
+
+/* Current-game banner on the roster page. */
+function renderCurrentGameBanner() {
+  const host = document.getElementById('currentGameBanner');
+  if (!host) return;
+  const games = loadGames();
+  if (!games.length) {
+    host.innerHTML = `<div class="current-game-empty">No games scheduled.</div>
+      <div class="cgb-actions"><button class="cgb-action primary" id="cgbNewBtn">New Game</button></div>`;
+    host.style.display = 'flex';
+    document.getElementById('cgbNewBtn')?.addEventListener('click', () => openGameModal(null));
+    return;
+  }
+  const cur = getGameById(currentGameId);
+  if (!cur) {
+    host.style.display = 'none';
+    return;
+  }
+  const status = gameStatus(cur);
+  const { day, mon } = fmtDateRow(cur.date);
+  const isActive = status === 'active';
+  host.innerHTML = `
+    <div class="cgb-date"><span class="cgb-d">${day}</span><span class="cgb-m">${mon}</span></div>
+    <div class="cgb-body">
+      <div class="cgb-opp">${cur.opponent ? escapeHtml('vs ' + cur.opponent) : 'Game'}</div>
+      <div class="cgb-meta"><span class="schedule-status ${status}">${statusLabel(status)}</span>${cur.notes ? ' · ' + escapeHtml(cur.notes) : ''}</div>
+    </div>
+    <div class="cgb-actions">
+      ${isActive ? '<button class="cgb-action primary" id="cgbCompleteBtn" title="Mark this game complete">Mark Complete</button>' : ''}
+      <button class="cgb-action" id="cgbNewBtn" title="Create a new game">New Game</button>
+    </div>
+  `;
+  host.style.display = 'flex';
+  document.getElementById('cgbNewBtn')?.addEventListener('click', () => openGameModal(null));
+  document.getElementById('cgbCompleteBtn')?.addEventListener('click', () => {
+    const games = loadGames();
+    const idx = games.findIndex(g => String(g.id) === String(cur.id));
+    if (idx < 0) return;
+    games[idx].completedAt = Date.now();
+    saveGames(games);
+    refreshCurrentGameId();
+    reloadGameState();
+    cloudBeacon();
+    showBubble('Game marked complete 🏁');
+  });
+}
+
 /* ============ Boot: route between manager and team app ============ */
 (async function bootRouter() {
   // Safety net: bootRouter is synchronous-ish (the only async work is
@@ -4157,18 +4741,18 @@ const state = {
 };
 function loadManualRotation() {
   try {
-    const raw = localStorage.getItem(tk('cardinals_manual_rotation_v1'));
+    const raw = localStorage.getItem(gameKey('manual_rotation'));
     if (!raw) return {};
     const parsed = JSON.parse(raw);
     return (parsed && typeof parsed === 'object') ? parsed : {};
   } catch (e) { return {}; }
 }
 function saveManualRotation() {
-  try { localStorage.setItem(tk('cardinals_manual_rotation_v1'), JSON.stringify(state.manualRotation)); } catch (e) {}
+  try { localStorage.setItem(gameKey('manual_rotation'), JSON.stringify(state.manualRotation)); } catch (e) {}
 }
 function clearManualRotation() {
   state.manualRotation = {};
-  localStorage.removeItem(tk('cardinals_manual_rotation_v1'));
+  localStorage.removeItem(gameKey('manual_rotation'));
 }
 
 // Per-player premium-position cap. Each player can be assigned up to
@@ -4187,13 +4771,135 @@ function loadPremiumCaps() {
 function savePremiumCaps(caps) {
   try { localStorage.setItem(tk('cardinals_premium_caps_v1'), JSON.stringify(caps)); } catch (e) {}
 }
+
+/* ============ Games (schedule + per-game state) ============
+   A team has a list of games. Each game owns its own attendance,
+   batting order, field-rotation overrides, rotation salt, and
+   scorecard. Status is computed from the date (future / active /
+   complete), with completedAt as a manual override. */
+function todayKey() {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+function gameStatus(game) {
+  if (!game) return null;
+  if (game.completedAt) return 'complete';
+  const today = todayKey();
+  if (game.date < today) return 'complete';   // past dates auto-complete
+  if (game.date === today) return 'active';
+  return 'future';
+}
+function statusLabel(status) {
+  return status === 'active' ? 'ACTIVE' : status === 'complete' ? 'COMPLETE' : status === 'future' ? 'UPCOMING' : '';
+}
+function loadGames() {
+  try {
+    const raw = localStorage.getItem(tk('cardinals_games_v1'));
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter(g => g && typeof g === 'object' && g.id && g.date)
+      .sort((a, b) => a.date.localeCompare(b.date) || (a.id - b.id));
+  } catch (e) { return []; }
+}
+function saveGames(games) {
+  try { localStorage.setItem(tk('cardinals_games_v1'), JSON.stringify(games)); return true; }
+  catch (e) { console.warn('[games] save failed:', e); return false; }
+}
+function getGameById(id) {
+  return loadGames().find(g => String(g.id) === String(id)) || null;
+}
+function setCurrentGameId(id) {
+  if (id) localStorage.setItem(tk('cardinals_current_game_id'), String(id));
+  else localStorage.removeItem(tk('cardinals_current_game_id'));
+}
+// Pick the "best" game to show by default: any active game wins,
+// else the most recent past game, else the nearest future game.
+// A user-selected override takes priority if it's still valid.
+function pickCurrentGameId() {
+  const games = loadGames();
+  if (!games.length) return null;
+  const sel = localStorage.getItem(tk('cardinals_current_game_id'));
+  if (sel) {
+    const found = games.find(g => String(g.id) === String(sel));
+    if (found) return found.id;
+  }
+  const today = todayKey();
+  const active = games.find(g => gameStatus(g) === 'active');
+  if (active) return active.id;
+  const past = games.filter(g => g.date < today).sort((a, b) => b.date.localeCompare(a.date));
+  if (past.length) return past[0].id;
+  const future = games.filter(g => g.date > today).sort((a, b) => a.date.localeCompare(b.date));
+  if (future.length) return future[0].id;
+  return games[0].id;
+}
+// Module-scoped pointer to the current game's id (or null if the
+// team has no games yet). Set on boot via refreshCurrentGameId();
+// gameKey() reads this, so callers can change games and have all
+// per-game data reads/writes switch in one place.
+let currentGameId = null;
+function refreshCurrentGameId() {
+  currentGameId = pickCurrentGameId();
+  return currentGameId;
+}
+// Returns the localStorage key for game-scoped state. Falls back to
+// the legacy team-level key when no games exist yet, so an unmigrated
+// team still works.
+function gameKey(suffix) {
+  if (currentGameId) return tk(`game_${currentGameId}_${suffix}`);
+  const legacy = {
+    present: 'cardinals_present_v2',
+    manual_rotation: 'cardinals_manual_rotation_v1',
+    rotation_salt: 'cardinals_rotation_salt_v1',
+    batting: 'cardinals_batting_order_v1',
+    scorecard: 'cardinals_scorecard_v2'
+  };
+  return tk(legacy[suffix] || `cardinals_${suffix}`);
+}
+// Migrate any pre-2.25 team-level data into a fresh game so the team
+// page keeps showing the same info on first load after this update.
+function migrateLegacyToFirstGame() {
+  if (loadGames().length) return; // already has games
+  const today = todayKey();
+  const haveAnyLegacy = !!(
+    localStorage.getItem(tk('cardinals_present_v2')) ||
+    localStorage.getItem(tk('cardinals_manual_rotation_v1')) ||
+    localStorage.getItem(tk('cardinals_scorecard_v2::' + today))
+  );
+  if (!haveAnyLegacy) return;
+  const id = Date.now();
+  saveGames([{ id, date: today, opponent: null, notes: null, createdAt: Date.now(), completedAt: null }]);
+  setCurrentGameId(id);
+  // Copy legacy keys into game-scoped keys.
+  const copy = (legacyKey, newSuffix) => {
+    const v = localStorage.getItem(tk(legacyKey));
+    if (v !== null) localStorage.setItem(tk(`game_${id}_${newSuffix}`), v);
+  };
+  copy('cardinals_present_v2', 'present');
+  copy('cardinals_manual_rotation_v1', 'manual_rotation');
+  copy('cardinals_scorecard_v2::' + today, 'scorecard');
+}
+
+// Migrate any pre-2.25 team data into a default "today" game and
+// flip currentGameId to that game so all subsequent reads/writes
+// go through the game-scoped keys.
+migrateLegacyToFirstGame();
+refreshCurrentGameId();
+// state was initialized above with the legacy keys — re-load from
+// the game-scoped keys now that currentGameId is set.
+state.present = loadPresent();
+state.manualRotation = loadManualRotation();
+
 // Clean up stale key from the old toggle days
 localStorage.removeItem('cardinals_view');
 document.body.dataset.page = state.page;
 
 function loadPresent() {
   try {
-    const saved = localStorage.getItem(tk('cardinals_present_v2'));
+    const saved = localStorage.getItem(gameKey('present'));
     if (saved) {
       const parsed = JSON.parse(saved);
       return new Set(parsed.filter(p => ROSTER.includes(p)));
@@ -4201,7 +4907,7 @@ function loadPresent() {
   } catch (e) {}
   return new Set(ROSTER);
 }
-function savePresent() { localStorage.setItem(tk('cardinals_present_v2'), JSON.stringify([...state.present])); }
+function savePresent() { localStorage.setItem(gameKey('present'), JSON.stringify([...state.present])); }
 function loadPhotos() {
   try { return JSON.parse(localStorage.getItem('cardinals_photos') || '{}'); }
   catch (e) { return {}; }
@@ -4781,7 +5487,7 @@ function renderStats() {
   container.innerHTML = html;
 }
 
-const VALID_PAGES = ['roster', 'batting', 'fielding', 'score'];
+const VALID_PAGES = ['roster', 'batting', 'fielding', 'score', 'schedule'];
 let userHasNavigated = false;
 function showPage(page, opts) {
   opts = opts || {};
@@ -5193,29 +5899,26 @@ document.getElementById('teamLogo').addEventListener('touchend', () => {
 
 // markAllBtn removed
 
-// Scorecard (per-date, per-player assists + outs) — each game day gets its own bucket.
-function currentDateKey() {
-  return localStorage.getItem(tk('cardinals_roster_date')) || new Date().toISOString().slice(0, 10);
-}
-function scorecardStorageKey(dateKey) { return tk('cardinals_scorecard_v2::' + dateKey); }
-function loadScorecardFor(dateKey) {
+// Scorecard is now per-game: each game owns its own assists / outs.
+// Date-keyed buckets from earlier versions are migrated into the
+// current game in migrateLegacyToFirstGame().
+function loadScorecard() {
   try {
-    const raw = localStorage.getItem(scorecardStorageKey(dateKey));
+    const raw = localStorage.getItem(gameKey('scorecard'));
     return raw ? JSON.parse(raw) : {};
   } catch (e) { return {}; }
 }
-// One-time migration from the old global key to today's bucket so existing stats aren't lost.
-(function migrateScorecard() {
+function saveScorecard() {
+  try { localStorage.setItem(gameKey('scorecard'), JSON.stringify(scorecard)); } catch (e) {}
+}
+// One-time migration from the very old global key.
+(function migrateAncientScorecard() {
   const old = localStorage.getItem('cardinals_scorecard_v1');
   if (!old) return;
-  const today = new Date().toISOString().slice(0, 10);
-  if (!localStorage.getItem(scorecardStorageKey(today))) {
-    localStorage.setItem(scorecardStorageKey(today), old);
-  }
   localStorage.removeItem('cardinals_scorecard_v1');
 })();
 
-let scorecard = loadScorecardFor(currentDateKey());
+let scorecard = loadScorecard();
 
 function getStat(player, metric) {
   return (scorecard[player] && scorecard[player][metric]) || 0;
@@ -5224,7 +5927,7 @@ function setStat(player, metric, value) {
   value = Math.max(0, value);
   if (!scorecard[player]) scorecard[player] = {};
   scorecard[player][metric] = value;
-  localStorage.setItem(scorecardStorageKey(currentDateKey()), JSON.stringify(scorecard));
+  saveScorecard();
 }
 function renderScorecard() {
   const container = document.getElementById('scorecardList');
@@ -5521,6 +6224,9 @@ rotateSectionQuotes();
 render();
 bindBattingDrag();
 bindFieldingDrag();
+bindScheduleUi();
+renderSchedule();
+renderCurrentGameBanner();
 
 // PWA: register the service worker so the app installs to the iOS / iPad
 // Home Screen with offline support and instant launch from cache. Skipped
