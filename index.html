@@ -2708,59 +2708,46 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
    with a thin white sub-border, diagonal player-name banner across
    the bottom-right corner, position pill on the front, retro back
    with a stats table + factoid panel. */
+/* Sleek silver-frame card with a dominant photo and a clean name band */
 .bb-card {
   width: 100%;
   max-width: 300px;
   aspect-ratio: 5 / 7;
   position: relative;
-  background: var(--card-color, #C41E3A);
-  border-radius: 6px;
-  padding: 14px 14px 14px 14px;
+  background: linear-gradient(135deg, #D6D6D8 0%, #F4F4F6 35%, #BFBFC2 70%, #E2E2E5 100%);
+  border-radius: 10px;
+  padding: 8px;
   box-sizing: border-box;
   box-shadow:
-    0 0 0 2px rgba(0,0,0,0.2),
-    0 14px 38px rgba(0,0,0,0.28);
-  font-family: 'Impact', 'Anton', 'Arial Black', 'Helvetica Neue', system-ui, sans-serif;
+    0 0 0 1px rgba(0,0,0,0.12),
+    inset 0 1px 0 rgba(255,255,255,0.6),
+    0 14px 38px rgba(0,0,0,0.22);
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', system-ui, sans-serif;
   color: #1a1a1a;
 }
 .bb-card-inner {
   position: relative;
-  background: #FFFDF5;
+  background: white;
   height: 100%;
   width: 100%;
-  border-radius: 2px;
+  border-radius: 4px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.08);
 }
-/* Top team band — bold caps in white on the team color */
-.bb-card-team-band {
-  background: linear-gradient(180deg, color-mix(in srgb, var(--card-color, #C41E3A) 88%, black) 0%, var(--card-color, #C41E3A) 100%);
-  color: white;
-  text-align: center;
-  padding: 0.35rem 0.4rem 0.3rem;
-  font-family: 'Impact', 'Oswald', 'Arial Black', sans-serif;
-  font-weight: 900;
-  font-size: 0.95rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  text-shadow: 0 1px 0 rgba(0,0,0,0.25);
-  border-bottom: 2px solid rgba(0,0,0,0.25);
-  line-height: 1;
-}
-/* Photo area — sub-bordered with white, then with team color */
+/* Photo area — dominates the upper portion */
 .bb-card-photo-frame {
   flex: 1;
-  padding: 5px;
-  background: white;
   position: relative;
+  background: white;
 }
 .bb-card-photo {
   width: 100%;
   height: 100%;
   background:
-    radial-gradient(ellipse at 50% 70%, rgba(255, 255, 255, 0.35) 0%, transparent 65%),
-    linear-gradient(180deg, color-mix(in srgb, var(--card-color, #C41E3A) 30%, white) 0%, color-mix(in srgb, var(--card-color, #C41E3A) 8%, white) 100%);
+    radial-gradient(ellipse at 50% 65%, rgba(255, 255, 255, 0.35) 0%, transparent 60%),
+    linear-gradient(180deg, color-mix(in srgb, var(--card-color, #C41E3A) 35%, white) 0%, color-mix(in srgb, var(--card-color, #C41E3A) 10%, white) 100%);
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -2768,7 +2755,6 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  border: 1px solid color-mix(in srgb, var(--card-color, #C41E3A) 40%, white);
 }
 .bb-card-photo-hint {
   font-family: -apple-system, system-ui, sans-serif;
@@ -2784,157 +2770,141 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
   pointer-events: none;
 }
 .bb-card-photo.has-photo .bb-card-photo-hint { display: none; }
-/* Position pill — small Topps-style oval in the top-left */
-.bb-card-position {
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  background: white;
-  color: var(--card-color, #C41E3A);
-  font-family: 'Impact', 'Arial Black', sans-serif;
-  font-size: 0.62rem;
-  font-weight: 900;
-  letter-spacing: 0.06em;
-  padding: 0.2rem 0.5rem;
-  border-radius: 999px;
-  border: 1.5px solid var(--card-color, #C41E3A);
-  text-transform: uppercase;
-  z-index: 2;
-}
-/* Bottom strip with the diagonal name banner */
+/* Bottom strip — meta row (logo · team · position) above the big player name */
 .bb-card-bottom {
   background: white;
-  padding: 0.45rem 0.55rem 0.5rem;
-  position: relative;
-  min-height: 52px;
+  padding: 0.5rem 0.7rem 0.55rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  border-top: 1px solid rgba(0,0,0,0.1);
+}
+.bb-card-bottom-meta {
   display: flex;
   align-items: center;
-}
-.bb-card-bottom::before {
-  content: '';
-  position: absolute;
-  left: 0; right: 0;
-  top: -2px;
-  height: 2px;
-  background: linear-gradient(90deg, var(--card-color, #C41E3A) 0%, color-mix(in srgb, var(--card-color, #C41E3A) 60%, black) 50%, var(--card-color, #C41E3A) 100%);
-}
-.bb-card-name-banner {
-  flex: 1;
-  background: linear-gradient(135deg, var(--card-color, #C41E3A) 0%, color-mix(in srgb, var(--card-color, #C41E3A) 70%, black) 100%);
-  color: white;
-  padding: 0.3rem 0.6rem;
-  transform: skewX(-12deg);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-}
-.bb-card-name-banner > * { display: block; transform: skewX(12deg); }
-.bb-card-name-text {
-  font-family: 'Impact', 'Oswald', 'Arial Black', sans-serif;
-  font-size: 1.25rem;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  line-height: 1;
-  text-shadow: 1px 1px 0 rgba(0,0,0,0.3);
-}
-.bb-card-team-sub {
-  font-size: 0.6rem;
+  gap: 0.45rem;
+  font-size: 0.62rem;
   font-weight: 800;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  opacity: 0.92;
-  margin-top: 0.15rem;
-  font-family: -apple-system, system-ui, sans-serif;
+  color: #555;
 }
-.bb-card-tm-badge {
-  position: absolute;
-  bottom: 6px;
-  right: 8px;
-  background: white;
-  color: var(--card-color, #C41E3A);
-  font-family: 'Pacifico', 'Brush Script MT', cursive;
-  font-size: 0.85rem;
-  padding: 0 6px;
-  border-radius: 12px;
-  border: 1.5px solid var(--card-color, #C41E3A);
-  line-height: 1.4;
-  font-weight: 400;
-  z-index: 2;
-}
-.bb-card-logo {
-  position: absolute;
-  top: 6px;
-  right: 8px;
-  width: 36px;
-  height: 36px;
+.bb-card-team-logo,
+.bb-card-team-mark {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
   background-color: white;
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
-  border-radius: 50%;
-  border: 2px solid var(--card-color, #C41E3A);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-  z-index: 2;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 1.5px var(--card-color, #C41E3A);
 }
-
-/* Back of card — cream stock, stats table dominates */
-.bb-card-back .bb-card-inner { background: #F4EFE0; }
-.bb-card-back-header {
+.bb-card-team-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   background: var(--card-color, #C41E3A);
   color: white;
-  padding: 0.4rem 0.6rem 0.45rem;
-  border-bottom: 2px solid rgba(0,0,0,0.25);
+  font-family: 'Impact', 'Oswald', 'Arial Black', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 900;
+  box-shadow: none;
+}
+.bb-card-team-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--card-color, #C41E3A);
+  font-weight: 900;
+  letter-spacing: 0.1em;
+}
+.bb-card-position {
+  background: var(--card-color, #C41E3A);
+  color: white;
+  padding: 0.18rem 0.5rem;
+  border-radius: 3px;
+  font-size: 0.58rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  flex-shrink: 0;
+}
+.bb-card-name {
+  font-family: 'Pacifico', 'Brush Script MT', 'Lucida Handwriting', cursive;
+  font-size: 1.65rem;
+  font-weight: 400;
+  line-height: 1;
+  color: #111;
+  letter-spacing: 0.005em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Back of card — clean white stock with team-color accents */
+.bb-card-back .bb-card-inner { background: white; }
+.bb-card-back-header {
+  background: linear-gradient(180deg, var(--card-color, #C41E3A) 0%, color-mix(in srgb, var(--card-color, #C41E3A) 80%, black) 100%);
+  color: white;
+  padding: 0.55rem 0.7rem 0.6rem;
   display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 0.4rem;
-  font-family: 'Impact', sans-serif;
+  align-items: center;
+  gap: 0.55rem;
+  font-family: 'Oswald', 'Impact', 'Arial Black', sans-serif;
 }
 .bb-card-back-name {
-  font-size: 1rem;
+  flex: 1;
+  font-size: 1.05rem;
   font-weight: 900;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   line-height: 1;
   text-shadow: 1px 1px 0 rgba(0,0,0,0.25);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .bb-card-back-num {
   background: white;
   color: var(--card-color, #C41E3A);
-  font-family: 'Impact', sans-serif;
-  font-size: 0.7rem;
-  padding: 0.1rem 0.4rem;
+  font-family: 'Oswald', 'Impact', sans-serif;
+  font-size: 0.95rem;
+  padding: 0.25rem 0.55rem;
   border-radius: 4px;
   letter-spacing: 0.06em;
   font-weight: 900;
+  line-height: 1;
+  flex-shrink: 0;
 }
 .bb-card-back-meta {
-  padding: 0.4rem 0.6rem 0.35rem;
+  padding: 0.45rem 0.7rem 0.4rem;
   font-family: -apple-system, system-ui, sans-serif;
   font-size: 0.7rem;
   font-weight: 700;
   color: #333;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  border-bottom: 1px solid rgba(0,0,0,0.15);
-  background: #FFFDF5;
+  border-bottom: 1px solid rgba(0,0,0,0.1);
 }
 .bb-card-back-meta span { margin-right: 0.65rem; }
 .bb-card-back-meta b { color: var(--card-color, #C41E3A); margin-right: 0.2rem; }
 .bb-card-stats {
-  padding: 0.5rem 0.6rem 0.55rem;
+  padding: 0.55rem 0.7rem 0.6rem;
   font-family: -apple-system, system-ui, sans-serif;
-  background: #FFFDF5;
 }
 .bb-card-stats-title {
-  font-family: 'Impact', sans-serif;
-  font-size: 0.85rem;
+  font-family: 'Oswald', 'Impact', sans-serif;
+  font-size: 0.8rem;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   color: var(--card-color, #C41E3A);
   border-bottom: 2px solid var(--card-color, #C41E3A);
-  padding-bottom: 0.15rem;
-  margin-bottom: 0.3rem;
-  text-shadow: 1px 1px 0 rgba(0,0,0,0.06);
+  padding-bottom: 0.2rem;
+  margin-bottom: 0.35rem;
+  font-weight: 700;
 }
 .bb-card-stats table {
   width: 100%;
@@ -3002,7 +2972,7 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
   .modal-header, .modal-footer, .bb-card-controls { display: none !important; }
   .bb-card-modal-body { padding: 0.5in !important; }
   .bb-card-stack { gap: 0.5in !important; flex-direction: row !important; flex-wrap: wrap !important; justify-content: center !important; }
-  .bb-card { box-shadow: 0 0 0 4px var(--card-color, #C41E3A) !important; width: 2.5in !important; max-width: 2.5in !important; height: 3.5in !important; aspect-ratio: auto !important; }
+  .bb-card { box-shadow: 0 0 0 1px rgba(0,0,0,0.25) !important; width: 2.5in !important; max-width: 2.5in !important; height: 3.5in !important; aspect-ratio: auto !important; }
 }
 
 /* ============ Schedule ============ */
@@ -3428,12 +3398,12 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
   width: 5px;
   background: var(--opp-primary, transparent);
 }
-/* Header row: "Current Game" label + date + status (+ Mark Complete tucked under status). */
+/* Header row: "Current Game" label + date. Status + Mark Complete moved to the actions row. */
 .cgb-header {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   justify-content: space-between;
-  gap: 0.5rem;
+  gap: 0.75rem;
   flex-wrap: wrap;
 }
 .cgb-label {
@@ -3442,11 +3412,6 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--gray-500);
-}
-.cgb-header-right {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
 }
 .cgb-date-pill {
   display: inline-flex;
@@ -3459,6 +3424,7 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
   position: relative;
   font-variant-numeric: tabular-nums;
 }
+.cgb-date-pill .cgb-d { font-size: inherit; }
 .cgb-date-pill .cgb-m { color: var(--gray-500); font-weight: 700; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; }
 .cgb-date-pill input.cgb-date-input {
   position: absolute;
@@ -3469,26 +3435,6 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
   background: transparent;
   font: inherit;
 }
-.cgb-status-stack {
-  display: inline-flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 0.25rem;
-}
-.cgb-status-stack .schedule-status { text-align: center; }
-.cgb-status-stack .cgb-complete-btn {
-  background: var(--cardinal-red);
-  color: white;
-  border: none;
-  padding: 0.25rem 0.55rem;
-  border-radius: 999px;
-  font-size: 0.62rem;
-  font-weight: 800;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  cursor: pointer;
-}
-.cgb-status-stack .cgb-complete-btn:hover { background: var(--cardinal-red-dark); }
 /* Matchup row: "Our Team vs Opponent" */
 .cgb-matchup {
   font-size: 1.05rem;
@@ -3511,7 +3457,18 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
   flex-shrink: 0;
 }
 .cgb-notes { font-size: 0.78rem; color: var(--gray-500); font-weight: 600; }
-.cgb-actions { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+.cgb-actions {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.cgb-actions-status {
+  align-self: center;
+  /* Match the action-button vertical rhythm so the pill doesn't look like a separate row */
+  padding: 0.32rem 0.7rem;
+  font-size: 0.7rem;
+}
 .cgb-action {
   background: rgba(255, 255, 255, 0.7);
   border: 1px solid var(--gray-200);
@@ -3527,6 +3484,32 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
 .cgb-action.primary { background: var(--cardinal-red); color: white; border-color: var(--cardinal-red); }
 .cgb-action.primary:hover { background: var(--cardinal-red-dark); }
 .cgb-action:hover { background: white; }
+.cgb-complete-btn {
+  background: var(--cardinal-red);
+  color: white;
+  border-color: var(--cardinal-red);
+}
+.cgb-complete-btn:hover { background: var(--cardinal-red-dark); }
+
+/* Desktop: scale up label + date so the banner reads as a real header. */
+@media (min-width: 720px) {
+  .current-game-banner { padding: 1.1rem 1.25rem 1.1rem 1.5rem; gap: 0.4rem; }
+  .cgb-header { align-items: baseline; }
+  .cgb-label {
+    font-size: 1.45rem;
+    letter-spacing: 0.04em;
+    color: var(--navy-dark);
+    text-transform: none;
+  }
+  .cgb-date-pill { font-size: 1.45rem; gap: 0.45rem; }
+  .cgb-date-pill .cgb-m { font-size: 1rem; }
+  .cgb-matchup { font-size: 1.15rem; }
+  .cgb-actions-status {
+    font-size: 0.78rem;
+    padding: 0.45rem 0.95rem;
+  }
+  .cgb-action { flex: 0 0 auto; }
+}
 .current-game-empty {
   font-size: 0.92rem;
   font-weight: 600;
@@ -4333,6 +4316,63 @@ function syncSnapshot() {
     if (k && shouldSyncKey(k)) out.push(k + '=' + localStorage.getItem(k));
   }
   return out.sort().join('|');
+}
+
+// Pull cloud → merge → re-render the current view. Safe to call any
+// time the user returns to the app: a fresh push from one device just
+// landed in the cloud, and the device the coach is now looking at
+// should reflect it without a hard refresh. Pull is gated against any
+// in-flight beacon (5s after our own push, the cloud's contents are
+// just our own data echoed back, so skip).
+let cloudPullInFlight = false;
+let lastPullAt = 0;
+async function cloudPullAndRefresh(opts) {
+  if (!getPantryId()) return;
+  const force = !!(opts && opts.force);
+  if (cloudPullInFlight) return;
+  const lastPush = parseInt(localStorage.getItem('tm_last_push') || '0', 10);
+  if (Date.now() - lastPush < 5000) return;
+  // Don't hammer Pantry if the user toggles tabs rapidly.
+  if (!force && Date.now() - lastPullAt < 3000) return;
+  cloudPullInFlight = true;
+  const before = syncSnapshot();
+  let data = null;
+  try { data = await cloudPull(); } finally { cloudPullInFlight = false; lastPullAt = Date.now(); }
+  if (!data) return;
+  const after = syncSnapshot();
+  // Nothing changed — skip the (potentially disruptive) re-render.
+  if (before === after) return;
+  if (CURRENT_TEAM_ID === null && typeof renderTeamManager === 'function') {
+    renderTeamManager();
+  } else if (typeof CURRENT_TEAM_ID === 'number') {
+    // In-memory state was captured before the pull landed; reload it
+    // and re-apply team chrome so remote edits show without a refresh.
+    try {
+      if (typeof loadRoster === 'function') ROSTER = loadRoster();
+      if (typeof loadPresent === 'function') state.present = loadPresent();
+      if (typeof loadManualRotation === 'function') state.manualRotation = loadManualRotation();
+      if (typeof refreshCurrentGameId === 'function') refreshCurrentGameId();
+      const team = getTeamById(CURRENT_TEAM_ID);
+      if (team && typeof applyTeamConfig === 'function') applyTeamConfig(team);
+      if (typeof render === 'function') render();
+    } catch (e) { console.warn('[cloudPull] refresh failed:', e); }
+  }
+}
+
+// When the page becomes visible again (tab switch, app foreground on
+// iOS), or the window regains focus (desktop), pull cloud state so the
+// coach sees edits made on the other device.
+if (typeof document !== 'undefined') {
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') cloudPullAndRefresh();
+  });
+  window.addEventListener('focus', () => cloudPullAndRefresh());
+  // pagehide is more reliable than beforeunload on iOS Safari — fires
+  // even when the tab is backgrounded. Flush any pending debounced
+  // push via beacon so the change actually lands in cloud.
+  window.addEventListener('pagehide', () => {
+    if (pushTimer) cloudBeacon();
+  });
 }
 
 /* ============ Team Manager: routing + registry ============ */
@@ -5159,28 +5199,26 @@ function renderBaseballCard() {
   host.innerHTML = `
     <div class="bb-card bb-card-front" style="${cardVarStyle}">
       <div class="bb-card-inner">
-        <div class="bb-card-team-band">${escapeHtml(teamName.toUpperCase())}</div>
         <div class="bb-card-photo-frame">
-          <span class="bb-card-position">⚾ ${escapeHtml((team && team.sport) === 'softball' ? 'SOFTBALL' : 'BASEBALL')}</span>
-          ${teamLogo ? `<div class="bb-card-logo" style="${logoStyle}"></div>` : ''}
           <div class="bb-card-photo${bbCardPhotoDataUrl ? ' has-photo' : ''}" id="bbCardPhoto" style="${photoStyle}">
             <span class="bb-card-photo-hint">Tap to upload photo</span>
           </div>
         </div>
         <div class="bb-card-bottom">
-          <div class="bb-card-name-banner">
-            <span class="bb-card-name-text">${escapeHtml(bbCardPlayer.toUpperCase())}</span>
-            <span class="bb-card-team-sub">${escapeHtml(teamLeague || teamName)}</span>
+          <div class="bb-card-bottom-meta">
+            ${teamLogo ? `<span class="bb-card-team-logo" style="${logoStyle}" aria-hidden="true"></span>` : `<span class="bb-card-team-mark" aria-hidden="true">${escapeHtml(teamName[0] || '•')}</span>`}
+            <span class="bb-card-team-name">${escapeHtml(teamName.toUpperCase())}</span>
+            <span class="bb-card-position">${escapeHtml((team && team.sport) === 'softball' ? 'SOFTBALL' : 'BASEBALL')}</span>
           </div>
-          <span class="bb-card-tm-badge" aria-hidden="true">topps</span>
+          <div class="bb-card-name">${escapeHtml(bbCardPlayer)}</div>
         </div>
       </div>
     </div>
     <div class="bb-card bb-card-back" style="${cardVarStyle}">
       <div class="bb-card-inner">
         <div class="bb-card-back-header">
-          <span class="bb-card-back-name">${escapeHtml(bbCardPlayer.toUpperCase())}</span>
           <span class="bb-card-back-num">${initials}</span>
+          <span class="bb-card-back-name">${escapeHtml(bbCardPlayer.toUpperCase())}</span>
         </div>
         <div class="bb-card-back-meta">
           <span><b>TEAM:</b> ${escapeHtml(teamName)}</span>
@@ -5331,17 +5369,11 @@ function renderCurrentGameBanner() {
     <div class="cgb-opponent-stripe" aria-hidden="true"></div>
     <div class="cgb-header">
       <span class="cgb-label">Current Game</span>
-      <div class="cgb-header-right">
-        <span class="cgb-date-pill" title="Tap to change date">
-          <span>${day}</span>
-          <span class="cgb-m">${mon}</span>
-          <input type="date" id="cgbDateInput" class="cgb-date-input" value="${cur.date}" aria-label="Change game date">
-        </span>
-        <div class="cgb-status-stack">
-          <span class="schedule-status ${status}">${statusLabel(status)}</span>
-          ${isActive ? '<button class="cgb-complete-btn" id="cgbCompleteBtn" title="Mark this game complete">Mark Complete</button>' : ''}
-        </div>
-      </div>
+      <span class="cgb-date-pill" title="Tap to change date">
+        <span class="cgb-d">${day}</span>
+        <span class="cgb-m">${mon}</span>
+        <input type="date" id="cgbDateInput" class="cgb-date-input" value="${cur.date}" aria-label="Change game date">
+      </span>
     </div>
     <div class="cgb-matchup">
       <span>${escapeHtml(ourName)}</span>
@@ -5351,8 +5383,10 @@ function renderCurrentGameBanner() {
     </div>
     ${cur.notes ? '<div class="cgb-notes">' + escapeHtml(cur.notes) + '</div>' : ''}
     <div class="cgb-actions">
+      <span class="schedule-status ${status} cgb-actions-status">${statusLabel(status)}</span>
       <button class="cgb-action" id="cgbEditBtn" title="Edit this game">Edit Game</button>
       <button class="cgb-action" id="cgbNewBtn" title="Create a new game">New Game</button>
+      ${isActive ? '<button class="cgb-action cgb-complete-btn" id="cgbCompleteBtn" title="Mark this game complete">Mark Complete</button>' : ''}
     </div>
   `;
   host.style.display = 'flex';
@@ -5403,42 +5437,12 @@ function renderCurrentGameBanner() {
   bindTeamManager();
   bindDeleteTeam();
 
-  // Pull cloud state in the background — don't block the initial render
-  // or reload (the reload-on-diff approach raced with the unload, which
-  // could leave cloud writes mid-flight and corrupt the basket). When
-  // the pull lands, just re-render the manager grid so newly arrived
-  // teams pop in. Team views read at most one team's data, so they
-  // don't need a refresh.
-  if (getPantryId()) {
-    // Don't pull immediately after a sendBeacon push — Pantry hasn't
-    // necessarily caught up yet, and a fresh pull would race with the
-    // beacon delivery and overwrite our just-saved team with stale
-    // cloud data. 5s is plenty for the beacon to land on the server.
-    const lastPush = parseInt(localStorage.getItem('tm_last_push') || '0', 10);
-    const sincePush = Date.now() - lastPush;
-    if (sincePush > 5000) {
-      cloudPull().then((data) => {
-        if (!data) return;
-        if (CURRENT_TEAM_ID === null && typeof renderTeamManager === 'function') {
-          renderTeamManager();
-        } else if (typeof CURRENT_TEAM_ID === 'number') {
-          // Team view: in-memory ROSTER / state were captured before
-          // the pull landed. Re-read them from localStorage and
-          // re-apply every team setting (background gradient, logo,
-          // color, name, sponsor) so a remote edit shows up without
-          // a second refresh.
-          try {
-            if (typeof loadRoster === 'function') ROSTER = loadRoster();
-            if (typeof loadPresent === 'function') state.present = loadPresent();
-            if (typeof loadManualRotation === 'function') state.manualRotation = loadManualRotation();
-            const team = getTeamById(CURRENT_TEAM_ID);
-            if (team && typeof applyTeamConfig === 'function') applyTeamConfig(team);
-            if (typeof render === 'function') render();
-          } catch (e) { console.warn('[cloudPull] refresh failed:', e); }
-        }
-      }).catch(() => {});
-    }
-  }
+  // Pull cloud state in the background — don't block the initial render.
+  // The pull-and-rerender machinery is shared by boot, visibility-change,
+  // and window-focus, so a coach who edits the roster on the phone sees
+  // it appear on the laptop (and vice versa) the moment they switch back
+  // to that device, without having to refresh.
+  if (getPantryId()) cloudPullAndRefresh();
 
   if (CURRENT_TEAM_ID === null) {
     // No ?team= → Team Manager landing
