@@ -3441,19 +3441,36 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
   gap: 0.75rem;
   flex-wrap: wrap;
 }
-/* Matchup is now the headline of the banner — same weight as "Today's Roster". */
-.cgb-matchup-title {
+/* "Current Game" headline — same large bold treatment as "Today's Roster". */
+.cgb-title {
   margin: 0;
   font-size: 1.5rem;
   font-weight: 900;
   letter-spacing: -0.01em;
   color: var(--navy-dark);
   line-height: 1.05;
+}
+/* Single-line matchup row right below the title. Shrinks the font on tighter
+   screens before truncating with ellipsis so both team names stay readable. */
+.cgb-matchup-line {
   display: flex;
   align-items: baseline;
-  gap: 0.45rem;
-  flex-wrap: wrap;
+  gap: 0.4rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--navy-dark);
+  white-space: nowrap;
+  overflow: hidden;
+  min-width: 0;
 }
+.cgb-matchup-line .cgb-our,
+.cgb-matchup-line .cgb-opp {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+  flex: 0 1 auto;
+}
+.cgb-matchup-line .cgb-vs { flex-shrink: 0; }
 .cgb-date-pill {
   display: inline-flex;
   align-items: baseline;
@@ -3513,10 +3530,11 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
 }
 .cgb-complete-btn:hover { background: var(--cardinal-red-dark); }
 
-/* Desktop: bump the matchup headline up another notch. */
+/* Desktop: bump the headline up another notch. */
 @media (min-width: 720px) {
   .current-game-banner { padding: 1.1rem 1.25rem 1.1rem 1.5rem; gap: 0.4rem; }
-  .cgb-matchup-title { font-size: 2rem; }
+  .cgb-title { font-size: 2rem; }
+  .cgb-matchup-line { font-size: 1.15rem; }
   .cgb-date-pill { font-size: 1.45rem; gap: 0.45rem; }
   .cgb-date-pill .cgb-m { font-size: 1rem; }
   .cgb-actions-status {
@@ -3976,7 +3994,8 @@ button, .outs-btn, .sc-btn, .cgb-action, [role="button"] {
       </div>
     </div>
     <div class="scorecard-header">
-      <span></span>
+      <span></span><!-- icon column -->
+      <span></span><!-- name column -->
       <span>Assists</span>
       <span>Outs</span>
     </div>
@@ -4163,7 +4182,7 @@ const PANTRY_BASKET = 'tm_state';
 // without any setup. A user who wants their own private pantry can paste
 // a different ID into the Sync modal; that override is stored locally.
 const DEFAULT_PANTRY_ID = 'a53410b0-2cad-40be-9743-5c64695d2c2e';
-const SYNC_PREFIXES = ['tm_teams', 'cardinals_', 'tm_t', 'game_'];
+const SYNC_PREFIXES = ['tm_teams', 'cardinals_', 'tm_t', 'game_', 'tm_updates'];
 // Cleanup-only keys we delete on every boot. They start with a synced
 // prefix but they don't represent user data, so we must NOT trigger a
 // cloud push when they're touched — that push would race with the
@@ -4173,6 +4192,25 @@ const NO_SYNC_KEYS = new Set(['cardinals_view', 'cardinals_innings']);
 function shouldSyncKey(key) {
   if (NO_SYNC_KEYS.has(key)) return false;
   return SYNC_PREFIXES.some(p => key === p || key.startsWith(p));
+}
+// Stash the raw localStorage setters so the cloud-sync layer can write
+// without re-entering the wrapper (which would falsely mark every cloud
+// pull as a "local edit", losing the per-key timestamps).
+const _rawSet = localStorage.setItem.bind(localStorage);
+const _rawRemove = localStorage.removeItem.bind(localStorage);
+// tm_updates is a sidecar map of { [syncKey]: lastLocalEditMs }. It tracks
+// the LAST TIME THIS DEVICE locally modified each sync key, and rides
+// along in every push. On pull, we only overwrite a local key when the
+// cloud's timestamp is strictly newer — so a push that hasn't landed yet
+// can't be undone by a subsequent pull.
+function loadUpdates() {
+  try { return JSON.parse(localStorage.getItem('tm_updates') || '{}') || {}; }
+  catch (e) { return {}; }
+}
+function bumpUpdated(key) {
+  const u = loadUpdates();
+  u[key] = Date.now();
+  _rawSet('tm_updates', JSON.stringify(u));
 }
 function getPantryId() {
   const override = (localStorage.getItem('tm_pantry_id') || '').trim();
@@ -4210,14 +4248,22 @@ async function cloudPull() {
     let data;
     try { data = JSON.parse(wrap.payload); } catch (e) { return null; }
     if (data && typeof data === 'object') {
+      // Per-key conflict resolution: cloud wins only if its tm_updates
+      // timestamp for that key is strictly newer than ours. This is the
+      // safety net for "I just changed it and the next pull is about to
+      // erase it" — if the push hasn't completed, local stays.
+      const cloudUpdates = (data.tm_updates && typeof data.tm_updates === 'object') ? data.tm_updates : {};
+      const localUpdates = loadUpdates();
       for (const [k, v] of Object.entries(data)) {
         if (!shouldSyncKey(k)) continue;
+        if (k === 'tm_updates') continue; // handled separately below
+        const cloudAt = (typeof cloudUpdates[k] === 'number') ? cloudUpdates[k] : 0;
+        const localAt = (typeof localUpdates[k] === 'number') ? localUpdates[k] : 0;
         try {
-          // tm_teams gets a smart per-team merge so a stale cloud
-          // (e.g. our sendBeacon was dropped, or another device's
-          // older state) can't clobber a fresh local edit. Each team
-          // carries an `updatedAt` timestamp; the newer wins.
           if (k === 'tm_teams' && Array.isArray(v)) {
+            // tm_teams keeps its per-team merge — finer-grained than the
+            // sidecar timestamp, so a single team edit doesn't have to
+            // block edits to a sibling team on another device.
             const localTeams = JSON.parse(localStorage.getItem('tm_teams') || '[]');
             const byId = new Map();
             for (const t of (Array.isArray(localTeams) ? localTeams : [])) {
@@ -4232,12 +4278,28 @@ async function cloudPull() {
               if (ctAt > ltAt) byId.set(ct.id, ct);
             }
             const merged = [...byId.values()].sort((a, b) => a.id - b.id);
-            localStorage.setItem('tm_teams', JSON.stringify(merged));
+            _rawSet('tm_teams', JSON.stringify(merged));
           } else {
-            localStorage.setItem(k, typeof v === 'string' ? v : JSON.stringify(v));
+            // Every other sync key: cloud wins when it's at least as new
+            // as local. (>= handles fresh devices where both timestamps
+            // are 0 — without that, the very first pull wouldn't seed the
+            // local store from cloud.) _rawSet bypasses the wrapper so
+            // this write doesn't falsely bump our local timestamp to
+            // "now" — we want to inherit the cloud's timestamp.
+            if (cloudAt >= localAt) {
+              _rawSet(k, typeof v === 'string' ? v : JSON.stringify(v));
+            }
           }
         } catch (e) { console.warn('[cloudPull] storage write failed for', k, e); }
       }
+      // Merge timestamps: take the max per key. The result is our new
+      // record of "when was each key last meaningfully touched anywhere"
+      // — the answer the next pull will compare against.
+      const mergedUpdates = Object.assign({}, localUpdates);
+      for (const k of Object.keys(cloudUpdates)) {
+        if ((cloudUpdates[k] || 0) > (mergedUpdates[k] || 0)) mergedUpdates[k] = cloudUpdates[k];
+      }
+      _rawSet('tm_updates', JSON.stringify(mergedUpdates));
     }
     return data;
   } catch (err) {
@@ -4352,17 +4414,26 @@ function cloudBeacon() {
   }
 }
 
-// Wrap localStorage so any tracked-key write triggers a cloud push.
+// Wrap localStorage so any tracked-key write
+//   - stamps tm_updates[key] with Date.now() so cloudPull can tell whether
+//     local or cloud is fresher next time it merges
+//   - schedules a debounced cloudPush
+// The tm_updates write itself uses the raw setter so we don't recursively
+// re-trigger pushes from inside the bump.
 (function wrapLocalStorage() {
-  const origSet = localStorage.setItem.bind(localStorage);
-  const origRemove = localStorage.removeItem.bind(localStorage);
   localStorage.setItem = function (k, v) {
-    origSet(k, v);
-    if (shouldSyncKey(k)) cloudPush();
+    _rawSet(k, v);
+    if (shouldSyncKey(k) && k !== 'tm_updates') {
+      bumpUpdated(k);
+      cloudPush();
+    }
   };
   localStorage.removeItem = function (k) {
-    origRemove(k);
-    if (shouldSyncKey(k)) cloudPush();
+    _rawRemove(k);
+    if (shouldSyncKey(k) && k !== 'tm_updates') {
+      bumpUpdated(k);
+      cloudPush();
+    }
   };
 })();
 
@@ -5490,16 +5561,17 @@ function renderCurrentGameBanner() {
   host.innerHTML = `
     <div class="cgb-opponent-stripe" aria-hidden="true"></div>
     <div class="cgb-header">
-      <h2 class="cgb-matchup-title">
-        <span>${escapeHtml(ourName)}</span>
-        <span class="cgb-vs">vs</span>
-        <span>${escapeHtml(opp)}</span>
-      </h2>
+      <h2 class="cgb-title">Current Game</h2>
       <span class="cgb-date-pill" title="Tap to change date">
         <span class="cgb-d">${day}</span>
         <span class="cgb-m">${mon}</span>
         <input type="date" id="cgbDateInput" class="cgb-date-input" value="${cur.date}" aria-label="Change game date">
       </span>
+    </div>
+    <div class="cgb-matchup-line">
+      <span class="cgb-our">${escapeHtml(ourName)}</span>
+      <span class="cgb-vs">vs</span>
+      <span class="cgb-opp">${escapeHtml(opp)}</span>
     </div>
     ${cur.notes ? '<div class="cgb-notes">' + escapeHtml(cur.notes) + '</div>' : ''}
     <div class="cgb-actions">
