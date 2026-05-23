@@ -20,6 +20,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Pacifico&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer">
+<!-- html2canvas: used to render the baseball-card stack to a PNG for download. Loaded lazily on demand. -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
 <title>Team Manager</title>
 <style>
 :root {
@@ -486,6 +488,19 @@ body.is-app > .app-team-links {
 .tm-field input:focus,
 .tm-field select:focus,
 .tm-field textarea:focus { border-color: #C41E3A; }
+/* iOS renders <input type="date"> with a wide native pill containing the long-format value
+   (e.g. "May 19, 2026") which can overflow on small iPhones. Left-align and shrink slightly
+   so the value sits flush with the input and never gets clipped. */
+.tm-field input[type="date"] {
+  text-align: left;
+  -webkit-appearance: none;
+  appearance: none;
+  font-size: 0.95rem;
+  padding-right: 0.5rem;
+}
+@media (max-width: 380px) {
+  .tm-field input[type="date"] { font-size: 0.9rem; padding-left: 0.65rem; padding-right: 0.4rem; }
+}
 .tm-color-swatches {
   display: flex;
   gap: 0.5rem;
@@ -2660,8 +2675,18 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
 }
 
 /* ============ Baseball card ============ */
-.bb-card-modal-card { max-width: 460px; max-height: 92dvh; }
+.bb-card-modal-card {
+  max-width: 460px;
+  /* Leave room for the iOS status bar + a comfortable buffer below the home indicator. */
+  max-height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 1.5rem);
+}
 .bb-card-modal-body { padding: 1rem 1rem 1.5rem; }
+@media (max-width: 600px) {
+  /* Phones: shrink the card so the whole stack fits comfortably without scrolling the modal off-screen. */
+  .bb-card-modal-card { max-height: 88dvh; }
+  .bb-card-modal-body { padding: 0.75rem 0.75rem 1rem; }
+  .bb-card { max-width: 240px; }
+}
 .bb-card-controls {
   display: flex;
   align-items: center;
@@ -3407,17 +3432,17 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
   flex-wrap: wrap;
 }
 .cgb-label {
-  font-size: 0.62rem;
+  font-size: 1.2rem;
   font-weight: 800;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--gray-500);
+  letter-spacing: 0.02em;
+  color: var(--navy-dark);
+  line-height: 1.1;
 }
 .cgb-date-pill {
   display: inline-flex;
   align-items: baseline;
-  gap: 0.35rem;
-  font-size: 0.92rem;
+  gap: 0.45rem;
+  font-size: 1.2rem;
   font-weight: 800;
   color: var(--navy-dark);
   cursor: pointer;
@@ -3425,7 +3450,7 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
   font-variant-numeric: tabular-nums;
 }
 .cgb-date-pill .cgb-d { font-size: inherit; }
-.cgb-date-pill .cgb-m { color: var(--gray-500); font-weight: 700; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; }
+.cgb-date-pill .cgb-m { color: var(--gray-500); font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; }
 .cgb-date-pill input.cgb-date-input {
   position: absolute;
   inset: 0;
@@ -4068,7 +4093,7 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
     </div>
     <div class="modal-footer">
       <button class="modal-btn-secondary" id="bbCardCloseBtn2" type="button">Close</button>
-      <button class="modal-btn-primary" id="bbCardPrintBtn" type="button"><i class="fa-solid fa-print" aria-hidden="true"></i> Print / Save PDF</button>
+      <button class="modal-btn-primary" id="bbCardSaveImgBtn" type="button"><i class="fa-solid fa-download" aria-hidden="true"></i> Save image</button>
     </div>
   </div>
 </div>
@@ -4102,6 +4127,13 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
       <label class="tm-field">
         <span class="tm-field-label">Notes <span class="tm-field-hint">(optional)</span></span>
         <textarea id="gameModalNotes" rows="3" maxlength="280" placeholder="Field, weather, line-up reminders…"></textarea>
+      </label>
+      <label class="tm-field" id="gameModalStatusField" hidden>
+        <span class="tm-field-label">Status</span>
+        <select id="gameModalStatus">
+          <option value="auto">Auto (by date)</option>
+          <option value="complete">Complete</option>
+        </select>
       </label>
       <p class="game-modal-status" id="gameModalStatusLine"></p>
     </div>
@@ -5071,9 +5103,18 @@ function openGameModal(game, defaultDate) {
   document.getElementById('gameModalColorPrimary').value = colors.primary || '#1D4ED8';
   document.getElementById('gameModalColorPrimary').classList.toggle('is-empty', !colors.primary);
   document.getElementById('gameModalDeleteBtn').hidden = !game;
+  // Status selector — only shown when editing. Two values:
+  //   "auto"     → completedAt cleared; status derives from date
+  //   "complete" → completedAt set explicitly (reopens reversible)
+  const statusField = document.getElementById('gameModalStatusField');
+  const statusSel = document.getElementById('gameModalStatus');
+  if (statusField && statusSel) {
+    statusField.hidden = !game;
+    statusSel.value = (game && game.completedAt) ? 'complete' : 'auto';
+  }
   const statusLine = document.getElementById('gameModalStatusLine');
   if (statusLine) {
-    if (game) statusLine.textContent = `Status: ${statusLabel(gameStatus(game))}`;
+    if (game) statusLine.textContent = `Current: ${statusLabel(gameStatus(game))} · today is ${todayKey()}`;
     else statusLine.textContent = '';
   }
   document.getElementById('gameModalOverlay').hidden = false;
@@ -5091,10 +5132,17 @@ function saveGameModal() {
   const primaryEl = document.getElementById('gameModalColorPrimary');
   const primary = primaryEl.classList.contains('is-empty') ? null : primaryEl.value;
   const colors = primary ? { primary } : null;
+  const statusChoice = document.getElementById('gameModalStatus')?.value || 'auto';
   const games = loadGames();
   if (editingGameId !== null) {
     const idx = games.findIndex(g => String(g.id) === String(editingGameId));
-    if (idx >= 0) games[idx] = Object.assign({}, games[idx], { date, opponent, notes, colors });
+    if (idx >= 0) {
+      // Status: "auto" clears completedAt (date+today drive status), "complete" forces it.
+      let completedAt = games[idx].completedAt || null;
+      if (statusChoice === 'auto') completedAt = null;
+      else if (statusChoice === 'complete' && !completedAt) completedAt = Date.now();
+      games[idx] = Object.assign({}, games[idx], { date, opponent, notes, colors, completedAt });
+    }
   } else {
     const id = Date.now();
     games.push({ id, date, opponent, notes, colors, createdAt: Date.now(), completedAt: null });
@@ -5186,7 +5234,10 @@ function renderBaseballCard() {
     const o = ps.outs || 0;
     if (a === 0 && o === 0 && String(g.id) !== String(currentGameId)) continue;
     totalA += a; totalO += o;
-    seasonStats.push({ date: g.date.slice(5), opp: g.opponent || '—', a, o });
+    // Compact M/D/YY for the game log column.
+    const [yy, mm, dd] = g.date.split('-');
+    const dateLabel = `${parseInt(mm, 10)}/${parseInt(dd, 10)}/${yy.slice(2)}`;
+    seasonStats.push({ date: dateLabel, opp: g.opponent || '—', a, o });
   }
   // Cap to last 5 rows so the back fits.
   const statsRows = seasonStats.slice(-5);
@@ -5246,13 +5297,66 @@ function renderBaseballCard() {
     document.getElementById('bbCardPhotoInput')?.click();
   });
 }
+// Render the front + back of the card to a PNG and offer it for
+// download. html2canvas is loaded lazily from CDN — if it didn't load
+// (e.g. offline), we surface a helpful message rather than failing
+// silently. On iOS, browsers often ignore the <a download> attribute,
+// so we also open the image in a new tab as a fallback.
+async function saveBaseballCardImage() {
+  const btn = document.getElementById('bbCardSaveImgBtn');
+  const stack = document.getElementById('bbCardStack');
+  if (!stack || !btn) return;
+  if (typeof html2canvas === 'undefined') {
+    alert('Image library still loading. Try again in a moment.');
+    return;
+  }
+  const original = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving…';
+  try {
+    const canvas = await html2canvas(stack, {
+      backgroundColor: '#ffffff',
+      scale: 2,                 // crisp on retina + when re-printed
+      useCORS: true,
+      logging: false
+    });
+    const filename = `${(bbCardPlayer || 'player').replace(/[^A-Za-z0-9_-]+/g, '_')}-card.png`;
+    canvas.toBlob((blob) => {
+      if (!blob) {
+        alert('Could not save image. Try a screenshot as a backup.');
+        return;
+      }
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      // iOS Safari often ignores `download` and just navigates. Give the
+      // user a second path: open the image in a new tab they can long-
+      // press to save to Photos.
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+                    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+      if (isIOS) window.open(url, '_blank');
+      setTimeout(() => URL.revokeObjectURL(url), 60000);
+    }, 'image/png');
+  } catch (err) {
+    console.warn('[saveBaseballCardImage] failed:', err);
+    alert('Could not save image. Try a screenshot as a backup.');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = original;
+  }
+}
+
 function bindBaseballCardUi() {
   document.getElementById('bbCardCloseBtn')?.addEventListener('click', closeBaseballCard);
   document.getElementById('bbCardCloseBtn2')?.addEventListener('click', closeBaseballCard);
   document.getElementById('bbCardOverlay')?.addEventListener('click', (e) => {
     if (e.target.id === 'bbCardOverlay') closeBaseballCard();
   });
-  document.getElementById('bbCardPrintBtn')?.addEventListener('click', () => window.print());
+  document.getElementById('bbCardSaveImgBtn')?.addEventListener('click', saveBaseballCardImage);
   document.getElementById('bbCardPhotoInput')?.addEventListener('change', (e) => {
     const file = e.target.files && e.target.files[0];
     if (!file) return;
@@ -6017,11 +6121,27 @@ function generateRotation(presentList, opts) {
       if (!eligible.length) {
         eligible = fielders.filter(p => !used.has(p) && !atPremiumCap(p));
       }
-      // Last resort if everyone with capacity has been placed — relax
-      // the soft cap, but still respect cap=0 (those players never
+      // Relax the soft cap if every fielder with capacity has already
+      // been placed, but still respect cap=0 (those players never
       // play premium regardless of slot shortage).
       if (!eligible.length) {
         eligible = fielders.filter(p => !used.has(p) && !permanentlyNoPrem(p));
+      }
+      // Final safety net: an inning must never leave the pitcher (or any
+      // other position) unassigned. If the cap rules have completely
+      // exhausted the eligible pool, fall back to any unused fielder —
+      // we'd rather break the soft cap than send the team out without
+      // a P. cap=0 is still respected; that's a hard "never play premium"
+      // rule the coach set explicitly.
+      if (!eligible.length) {
+        eligible = fielders.filter(p => !used.has(p) && !permanentlyNoPrem(p));
+      }
+      if (!eligible.length) {
+        // Last possible fallback — pick literally any unused fielder.
+        // Only reachable when the only remaining unused players have
+        // cap=0 for this premium position; better to break that rule
+        // than to leave the pitcher empty.
+        eligible = fielders.filter(p => !used.has(p));
       }
       if (!eligible.length) continue;
 
