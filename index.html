@@ -2268,6 +2268,22 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
 }
 .rotation-shuffle-btn:active { transform: rotate(360deg) scale(0.92); }
 
+/* Live sync-status indicator next to the Scorecard refresh button.
+   Empty when idle, then "Saving…" / "Saved ✓" / "Sync failed". Gives the
+   coach trustworthy feedback that their edits reached the cloud. */
+.sync-status {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--gray-500);
+  margin-left: auto;
+  padding: 0 0.5rem;
+  white-space: nowrap;
+}
+.sync-status[data-status="saving"] { color: var(--navy-dark); }
+.sync-status[data-status="saved"]  { color: #15803D; }
+.sync-status[data-status="failed"] { color: #B91C1C; }
+
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -3982,7 +3998,8 @@ button, .outs-btn, .sc-btn, .cgb-action, [role="button"] {
   <section id="scorePage" class="page">
     <h2 class="section-heading-row">
       <span>Scorecard</span>
-      <button class="rotation-shuffle-btn" id="scoreRefreshBtn" type="button" aria-label="Refresh from cloud" title="Pull latest from cloud">
+      <span class="sync-status" id="syncStatus" aria-live="polite"></span>
+      <button class="rotation-shuffle-btn" id="scoreRefreshBtn" type="button" aria-label="Sync with cloud" title="Push local changes, then pull the latest">
         <i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i>
       </button>
     </h2>
@@ -4359,6 +4376,7 @@ async function doCloudPush() {
     return;
   }
   const body = JSON.stringify({ payload: JSON.stringify(payload) });
+  setSyncStatus('saving');
   try {
     // Always POST — Pantry's POST overwrites the basket whole-hog,
     // unlike PUT which deep-merges (which concatenates arrays).
@@ -4372,8 +4390,10 @@ async function doCloudPush() {
       r = await fetch(url, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body });
       if (!r.ok) throw new Error('HTTP ' + r.status);
     }
+    setSyncStatus('saved');
   } catch (err) {
     console.warn('[cloudPush] failed:', err);
+    setSyncStatus('failed');
   }
 }
 
@@ -4422,13 +4442,14 @@ async function flushCloudPush() {
   if (pantryUrl()) await doCloudPush();
 }
 
-// Fire-and-forget version that survives the page unload — browser
-// delivers the request after we've already navigated. Uses fetch with
-// keepalive: true (more reliable than sendBeacon on iOS PWAs, where
-// sendBeacon is sometimes dropped when the home-screen app backgrounds
-// before the request flushes). Falls back to sendBeacon on older
-// browsers. Same safety net as doCloudPush: refuse to push an empty
-// tm_teams.
+// Fire-and-forget push that survives page unload. Tries multiple
+// transports in order of reliability for iOS PWAs:
+//   1. fetch + keepalive WITH awaitable promise (we kick off the
+//      doCloudPush so we get success/failure feedback for the UI)
+//   2. navigator.sendBeacon (last-ditch — guaranteed to leave the
+//      device even if the JS context is killed mid-flight)
+// We do BOTH on every call — duplicate writes to Pantry are harmless,
+// missing writes are not.
 function cloudBeacon() {
   const url = pantryUrl();
   if (!url) return false;
@@ -4446,28 +4467,59 @@ function cloudBeacon() {
   // trusts local data — otherwise the pull races with delivery and can
   // overwrite our just-saved data with stale cloud.
   try { localStorage.setItem('tm_last_push', String(Date.now())); } catch (e) {}
-  // keepalive: true lets fetch survive page unload up to 64 KB body. This
-  // payload is JSON of all team state and easily fits.
+  setSyncStatus('saving');
+  // 1) sendBeacon — most reliable on iOS PWA force-close. If it queues
+  //    successfully, the OS itself guarantees delivery.
+  let beaconQueued = false;
+  if (typeof navigator !== 'undefined' && navigator.sendBeacon) {
+    try {
+      beaconQueued = navigator.sendBeacon(url, new Blob([body], { type: 'application/json' }));
+    } catch (e) {}
+  }
+  // 2) fetch + keepalive — gives us a real Promise so we can update the
+  //    sync status indicator on success/fail. Runs in parallel with the
+  //    beacon above; if the beacon already queued it, this fetch is a
+  //    harmless duplicate that confirms delivery.
   try {
     fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body,
       keepalive: true
+    }).then(r => {
+      if (r && r.ok) setSyncStatus('saved');
+      else if (!beaconQueued) setSyncStatus('failed');
     }).catch(() => {
-      // If the keepalive fetch hard-fails, try sendBeacon as backup.
-      if (typeof navigator !== 'undefined' && navigator.sendBeacon) {
-        navigator.sendBeacon(url, new Blob([body], { type: 'application/json' }));
-      }
+      if (!beaconQueued) setSyncStatus('failed');
     });
     return true;
   } catch (e) {
-    if (typeof navigator !== 'undefined' && navigator.sendBeacon) {
-      return navigator.sendBeacon(url, new Blob([body], { type: 'application/json' }));
-    }
-    return false;
+    if (!beaconQueued) setSyncStatus('failed');
+    return beaconQueued;
   }
 }
+
+// Sync indicator state — visible to the user so they can see when an
+// edit reached the cloud. Updated by cloudBeacon / doCloudPush.
+let _syncStatus = 'idle'; // 'idle' | 'saving' | 'saved' | 'failed'
+let _syncStatusAt = 0;
+function setSyncStatus(s) {
+  _syncStatus = s;
+  _syncStatusAt = Date.now();
+  if (typeof renderSyncStatus === 'function') renderSyncStatus();
+}
+function renderSyncStatus() {
+  const el = document.getElementById('syncStatus');
+  if (!el) return;
+  if (_syncStatus === 'idle') { el.textContent = ''; return; }
+  const sec = Math.max(0, Math.floor((Date.now() - _syncStatusAt) / 1000));
+  if (_syncStatus === 'saving') el.textContent = 'Saving…';
+  else if (_syncStatus === 'saved') el.textContent = sec < 5 ? 'Saved ✓' : `Saved ${sec}s ago`;
+  else if (_syncStatus === 'failed') el.textContent = 'Sync failed — tap ↻';
+  el.dataset.status = _syncStatus;
+}
+// Tick the indicator's "X seconds ago" label.
+setInterval(renderSyncStatus, 5000);
 
 // Wrap localStorage so any tracked-key write
 //   - stamps tm_updates[key] with Date.now() so cloudPull can tell whether

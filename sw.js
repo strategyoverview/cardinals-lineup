@@ -8,7 +8,7 @@
    - Pantry API calls  → bypassed entirely so syncs never get stuck
      on a stale cached response
 */
-const CACHE = 'tm-cache-v2-sync-timestamps';
+const CACHE = 'tm-cache-v3-sync-indicator';
 
 const PRECACHE = [
   './',
