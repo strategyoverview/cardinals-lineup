@@ -4271,7 +4271,17 @@ async function cloudPull() {
       // timestamp for that key is strictly newer than ours. This is the
       // safety net for "I just changed it and the next pull is about to
       // erase it" — if the push hasn't completed, local stays.
-      const cloudUpdates = (data.tm_updates && typeof data.tm_updates === 'object') ? data.tm_updates : {};
+      // Pantry has been seen storing values as JSON strings rather than
+      // parsed objects (legacy / first-push artifact). Accept either —
+      // try-parse a string before falling back to {}.
+      let cloudUpdates = {};
+      if (data.tm_updates) {
+        if (typeof data.tm_updates === 'object') {
+          cloudUpdates = data.tm_updates;
+        } else if (typeof data.tm_updates === 'string') {
+          try { cloudUpdates = JSON.parse(data.tm_updates) || {}; } catch (e) {}
+        }
+      }
       const localUpdates = loadUpdates();
       for (const [k, v] of Object.entries(data)) {
         if (!shouldSyncKey(k)) continue;
@@ -4375,15 +4385,28 @@ let pushTimer = null;
 // erasing any change another device had just made. The pull flips
 // this to true the moment it finishes (success or failure).
 let syncReady = false;
+// If any sync-tracked write happens while syncReady is false, we still
+// want it to make it to the cloud — just not until the boot pull lands.
+// onSyncReady() flushes any deferred writes the moment we unblock.
+let pushDeferred = false;
+function onSyncReady() {
+  if (syncReady) return; // already unblocked — nothing to do
+  syncReady = true;
+  if (pushDeferred) {
+    pushDeferred = false;
+    cloudPush();
+    fireBeaconThrottled();
+  }
+}
 // Safety net: if the boot pull never runs (e.g. on the Team Manager
 // landing page, or because the network is down and we never get past
 // the abort timeout), still flip syncReady after 8 s so a user can
 // save changes. cloudPullAndRefresh flips it earlier on its own path.
-setTimeout(() => { syncReady = true; }, 8000);
+setTimeout(onSyncReady, 8000);
 function cloudPush() {
   const url = pantryUrl();
   if (!url) return;
-  if (!syncReady) return; // boot pull still in flight — don't clobber cloud
+  if (!syncReady) { pushDeferred = true; return; }
   clearTimeout(pushTimer);
   // Short debounce so rapid edits (e.g. mashing the +/- on the score
   // page) still batch, but the cloud sees the change in well under a
@@ -4457,7 +4480,7 @@ function cloudBeacon() {
 // re-trigger pushes from inside the bump.
 let _lastBeaconAt = 0;
 function fireBeaconThrottled() {
-  if (!syncReady) return; // boot pull still in flight — don't clobber cloud
+  if (!syncReady) { pushDeferred = true; return; }
   // 400ms throttle — short enough that a single user click feels instant
   // cross-device, long enough that a held score button doesn't beacon on
   // every increment.
@@ -4505,13 +4528,13 @@ function syncSnapshot() {
 let cloudPullInFlight = false;
 let lastPullAt = 0;
 async function cloudPullAndRefresh(opts) {
-  if (!getPantryId()) { syncReady = true; return; }
+  if (!getPantryId()) { onSyncReady(); return; }
   const force = !!(opts && opts.force);
   if (cloudPullInFlight) return;
   const lastPush = parseInt(localStorage.getItem('tm_last_push') || '0', 10);
-  if (Date.now() - lastPush < 5000) { syncReady = true; return; }
+  if (Date.now() - lastPush < 5000) { onSyncReady(); return; }
   // Don't hammer Pantry if the user toggles tabs rapidly.
-  if (!force && Date.now() - lastPullAt < 3000) { syncReady = true; return; }
+  if (!force && Date.now() - lastPullAt < 3000) { onSyncReady(); return; }
   cloudPullInFlight = true;
   const before = syncSnapshot();
   let data = null;
@@ -4522,7 +4545,7 @@ async function cloudPullAndRefresh(opts) {
     // Unblock pushes regardless of whether the pull succeeded — an
     // offline user must still be able to save changes locally and have
     // them push when connectivity returns.
-    syncReady = true;
+    onSyncReady();
   }
   if (!data) return;
   const after = syncSnapshot();
