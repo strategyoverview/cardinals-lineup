@@ -4442,14 +4442,18 @@ async function flushCloudPush() {
   if (pantryUrl()) await doCloudPush();
 }
 
-// Fire-and-forget push that survives page unload. Tries multiple
-// transports in order of reliability for iOS PWAs:
-//   1. fetch + keepalive WITH awaitable promise (we kick off the
-//      doCloudPush so we get success/failure feedback for the UI)
-//   2. navigator.sendBeacon (last-ditch — guaranteed to leave the
-//      device even if the JS context is killed mid-flight)
-// We do BOTH on every call — duplicate writes to Pantry are harmless,
-// missing writes are not.
+// Fire-and-forget push. Tries transports in order:
+//   1. navigator.sendBeacon — most reliable when the page is about to
+//      unload (iOS PWA force-close). 64 KB body cap; returns false if
+//      too big.
+//   2. fetch + keepalive — also 64 KB cap, but gives us a Promise so
+//      the status indicator gets feedback. Used only when sendBeacon
+//      can't queue OR when we're not navigating away (the common case
+//      during live scoring).
+//   3. Regular fetch — no size limit, no unload survival. The last-
+//      resort fallback when the payload is too big for keepalive,
+//      typical when the user has team logos uploaded (base64 images
+//      blow well past 64 KB).
 function cloudBeacon() {
   const url = pantryUrl();
   if (!url) return false;
@@ -4468,35 +4472,32 @@ function cloudBeacon() {
   // overwrite our just-saved data with stale cloud.
   try { localStorage.setItem('tm_last_push', String(Date.now())); } catch (e) {}
   setSyncStatus('saving');
-  // 1) sendBeacon — most reliable on iOS PWA force-close. If it queues
-  //    successfully, the OS itself guarantees delivery.
-  let beaconQueued = false;
-  if (typeof navigator !== 'undefined' && navigator.sendBeacon) {
+  // 64 KB ceiling is the spec'd limit for both sendBeacon and fetch
+  // keepalive. Above that, fall straight through to a regular fetch.
+  const KEEPALIVE_MAX = 60000; // a bit under 64 KB for header overhead
+  if (body.length <= KEEPALIVE_MAX && typeof navigator !== 'undefined' && navigator.sendBeacon) {
     try {
-      beaconQueued = navigator.sendBeacon(url, new Blob([body], { type: 'application/json' }));
+      if (navigator.sendBeacon(url, new Blob([body], { type: 'application/json' }))) {
+        setSyncStatus('saved');
+        return true;
+      }
     } catch (e) {}
   }
-  // 2) fetch + keepalive — gives us a real Promise so we can update the
-  //    sync status indicator on success/fail. Runs in parallel with the
-  //    beacon above; if the beacon already queued it, this fetch is a
-  //    harmless duplicate that confirms delivery.
-  try {
-    fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body,
-      keepalive: true
-    }).then(r => {
-      if (r && r.ok) setSyncStatus('saved');
-      else if (!beaconQueued) setSyncStatus('failed');
-    }).catch(() => {
-      if (!beaconQueued) setSyncStatus('failed');
-    });
-    return true;
-  } catch (e) {
-    if (!beaconQueued) setSyncStatus('failed');
-    return beaconQueued;
-  }
+  // Regular fetch — handles arbitrarily large payloads (logos etc.). On
+  // a page-unload race this can be killed by the browser, but for a
+  // mid-game score tap it's the right answer.
+  fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body
+  }).then(r => {
+    if (r && r.ok) setSyncStatus('saved');
+    else setSyncStatus('failed');
+  }).catch((err) => {
+    console.warn('[cloudBeacon] fetch failed:', err);
+    setSyncStatus('failed');
+  });
+  return true;
 }
 
 // Sync indicator state — visible to the user so they can see when an
