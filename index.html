@@ -6951,9 +6951,25 @@ document.addEventListener('click', (e) => {
   const navBtn = e.target.closest('.page-nav button');
   if (navBtn) {
     showPage(navBtn.dataset.page);
+    // Every nav tap doubles as a Sync — push any pending local edits to
+    // cloud, then pull anything another device pushed. This is how the
+    // PWA stays current without a browser refresh button: tapping
+    // between Roster / Batting / Fielding / Score / Schedule always
+    // freshens the page being navigated to.
+    syncOnNav();
     return;
   }
 });
+
+// Lightweight wrapper around flushCloudPush + cloudPullAndRefresh so
+// nav taps don't have to be async. Errors are swallowed — the user can
+// always see the live status in the Scorecard indicator.
+function syncOnNav() {
+  try {
+    if (typeof flushCloudPush === 'function') flushCloudPush().catch(() => {});
+    if (typeof cloudPullAndRefresh === 'function') cloudPullAndRefresh({ force: true }).catch(() => {});
+  } catch (e) {}
+}
 
 document.getElementById('logoInput').addEventListener('change', (e) => {
   const file = e.target.files[0];

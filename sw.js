@@ -8,7 +8,7 @@
    - Pantry API calls  → bypassed entirely so syncs never get stuck
      on a stale cached response
 */
-const CACHE = 'tm-cache-v4-keepalive-fix';
+const CACHE = 'tm-cache-v5-nav-sync';
 
 const PRECACHE = [
   './',
