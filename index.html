@@ -4239,7 +4239,15 @@ async function cloudPull() {
     // long. The safety timer in bootRouter is 16s, so this fits.
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 15000);
-    const r = await fetch(url, { method: 'GET', headers: { Accept: 'application/json' }, signal: controller.signal });
+    // cache: 'no-store' + no-cache headers so we always hit the live Pantry
+    // basket. Without this, a CDN / browser HTTP cache can return a stale
+    // snapshot that papers over a fresh edit on another device.
+    const r = await fetch(url, {
+      method: 'GET',
+      headers: { Accept: 'application/json', 'Cache-Control': 'no-cache', Pragma: 'no-cache' },
+      signal: controller.signal,
+      cache: 'no-store'
+    });
     clearTimeout(timeout);
     if (r.status === 400 || r.status === 404) return null;
     if (!r.ok) throw new Error('HTTP ' + r.status);
@@ -4418,14 +4426,28 @@ function cloudBeacon() {
 //   - stamps tm_updates[key] with Date.now() so cloudPull can tell whether
 //     local or cloud is fresher next time it merges
 //   - schedules a debounced cloudPush
+//   - fires a throttled beacon (fetch + keepalive) so the change reaches
+//     the cloud even if iOS suspends our JS context before the debounce
+//     can fire
 // The tm_updates write itself uses the raw setter so we don't recursively
 // re-trigger pushes from inside the bump.
+let _lastBeaconAt = 0;
+function fireBeaconThrottled() {
+  // 400ms throttle — short enough that a single user click feels instant
+  // cross-device, long enough that a held score button doesn't beacon on
+  // every increment.
+  const now = Date.now();
+  if (now - _lastBeaconAt < 400) return;
+  _lastBeaconAt = now;
+  cloudBeacon();
+}
 (function wrapLocalStorage() {
   localStorage.setItem = function (k, v) {
     _rawSet(k, v);
     if (shouldSyncKey(k) && k !== 'tm_updates') {
       bumpUpdated(k);
       cloudPush();
+      fireBeaconThrottled();
     }
   };
   localStorage.removeItem = function (k) {
@@ -4433,6 +4455,7 @@ function cloudBeacon() {
     if (shouldSyncKey(k) && k !== 'tm_updates') {
       bumpUpdated(k);
       cloudPush();
+      fireBeaconThrottled();
     }
   };
 })();
@@ -5466,16 +5489,20 @@ function bindBaseballCardUi() {
 }
 
 function bindScoreRefresh() {
-  // Coach's manual "pull from cloud" button. Especially useful in the
-  // installed PWA where there's no browser refresh shortcut. Spins the
-  // icon while the pull is in flight, then re-renders.
+  // Coach's manual "Sync now" button. First flushes any locally-pending
+  // push so the cloud has the freshest data, then pulls so we pick up
+  // anything another device pushed in the meantime. Especially useful in
+  // the installed PWA where there's no browser refresh shortcut.
   const btn = document.getElementById('scoreRefreshBtn');
   if (!btn) return;
   btn.addEventListener('click', async () => {
     const icon = btn.querySelector('i');
     if (icon) icon.classList.add('fa-spin');
     btn.disabled = true;
-    try { await cloudPullAndRefresh({ force: true }); }
+    try {
+      await flushCloudPush();
+      await cloudPullAndRefresh({ force: true });
+    }
     finally {
       btn.disabled = false;
       if (icon) icon.classList.remove('fa-spin');
