@@ -4183,14 +4183,25 @@ const PANTRY_BASKET = 'tm_state';
 // a different ID into the Sync modal; that override is stored locally.
 const DEFAULT_PANTRY_ID = 'a53410b0-2cad-40be-9743-5c64695d2c2e';
 const SYNC_PREFIXES = ['tm_teams', 'cardinals_', 'tm_t', 'game_', 'tm_updates'];
-// Cleanup-only keys we delete on every boot. They start with a synced
-// prefix but they don't represent user data, so we must NOT trigger a
-// cloud push when they're touched — that push would race with the
-// boot-time cloudPull and could overwrite cloud's fresh data with
-// our stale local snapshot.
-const NO_SYNC_KEYS = new Set(['cardinals_view', 'cardinals_innings']);
+// Cleanup-only / per-device UI state keys that match a sync prefix but
+// don't represent shareable data. Writes to these (e.g. boot-time
+// cleanup, or the user navigating between pages) must NOT trigger a
+// push — otherwise the push races with the boot-time cloudPull and
+// overwrites cloud's fresh data with this device's stale snapshot.
+// Listed by canonical (un-team-prefixed) name; the helper below strips
+// any tm_t<N>_ prefix before comparing so `tm_t2_cardinals_page` also
+// gets excluded.
+const NO_SYNC_KEYS = new Set([
+  'cardinals_view',
+  'cardinals_innings',
+  'cardinals_outs',
+  'cardinals_roster_collapsed',
+  'cardinals_page',
+  'cardinals_current_game_id' // per-device focus — coaches can be on different games on different devices
+]);
 function shouldSyncKey(key) {
-  if (NO_SYNC_KEYS.has(key)) return false;
+  const canonical = key.replace(/^tm_t\d+_/, '');
+  if (NO_SYNC_KEYS.has(canonical)) return false;
   return SYNC_PREFIXES.some(p => key === p || key.startsWith(p));
 }
 // Stash the raw localStorage setters so the cloud-sync layer can write
@@ -4357,9 +4368,22 @@ async function doCloudPush() {
 }
 
 let pushTimer = null;
+// Pushes are blocked until the boot-time cloudPull has completed.
+// Without this, the boot-time cleanup writes (removeItem of
+// cardinals_outs / cardinals_roster_collapsed) trigger a push that
+// raced the pull — pushing this device's STALE snapshot up to cloud,
+// erasing any change another device had just made. The pull flips
+// this to true the moment it finishes (success or failure).
+let syncReady = false;
+// Safety net: if the boot pull never runs (e.g. on the Team Manager
+// landing page, or because the network is down and we never get past
+// the abort timeout), still flip syncReady after 8 s so a user can
+// save changes. cloudPullAndRefresh flips it earlier on its own path.
+setTimeout(() => { syncReady = true; }, 8000);
 function cloudPush() {
   const url = pantryUrl();
   if (!url) return;
+  if (!syncReady) return; // boot pull still in flight — don't clobber cloud
   clearTimeout(pushTimer);
   // Short debounce so rapid edits (e.g. mashing the +/- on the score
   // page) still batch, but the cloud sees the change in well under a
@@ -4433,6 +4457,7 @@ function cloudBeacon() {
 // re-trigger pushes from inside the bump.
 let _lastBeaconAt = 0;
 function fireBeaconThrottled() {
+  if (!syncReady) return; // boot pull still in flight — don't clobber cloud
   // 400ms throttle — short enough that a single user click feels instant
   // cross-device, long enough that a held score button doesn't beacon on
   // every increment.
@@ -4480,17 +4505,25 @@ function syncSnapshot() {
 let cloudPullInFlight = false;
 let lastPullAt = 0;
 async function cloudPullAndRefresh(opts) {
-  if (!getPantryId()) return;
+  if (!getPantryId()) { syncReady = true; return; }
   const force = !!(opts && opts.force);
   if (cloudPullInFlight) return;
   const lastPush = parseInt(localStorage.getItem('tm_last_push') || '0', 10);
-  if (Date.now() - lastPush < 5000) return;
+  if (Date.now() - lastPush < 5000) { syncReady = true; return; }
   // Don't hammer Pantry if the user toggles tabs rapidly.
-  if (!force && Date.now() - lastPullAt < 3000) return;
+  if (!force && Date.now() - lastPullAt < 3000) { syncReady = true; return; }
   cloudPullInFlight = true;
   const before = syncSnapshot();
   let data = null;
-  try { data = await cloudPull(); } finally { cloudPullInFlight = false; lastPullAt = Date.now(); }
+  try { data = await cloudPull(); }
+  finally {
+    cloudPullInFlight = false;
+    lastPullAt = Date.now();
+    // Unblock pushes regardless of whether the pull succeeded — an
+    // offline user must still be able to save changes locally and have
+    // them push when connectivity returns.
+    syncReady = true;
+  }
   if (!data) return;
   const after = syncSnapshot();
   // Nothing changed — skip the (potentially disruptive) re-render.
