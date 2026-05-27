@@ -4213,8 +4213,9 @@ const NO_SYNC_KEYS = new Set([
   'cardinals_innings',
   'cardinals_outs',
   'cardinals_roster_collapsed',
-  'cardinals_page',
-  'cardinals_current_game_id' // per-device focus — coaches can be on different games on different devices
+  'cardinals_page'
+  // cardinals_current_game_id IS synced — whichever device the coach
+  // last picked a game on becomes the "current game" everywhere.
 ]);
 function shouldSyncKey(key) {
   const canonical = key.replace(/^tm_t\d+_/, '');
@@ -4610,10 +4611,15 @@ async function cloudPullAndRefresh(opts) {
     // In-memory state was captured before the pull landed; reload it
     // and re-apply team chrome so remote edits show without a refresh.
     try {
+      if (typeof refreshCurrentGameId === 'function') refreshCurrentGameId();
       if (typeof loadRoster === 'function') ROSTER = loadRoster();
       if (typeof loadPresent === 'function') state.present = loadPresent();
       if (typeof loadManualRotation === 'function') state.manualRotation = loadManualRotation();
-      if (typeof refreshCurrentGameId === 'function') refreshCurrentGameId();
+      // The scorecard module-level cache also needs to be re-read or
+      // the +/- buttons keep showing the old per-player totals even
+      // though the cloud is correct. Same for the inning-by-inning
+      // manual rotation overrides.
+      if (typeof loadScorecard === 'function') scorecard = loadScorecard();
       const team = getTeamById(CURRENT_TEAM_ID);
       if (team && typeof applyTeamConfig === 'function') applyTeamConfig(team);
       if (typeof render === 'function') render();
