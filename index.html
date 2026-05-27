@@ -1064,6 +1064,18 @@ h2.section-heading-row > span {
   flex: 1 1 auto;
   min-width: 0;
 }
+/* Inline game date shown after a page title (Batting Order / Field
+   Positions / Scorecard) so it's always clear which game's data you're
+   looking at. */
+.heading-date {
+  flex: 0 0 auto;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--cardinal-red);
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+.heading-date:empty { display: none; }
 @media (max-width: 420px) {
   h2.section-heading-row { font-size: 2rem; letter-spacing: 0; }
 }
@@ -3512,54 +3524,50 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
 }
 .cgb-vs { color: var(--gray-500); font-weight: 600; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; }
 .cgb-notes { font-size: 0.78rem; color: var(--gray-500); font-weight: 600; }
-/* Switch-game control: lets the coach change which game is the team's
-   current game. The pick is persisted to a synced key, so it follows
-   to every device. */
-.cgb-switch-row {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-.cgb-switch-label {
-  font-size: 0.6rem;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+/* Switch-game picker modal: a tappable list of all games. */
+.switch-game-hint {
+  font-size: 0.85rem;
   color: var(--gray-500);
-  flex-shrink: 0;
+  margin: 0 0 0.75rem;
+  line-height: 1.35;
 }
-.cgb-switch-pill {
+.switch-game-list { display: flex; flex-direction: column; gap: 0.5rem; }
+.switch-game-row {
   position: relative;
-  display: inline-flex;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
-  flex: 1;
-  min-width: 0;
-  background: rgba(255, 255, 255, 0.75);
-  border: 1px solid var(--gray-200);
-  border-radius: 999px;
-  padding-right: 0.7rem;
-}
-.cgb-switch-pill select {
-  appearance: none;
-  -webkit-appearance: none;
-  background: transparent;
-  border: 0;
-  outline: none;
+  gap: 0.7rem;
   width: 100%;
-  padding: 0.4rem 0.5rem 0.4rem 0.85rem;
-  font-size: 0.82rem;
-  font-weight: 700;
-  color: var(--navy-dark);
+  text-align: left;
+  padding: 0.6rem 0.85rem 0.6rem 1rem;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1.5px solid rgba(15, 23, 42, 0.08);
+  border-radius: 12px;
   cursor: pointer;
-  text-overflow: ellipsis;
+  font: inherit;
 }
-.cgb-switch-pill i {
+.switch-game-row.is-current { border-color: var(--cardinal-red); box-shadow: 0 0 0 2px color-mix(in srgb, var(--cardinal-red) 22%, transparent); }
+.switch-game-stripe {
   position: absolute;
-  right: 0.7rem;
-  pointer-events: none;
-  font-size: 0.7rem;
-  color: var(--gray-400);
+  left: 0; top: 8px; bottom: 8px;
+  width: 4px;
+  border-radius: 4px;
+  background: var(--opp-primary, var(--cardinal-red));
 }
+.switch-game-date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 2.2rem;
+  line-height: 1;
+}
+.switch-game-date .sg-day { font-size: 1.3rem; font-weight: 800; color: var(--navy-dark); }
+.switch-game-date .sg-mon { font-size: 0.58rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gray-500); margin-top: 0.1rem; }
+.switch-game-main { display: flex; flex-direction: column; gap: 0.25rem; min-width: 0; }
+.switch-game-opp { font-weight: 700; font-size: 0.95rem; color: var(--navy-dark); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.switch-game-main .schedule-status { align-self: flex-start; }
+.switch-game-check { color: var(--cardinal-red); font-size: 1rem; }
 .cgb-actions {
   display: flex;
   gap: 0.4rem;
@@ -4001,7 +4009,7 @@ button, .outs-btn, .sc-btn, .cgb-action, [role="button"] {
 
   <section id="battingPage" class="page">
     <h2 class="section-heading-row">
-      <span>Batting Order</span>
+      <span>Batting Order <span class="heading-date" id="battingDate"></span></span>
       <button class="rotation-shuffle-btn" id="battingShuffleBtn" type="button" aria-label="Shuffle batting order">
         <i class="fa-solid fa-shuffle" aria-hidden="true"></i>
       </button>
@@ -4011,7 +4019,7 @@ button, .outs-btn, .sc-btn, .cgb-action, [role="button"] {
 
   <section id="fieldingPage" class="page">
     <h2 class="section-heading-row">
-      <span>Field Positions</span>
+      <span>Field Positions <span class="heading-date" id="fieldingDate"></span></span>
       <button class="rotation-shuffle-btn" id="rotationShuffleBtn" type="button" aria-label="Shuffle all innings">
         <i class="fa-solid fa-shuffle" aria-hidden="true"></i>
       </button>
@@ -4045,7 +4053,7 @@ button, .outs-btn, .sc-btn, .cgb-action, [role="button"] {
 
   <section id="scorePage" class="page">
     <h2 class="section-heading-row">
-      <span>Scorecard</span>
+      <span>Scorecard <span class="heading-date" id="scorecardDate"></span></span>
       <span class="sync-status" id="syncStatus" aria-live="polite"></span>
       <button class="rotation-shuffle-btn" id="scoreRefreshBtn" type="button" aria-label="Sync with cloud" title="Push local changes, then pull the latest">
         <i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i>
@@ -4228,6 +4236,19 @@ button, .outs-btn, .sc-btn, .cgb-action, [role="button"] {
       <button class="modal-btn-danger" id="gameModalDeleteBtn" type="button" hidden>Delete</button>
       <button class="modal-btn-secondary" id="gameModalCancelBtn" type="button">Cancel</button>
       <button class="modal-btn-primary" id="gameModalSaveBtn" type="button">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="switchGameOverlay" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="switchGameTitle">
+    <div class="modal-header">
+      <h3 id="switchGameTitle">Switch Game</h3>
+      <button class="modal-close" id="switchGameCloseBtn" aria-label="Close">×</button>
+    </div>
+    <div class="modal-body">
+      <p class="switch-game-hint">Pick the team's current game. Everyone on the team sees this game when they open the app.</p>
+      <div class="switch-game-list" id="switchGameList"></div>
     </div>
   </div>
 </div>
@@ -5438,6 +5459,52 @@ function reloadGameState() {
   if (typeof renderCurrentGameBanner === 'function') renderCurrentGameBanner();
 }
 
+// Switch-game picker: a simple tappable list of all games. Choosing one
+// sets it as the team's current game (synced key) and pushes so every
+// device follows.
+function openSwitchGameModal() {
+  const overlay = document.getElementById('switchGameOverlay');
+  const list = document.getElementById('switchGameList');
+  if (!overlay || !list) return;
+  const games = loadGames().slice().sort((a, b) => b.date.localeCompare(a.date) || (b.id - a.id));
+  list.innerHTML = games.map(g => {
+    const d = fmtDateRow(g.date);
+    const st = gameStatus(g);
+    const isCurrent = String(g.id) === String(currentGameId);
+    const opp = g.opponent ? escapeHtml('vs ' + g.opponent) : 'Game';
+    const colors = g.colors || {};
+    const styleVars = colors.primary ? `style="--opp-primary:${colors.primary}"` : '';
+    return `
+      <button class="switch-game-row${isCurrent ? ' is-current' : ''}" data-game-id="${g.id}" ${styleVars} type="button">
+        <span class="switch-game-stripe" aria-hidden="true"></span>
+        <span class="switch-game-date"><span class="sg-day">${d.day}</span><span class="sg-mon">${d.mon}</span></span>
+        <span class="switch-game-main">
+          <span class="switch-game-opp">${opp}</span>
+          <span class="schedule-status ${st}">${statusLabel(st)}</span>
+        </span>
+        ${isCurrent ? '<i class="fa-solid fa-check switch-game-check" aria-hidden="true"></i>' : ''}
+      </button>`;
+  }).join('');
+  list.querySelectorAll('.switch-game-row[data-game-id]').forEach(row => {
+    row.addEventListener('click', () => {
+      const id = row.dataset.gameId;
+      closeSwitchGameModal();
+      if (String(id) === String(currentGameId)) return;
+      setCurrentGameId(id);
+      refreshCurrentGameId();
+      reloadGameState();
+      cloudBeacon();
+      const picked = getGameById(id);
+      showBubble(picked && picked.opponent ? `Now on: vs ${picked.opponent}` : 'Game switched');
+    });
+  });
+  overlay.hidden = false;
+}
+function closeSwitchGameModal() {
+  const overlay = document.getElementById('switchGameOverlay');
+  if (overlay) overlay.hidden = true;
+}
+
 /* ============ Baseball card ============ */
 let bbCardPlayer = null;
 let bbCardPhotoDataUrl = null; // in-memory only; never persisted
@@ -5709,6 +5776,10 @@ function bindScheduleUi() {
   });
   document.getElementById('gameModalSaveBtn')?.addEventListener('click', saveGameModal);
   document.getElementById('gameModalDeleteBtn')?.addEventListener('click', deleteGameFromModal);
+  document.getElementById('switchGameCloseBtn')?.addEventListener('click', closeSwitchGameModal);
+  document.getElementById('switchGameOverlay')?.addEventListener('click', (e) => {
+    if (e.target.id === 'switchGameOverlay') closeSwitchGameModal();
+  });
   // Color inputs: clicking unsets the "empty" state so the picked
   // value sticks; Clear puts both pickers back into empty mode.
   document.getElementById('gameModalColorPrimary')?.addEventListener('input', (e) => e.target.classList.remove('is-empty'));
@@ -5748,18 +5819,6 @@ function renderCurrentGameBanner() {
   const ourName = (team && team.name) || 'Our Team';
   const opp = cur.opponent || 'Opponent';
   const hasOppColor = !!colors.primary;
-  // Build the switch-game dropdown — newest first so the most relevant
-  // games are at the top of the list.
-  const switchOptions = games
-    .slice()
-    .sort((a, b) => b.date.localeCompare(a.date) || (b.id - a.id))
-    .map(g => {
-      const d = fmtDateRow(g.date);
-      const oppName = g.opponent ? `vs ${g.opponent}` : 'Game';
-      const st = statusLabel(gameStatus(g));
-      const sel = String(g.id) === String(cur.id) ? ' selected' : '';
-      return `<option value="${g.id}"${sel}>${d.mon} ${d.day} · ${escapeHtml(oppName)}${st ? ' · ' + st : ''}</option>`;
-    }).join('');
   host.innerHTML = `
     <div class="cgb-opponent-stripe" aria-hidden="true"></div>
     <div class="cgb-header">
@@ -5776,35 +5835,18 @@ function renderCurrentGameBanner() {
       <span class="cgb-opp">${escapeHtml(opp)}</span>
     </div>
     ${cur.notes ? '<div class="cgb-notes">' + escapeHtml(cur.notes) + '</div>' : ''}
-    ${games.length > 1 ? `<label class="cgb-switch-row">
-      <span class="cgb-switch-label">Switch game</span>
-      <span class="cgb-switch-pill">
-        <select id="cgbGameSelect" aria-label="Switch the team's current game">${switchOptions}</select>
-        <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
-      </span>
-    </label>` : ''}
     <div class="cgb-actions">
       <span class="schedule-status ${status} cgb-actions-status">${statusLabel(status)}</span>
-      <button class="cgb-action" id="cgbEditBtn" title="Edit this game">Edit Game</button>
-      <button class="cgb-action" id="cgbNewBtn" title="Create a new game">New Game</button>
+      <button class="cgb-action" id="cgbEditBtn" title="Edit this game">Edit</button>
+      <button class="cgb-action" id="cgbNewBtn" title="Create a new game">New</button>
+      ${games.length > 1 ? '<button class="cgb-action" id="cgbSwitchBtn" title="Switch the current game">Switch</button>' : ''}
       ${isActive ? '<button class="cgb-action cgb-complete-btn" id="cgbCompleteBtn" title="Mark this game complete">Mark Complete</button>' : ''}
     </div>
   `;
   host.style.display = 'flex';
   document.getElementById('cgbNewBtn')?.addEventListener('click', () => openGameModal(null));
   document.getElementById('cgbEditBtn')?.addEventListener('click', () => openGameModal(cur));
-  document.getElementById('cgbGameSelect')?.addEventListener('change', (e) => {
-    const id = e.target.value;
-    if (!id || String(id) === String(cur.id)) return;
-    // Persist the team's current game (this key syncs), switch all
-    // per-game state to it, and push so every device follows.
-    setCurrentGameId(id);
-    refreshCurrentGameId();
-    reloadGameState();
-    cloudBeacon();
-    const picked = getGameById(id);
-    showBubble(picked && picked.opponent ? `Now on: vs ${picked.opponent}` : 'Game switched');
-  });
+  document.getElementById('cgbSwitchBtn')?.addEventListener('click', () => openSwitchGameModal());
   document.getElementById('cgbDateInput')?.addEventListener('change', (e) => {
     const newDate = e.target.value;
     if (!newDate || newDate === cur.date) return;
@@ -7011,7 +7053,27 @@ function render() {
   renderBatting();
   renderInnings();
   renderStats();
+  // These were missing — so a cloud pull that changed the current game
+  // (or its scores) updated currentGameId/scorecard in memory but left
+  // the banner and scorecard showing the OLD game. That's exactly the
+  // "switched game on phone, browser still shows old date" bug.
+  if (typeof renderCurrentGameBanner === 'function') renderCurrentGameBanner();
+  if (typeof renderScorecard === 'function') renderScorecard();
+  updateHeadingDates();
   showPage(state.page, { initial: true });
+}
+
+// Stamp the current game's date next to the Batting Order / Field
+// Positions / Scorecard headings so the coach always knows which game
+// they're editing.
+function updateHeadingDates() {
+  const cur = (typeof getGameById === 'function') ? getGameById(currentGameId) : null;
+  let label = '';
+  if (cur) { const d = fmtDateRow(cur.date); label = `${d.mon} ${d.day}`; }
+  ['battingDate', 'fieldingDate', 'scorecardDate'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = label;
+  });
 }
 
 /* ============ Events ============ */
