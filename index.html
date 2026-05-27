@@ -3512,6 +3512,54 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
 }
 .cgb-vs { color: var(--gray-500); font-weight: 600; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; }
 .cgb-notes { font-size: 0.78rem; color: var(--gray-500); font-weight: 600; }
+/* Switch-game control: lets the coach change which game is the team's
+   current game. The pick is persisted to a synced key, so it follows
+   to every device. */
+.cgb-switch-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.cgb-switch-label {
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gray-500);
+  flex-shrink: 0;
+}
+.cgb-switch-pill {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid var(--gray-200);
+  border-radius: 999px;
+  padding-right: 0.7rem;
+}
+.cgb-switch-pill select {
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  border: 0;
+  outline: none;
+  width: 100%;
+  padding: 0.4rem 0.5rem 0.4rem 0.85rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--navy-dark);
+  cursor: pointer;
+  text-overflow: ellipsis;
+}
+.cgb-switch-pill i {
+  position: absolute;
+  right: 0.7rem;
+  pointer-events: none;
+  font-size: 0.7rem;
+  color: var(--gray-400);
+}
 .cgb-actions {
   display: flex;
   gap: 0.4rem;
@@ -5700,6 +5748,18 @@ function renderCurrentGameBanner() {
   const ourName = (team && team.name) || 'Our Team';
   const opp = cur.opponent || 'Opponent';
   const hasOppColor = !!colors.primary;
+  // Build the switch-game dropdown — newest first so the most relevant
+  // games are at the top of the list.
+  const switchOptions = games
+    .slice()
+    .sort((a, b) => b.date.localeCompare(a.date) || (b.id - a.id))
+    .map(g => {
+      const d = fmtDateRow(g.date);
+      const oppName = g.opponent ? `vs ${g.opponent}` : 'Game';
+      const st = statusLabel(gameStatus(g));
+      const sel = String(g.id) === String(cur.id) ? ' selected' : '';
+      return `<option value="${g.id}"${sel}>${d.mon} ${d.day} · ${escapeHtml(oppName)}${st ? ' · ' + st : ''}</option>`;
+    }).join('');
   host.innerHTML = `
     <div class="cgb-opponent-stripe" aria-hidden="true"></div>
     <div class="cgb-header">
@@ -5716,6 +5776,13 @@ function renderCurrentGameBanner() {
       <span class="cgb-opp">${escapeHtml(opp)}</span>
     </div>
     ${cur.notes ? '<div class="cgb-notes">' + escapeHtml(cur.notes) + '</div>' : ''}
+    ${games.length > 1 ? `<label class="cgb-switch-row">
+      <span class="cgb-switch-label">Switch game</span>
+      <span class="cgb-switch-pill">
+        <select id="cgbGameSelect" aria-label="Switch the team's current game">${switchOptions}</select>
+        <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+      </span>
+    </label>` : ''}
     <div class="cgb-actions">
       <span class="schedule-status ${status} cgb-actions-status">${statusLabel(status)}</span>
       <button class="cgb-action" id="cgbEditBtn" title="Edit this game">Edit Game</button>
@@ -5726,6 +5793,18 @@ function renderCurrentGameBanner() {
   host.style.display = 'flex';
   document.getElementById('cgbNewBtn')?.addEventListener('click', () => openGameModal(null));
   document.getElementById('cgbEditBtn')?.addEventListener('click', () => openGameModal(cur));
+  document.getElementById('cgbGameSelect')?.addEventListener('change', (e) => {
+    const id = e.target.value;
+    if (!id || String(id) === String(cur.id)) return;
+    // Persist the team's current game (this key syncs), switch all
+    // per-game state to it, and push so every device follows.
+    setCurrentGameId(id);
+    refreshCurrentGameId();
+    reloadGameState();
+    cloudBeacon();
+    const picked = getGameById(id);
+    showBubble(picked && picked.opponent ? `Now on: vs ${picked.opponent}` : 'Game switched');
+  });
   document.getElementById('cgbDateInput')?.addEventListener('change', (e) => {
     const newDate = e.target.value;
     if (!newDate || newDate === cur.date) return;
