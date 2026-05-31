@@ -4653,6 +4653,7 @@ let lastPullAt = 0;
 async function cloudPullAndRefresh(opts) {
   if (!getPantryId()) { onSyncReady(); return; }
   const force = !!(opts && opts.force);
+  const adoptGame = !!(opts && opts.adoptGame);
   if (cloudPullInFlight) return;
   const lastPush = parseInt(localStorage.getItem('tm_last_push') || '0', 10);
   if (Date.now() - lastPush < 5000) { onSyncReady(); return; }
@@ -4680,7 +4681,14 @@ async function cloudPullAndRefresh(opts) {
     // In-memory state was captured before the pull landed; reload it
     // and re-apply team chrome so remote edits show without a refresh.
     try {
-      if (typeof refreshCurrentGameId === 'function') refreshCurrentGameId();
+      // Only ADOPT a synced current-game change on a fresh load (boot).
+      // A background pull (nav tap, tab focus) must NOT yank the coach
+      // to a different game mid-session — doing so reloads per-game
+      // state and, for a game with no saved attendance, resets present
+      // to "everyone", resurrecting players the coach marked absent.
+      // The synced game id still lands in storage, so the next fresh
+      // open of the app reflects the team's current game.
+      if (adoptGame && typeof refreshCurrentGameId === 'function') refreshCurrentGameId();
       if (typeof loadRoster === 'function') ROSTER = loadRoster();
       if (typeof loadPresent === 'function') state.present = loadPresent();
       if (typeof loadManualRotation === 'function') state.manualRotation = loadManualRotation();
@@ -5897,7 +5905,7 @@ function renderCurrentGameBanner() {
   // and window-focus, so a coach who edits the roster on the phone sees
   // it appear on the laptop (and vice versa) the moment they switch back
   // to that device, without having to refresh.
-  if (getPantryId()) cloudPullAndRefresh();
+  if (getPantryId()) cloudPullAndRefresh({ adoptGame: true });
 
   if (CURRENT_TEAM_ID === null) {
     // No ?team= → Team Manager landing
@@ -6068,7 +6076,11 @@ function saveRoster(next) {
 // so a smaller team still looks like a normal T-ball field.
 // Optional positions (Catcher, Right-Center) appear last so teams that opt in
 // get them filled only when the roster is large enough.
-const POSITION_PRIORITY = ['P1', '1B', 'SS', '2B', '3B', 'CF', 'RF', 'LF', 'LCF', 'P2', 'C', 'RCF'];
+// P2 sits right after P1: if a coach explicitly enables a second pitcher
+// they want both filled before outfield depth. (Previously P2 was last,
+// so it was the first slot dropped when fewer kids were present than
+// positions — "2 pitchers enabled, only 1 shows up".)
+const POSITION_PRIORITY = ['P1', 'P2', '1B', 'SS', '2B', '3B', 'CF', 'RF', 'LF', 'LCF', 'C', 'RCF'];
 const DIAMOND_ORDER = ['LF', 'LCF', 'CF', 'RCF', 'RF', '3B', 'SS', '2B', '1B', 'P1', 'P2', 'C'];
 const DEFENSE_LIST_ORDER = ['P1', 'P2', 'C', '1B', '2B', '3B', 'SS', 'LF', 'LCF', 'CF', 'RCF', 'RF'];
 const POSITION_NAMES = {

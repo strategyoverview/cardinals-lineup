@@ -8,7 +8,7 @@
    - Pantry API calls  → bypassed entirely so syncs never get stuck
      on a stale cached response
 */
-const CACHE = 'tm-cache-v8-switch-btn-dates';
+const CACHE = 'tm-cache-v9-gameday-fixes';
 
 const PRECACHE = [
   './',
