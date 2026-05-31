@@ -3568,6 +3568,84 @@ footer > * { max-width: 720px; margin-left: auto; margin-right: auto; }
 .switch-game-opp { font-weight: 700; font-size: 0.95rem; color: var(--navy-dark); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .switch-game-main .schedule-status { align-self: flex-start; }
 .switch-game-check { color: var(--cardinal-red); font-size: 1rem; }
+
+/* ===== Game overview: newspaper recap ===== */
+.game-overview-card { max-width: 560px; }
+.game-overview-body { padding: 0; }
+.newspaper {
+  font-family: Georgia, 'Times New Roman', serif;
+  color: #1a1a1a;
+  background:
+    repeating-linear-gradient(0deg, rgba(0,0,0,0.015) 0 2px, transparent 2px 4px),
+    #fdfcf7;
+  padding: 1.25rem 1.25rem 1.5rem;
+}
+.np-masthead {
+  text-align: center;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  color: #555;
+}
+.np-rule { border-top: 3px double #1a1a1a; margin: 0.35rem 0 0.6rem; }
+.np-headline {
+  font-family: 'Oswald', 'Georgia', serif;
+  font-weight: 700;
+  font-size: 1.7rem;
+  line-height: 1.05;
+  text-align: center;
+  margin: 0 0 0.35rem;
+  letter-spacing: -0.01em;
+}
+.np-headline .np-vs { font-style: italic; font-weight: 400; color: #777; font-size: 1.1rem; }
+.np-dateline {
+  text-align: center;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #8a1414;
+  text-transform: uppercase;
+  margin-bottom: 0.7rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid rgba(0,0,0,0.2);
+}
+.np-lead {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin: 0 0 0.9rem;
+}
+.np-lead::first-letter { font-size: 2.4rem; font-weight: 700; float: left; line-height: 0.8; padding: 0.1rem 0.35rem 0 0; font-family: 'Oswald', Georgia, serif; }
+.np-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 0 1.25rem; }
+@media (max-width: 460px) { .np-columns { grid-template-columns: 1fr; gap: 0; } }
+.go-section { margin-bottom: 1rem; border-top: 1px solid rgba(0,0,0,0.15); padding-top: 0.55rem; }
+.go-h {
+  font-family: 'Oswald', Georgia, serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin: 0 0 0.5rem;
+  color: #1a1a1a;
+}
+.go-boxscore { display: flex; gap: 1.25rem; }
+.go-stat { display: flex; flex-direction: column; align-items: center; line-height: 1; }
+.go-stat-num { font-family: 'Oswald', Georgia, serif; font-size: 1.9rem; font-weight: 700; color: #8a1414; }
+.go-stat-lbl { font-size: 0.58rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #555; margin-top: 0.2rem; }
+.go-note { font-size: 0.78rem; font-style: italic; color: #555; margin: 0.5rem 0 0; line-height: 1.4; }
+.go-attend { font-size: 0.85rem; line-height: 1.6; margin: 0; }
+.go-stats-table, .go-field-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+.go-stats-table th { text-align: left; font-family: 'Oswald', Georgia, serif; font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; color: #555; border-bottom: 1.5px solid #1a1a1a; padding: 0.2rem 0.3rem; }
+.go-stats-table td { padding: 0.22rem 0.3rem; border-bottom: 1px solid rgba(0,0,0,0.08); }
+.go-stats-table td.num, .go-stats-table th:nth-child(n+2) { text-align: center; }
+.go-stats-table .go-totals td { border-top: 1.5px solid #1a1a1a; border-bottom: none; }
+.go-batting { margin: 0; padding-left: 1.4rem; font-size: 0.9rem; line-height: 1.6; columns: 2; }
+.go-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.go-field-table th, .go-field-table td { padding: 0.25rem 0.4rem; text-align: center; border: 1px solid rgba(0,0,0,0.12); white-space: nowrap; }
+.go-field-table thead th { background: #1a1a1a; color: #fdfcf7; font-family: 'Oswald', Georgia, serif; font-size: 0.62rem; letter-spacing: 0.06em; }
+.go-field-table .go-pos { background: #efe9d8; font-weight: 700; font-family: 'Oswald', Georgia, serif; text-align: left; }
+.go-field-table .go-bench-row td, .go-field-table .go-bench-row .go-pos { background: #f3f0e6; font-style: italic; color: #555; }
+
 .cgb-actions {
   display: flex;
   gap: 0.4rem;
@@ -4227,6 +4305,7 @@ button, .outs-btn, .sc-btn, .cgb-action, [role="button"] {
         <span class="tm-field-label">Status</span>
         <select id="gameModalStatus">
           <option value="auto">Auto (by date)</option>
+          <option value="active">Active</option>
           <option value="complete">Complete</option>
         </select>
       </label>
@@ -4250,6 +4329,16 @@ button, .outs-btn, .sc-btn, .cgb-action, [role="button"] {
       <p class="switch-game-hint">Pick the team's current game. Everyone on the team sees this game when they open the app.</p>
       <div class="switch-game-list" id="switchGameList"></div>
     </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="gameOverviewOverlay" hidden>
+  <div class="modal-card game-overview-card" role="dialog" aria-modal="true" aria-labelledby="gameOverviewTitle">
+    <div class="modal-header">
+      <h3 id="gameOverviewTitle">Game Recap</h3>
+      <button class="modal-close" id="gameOverviewCloseBtn" aria-label="Close">×</button>
+    </div>
+    <div class="modal-body game-overview-body" id="gameOverviewBody"></div>
   </div>
 </div>
 
@@ -5241,12 +5330,10 @@ function renderScheduleList() {
     listEl.innerHTML = '<div class="schedule-empty">No games yet. Tap the + above to add one.</div>';
     return;
   }
-  // Sort: future first (asc), then past (desc) — feels natural for coaches
-  const today = todayKey();
-  const future = games.filter(g => g.date >= today).sort((a, b) => a.date.localeCompare(b.date));
-  const past = games.filter(g => g.date < today).sort((a, b) => b.date.localeCompare(a.date));
-  const ordered = [...future, ...past];
-  // Group by month
+  // Newest games at the top (descending by date) so the most recent /
+  // upcoming games lead — June above May, etc.
+  const ordered = games.slice().sort((a, b) => b.date.localeCompare(a.date) || (b.id - a.id));
+  // Group by month (insertion order is already newest-first)
   const byMonth = new Map();
   for (const g of ordered) {
     const key = g.date.slice(0, 7);
@@ -5273,6 +5360,7 @@ function renderScheduleList() {
             ${g.notes ? `<div class="schedule-notes">${escapeHtml(g.notes)}</div>` : ''}
           </div>
           <div class="schedule-row-actions">
+            <button class="schedule-row-btn" data-action="overview" data-game-id="${g.id}" aria-label="Game overview" title="Game overview"><i class="fa-solid fa-eye"></i></button>
             <button class="schedule-row-btn" data-action="edit" data-game-id="${g.id}" aria-label="Edit game" title="Edit"><i class="fa-solid fa-pen"></i></button>
             <button class="schedule-row-btn danger" data-action="delete" data-game-id="${g.id}" aria-label="Delete game" title="Delete"><i class="fa-solid fa-trash"></i></button>
           </div>
@@ -5388,14 +5476,17 @@ function openGameModal(game, defaultDate) {
   document.getElementById('gameModalColorPrimary').value = colors.primary || '#1D4ED8';
   document.getElementById('gameModalColorPrimary').classList.toggle('is-empty', !colors.primary);
   document.getElementById('gameModalDeleteBtn').hidden = !game;
-  // Status selector — only shown when editing. Two values:
-  //   "auto"     → completedAt cleared; status derives from date
-  //   "complete" → completedAt set explicitly (reopens reversible)
+  // Status selector — only shown when editing. Three values:
+  //   "auto"     → no override; status derives from the date
+  //   "active"   → forced Active (e.g. reopen a past game to keep scoring)
+  //   "complete" → forced Complete
   const statusField = document.getElementById('gameModalStatusField');
   const statusSel = document.getElementById('gameModalStatus');
   if (statusField && statusSel) {
     statusField.hidden = !game;
-    statusSel.value = (game && game.completedAt) ? 'complete' : 'auto';
+    statusSel.value = (game && game.completedAt) ? 'complete'
+      : (game && game.forcedActive) ? 'active'
+      : 'auto';
   }
   const statusLine = document.getElementById('gameModalStatusLine');
   if (statusLine) {
@@ -5422,15 +5513,20 @@ function saveGameModal() {
   if (editingGameId !== null) {
     const idx = games.findIndex(g => String(g.id) === String(editingGameId));
     if (idx >= 0) {
-      // Status: "auto" clears completedAt (date+today drive status), "complete" forces it.
+      // Status override is mutually exclusive:
+      //   auto     → no override (date drives status)
+      //   active   → forcedActive true, completedAt cleared
+      //   complete → completedAt set, forcedActive cleared
       let completedAt = games[idx].completedAt || null;
-      if (statusChoice === 'auto') completedAt = null;
-      else if (statusChoice === 'complete' && !completedAt) completedAt = Date.now();
-      games[idx] = Object.assign({}, games[idx], { date, opponent, notes, colors, completedAt });
+      let forcedActive = false;
+      if (statusChoice === 'auto') { completedAt = null; forcedActive = false; }
+      else if (statusChoice === 'active') { completedAt = null; forcedActive = true; }
+      else if (statusChoice === 'complete') { forcedActive = false; if (!completedAt) completedAt = Date.now(); }
+      games[idx] = Object.assign({}, games[idx], { date, opponent, notes, colors, completedAt, forcedActive });
     }
   } else {
     const id = Date.now();
-    games.push({ id, date, opponent, notes, colors, createdAt: Date.now(), completedAt: null });
+    games.push({ id, date, opponent, notes, colors, createdAt: Date.now(), completedAt: null, forcedActive: false });
     setCurrentGameId(id); // jump to the freshly added game
   }
   saveGames(games);
@@ -5510,6 +5606,159 @@ function openSwitchGameModal() {
 }
 function closeSwitchGameModal() {
   const overlay = document.getElementById('switchGameOverlay');
+  if (overlay) overlay.hidden = true;
+}
+
+/* ============ Game overview (newspaper recap) ============ */
+// Read a specific game's stored per-game state directly (not the
+// currently-active game). Returns present list (roster order), scorecard,
+// salt, and manual rotation overrides.
+function readGameData(gameId) {
+  function rd(suffix, fallback) {
+    try {
+      const raw = localStorage.getItem(tk(`game_${gameId}_${suffix}`));
+      if (raw == null) return fallback;
+      return JSON.parse(raw);
+    } catch (e) { return fallback; }
+  }
+  const presentArr = rd('present', null);
+  const presentSet = Array.isArray(presentArr) ? new Set(presentArr.filter(p => ROSTER.includes(p))) : new Set(ROSTER);
+  return {
+    present: ROSTER.filter(p => presentSet.has(p)),
+    scorecard: rd('scorecard', {}) || {},
+    salt: rd('rotation_salt', 0) || 0,
+    manualRotation: rd('manual_rotation', {}) || {}
+  };
+}
+
+// Compute a game's fielding rotation (auto + honored manual overrides),
+// the same way renderInnings does, but for an arbitrary game's data.
+function computeGameRotation(present, salt, manualRotation) {
+  const result = generateRotation(present, { salt });
+  if (manualRotation && Object.keys(manualRotation).length && result.rotation.length) {
+    const presentSet = new Set(present);
+    Object.keys(manualRotation).forEach(key => {
+      const idx = parseInt(key, 10);
+      if (isNaN(idx) || idx < 0 || idx >= result.rotation.length) return;
+      const override = manualRotation[key];
+      const players = new Set([
+        ...Object.entries(override).filter(([k]) => k !== '_bench').map(([, v]) => v),
+        ...((override._bench) || [])
+      ]);
+      const sameSet = players.size === presentSet.size && [...players].every(p => presentSet.has(p));
+      if (sameSet) result.rotation[idx] = override;
+    });
+  }
+  return result.rotation;
+}
+
+function openGameOverview(game) {
+  const overlay = document.getElementById('gameOverviewOverlay');
+  const body = document.getElementById('gameOverviewBody');
+  if (!overlay || !body || !game) return;
+  const team = (typeof CURRENT_TEAM_ID === 'number') ? getTeamById(CURRENT_TEAM_ID) : null;
+  const ourName = (team && team.name) || 'Our Team';
+  const opp = game.opponent || 'Opponent';
+  const data = readGameData(game.id);
+  const present = data.present;
+  const sc = data.scorecard;
+  const status = gameStatus(game);
+  const dateLong = (() => { const d = parseDateKey(game.date); return d ? `${MONTH_LONG[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}` : game.date; })();
+
+  // Totals + per-player defensive stats (present players only).
+  let totalOuts = 0, totalAssists = 0;
+  const statRows = present.map(p => {
+    const ps = sc[p] || {};
+    const o = ps.outs || 0, a = ps.assists || 0;
+    totalOuts += o; totalAssists += a;
+    return { player: p, outs: o, assists: a };
+  });
+  const outLeaders = statRows.filter(r => r.outs > 0).sort((a, b) => b.outs - a.outs);
+
+  // Fielding rotation by inning.
+  const rotation = present.length >= 4 ? computeGameRotation(present, data.salt, data.manualRotation) : [];
+  const numInnings = rotation.length;
+
+  // Lead paragraph — newspaper style.
+  const lead = `The ${escapeHtml(ourName)} sent ${present.length} player${present.length === 1 ? '' : 's'} onto the diamond against ${escapeHtml(opp)}` +
+    (totalOuts > 0 ? `, recording ${totalOuts} out${totalOuts === 1 ? '' : 's'}${totalAssists > 0 ? ` and ${totalAssists} assist${totalAssists === 1 ? '' : 's'}` : ''}.` : '.');
+
+  // Attendance: who was there / who missed.
+  const absent = ROSTER.filter(p => !present.includes(p));
+
+  // Fielding table — positions down the side, innings across the top.
+  let fieldingHtml = '';
+  if (numInnings) {
+    const usedPositions = DEFENSE_LIST_ORDER.filter(pos => rotation.some(inn => inn && inn[pos]));
+    const headCells = rotation.map((_, i) => `<th>${i + 1}</th>`).join('');
+    const rows = usedPositions.map(pos => {
+      const cells = rotation.map(inn => `<td>${inn && inn[pos] ? escapeHtml(inn[pos].split(' ')[0]) : '—'}</td>`).join('');
+      return `<tr><th class="go-pos">${pos}</th>${cells}</tr>`;
+    }).join('');
+    const benchRow = rotation.some(inn => inn && inn._bench && inn._bench.length)
+      ? `<tr class="go-bench-row"><th class="go-pos">Bench</th>${rotation.map(inn => `<td>${inn && inn._bench && inn._bench.length ? inn._bench.map(p => escapeHtml(p.split(' ')[0])).join(', ') : '—'}</td>`).join('')}</tr>`
+      : '';
+    fieldingHtml = `
+      <div class="go-section">
+        <h4 class="go-h">Field Positions by Inning</h4>
+        <div class="go-table-wrap">
+          <table class="go-field-table">
+            <thead><tr><th class="go-pos">Pos</th>${headCells}</tr></thead>
+            <tbody>${rows}${benchRow}</tbody>
+          </table>
+        </div>
+      </div>`;
+  }
+
+  body.innerHTML = `
+    <article class="newspaper">
+      <div class="np-masthead">THE ${escapeHtml(ourName.toUpperCase())} TIMES</div>
+      <div class="np-rule"></div>
+      <h2 class="np-headline">${escapeHtml(ourName)} <span class="np-vs">vs</span> ${escapeHtml(opp)}</h2>
+      <div class="np-dateline">${dateLong.toUpperCase()} · ${statusLabel(status)}</div>
+      <p class="np-lead">${lead}</p>
+
+      <div class="np-columns">
+        <div class="go-section">
+          <h4 class="go-h">Box Score</h4>
+          <div class="go-boxscore">
+            <div class="go-stat"><span class="go-stat-num">${totalOuts}</span><span class="go-stat-lbl">Outs</span></div>
+            <div class="go-stat"><span class="go-stat-num">${totalAssists}</span><span class="go-stat-lbl">Assists</span></div>
+            <div class="go-stat"><span class="go-stat-num">${present.length}</span><span class="go-stat-lbl">Played</span></div>
+          </div>
+          ${outLeaders.length ? `<p class="go-note">${outLeaders.slice(0, 3).map(r => `${escapeHtml(r.player)} (${r.outs})`).join(', ')} led the defense.</p>` : ''}
+        </div>
+
+        <div class="go-section">
+          <h4 class="go-h">Who Showed Up</h4>
+          <p class="go-attend">${present.length ? present.map(p => escapeHtml(p)).join(' · ') : 'No attendance recorded.'}</p>
+          ${absent.length ? `<p class="go-note">Missing: ${absent.map(p => escapeHtml(p)).join(', ')}</p>` : ''}
+        </div>
+      </div>
+
+      <div class="go-section">
+        <h4 class="go-h">Defensive Stats</h4>
+        <table class="go-stats-table">
+          <thead><tr><th>Player</th><th>Outs</th><th>Assists</th></tr></thead>
+          <tbody>
+            ${statRows.map(r => `<tr><td>${escapeHtml(r.player)}</td><td class="num">${r.outs}</td><td class="num">${r.assists}</td></tr>`).join('')}
+            <tr class="go-totals"><td><b>TOTALS</b></td><td class="num"><b>${totalOuts}</b></td><td class="num"><b>${totalAssists}</b></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="go-section">
+        <h4 class="go-h">Batting Order</h4>
+        <ol class="go-batting">${present.map(p => `<li>${escapeHtml(p)}</li>`).join('')}</ol>
+      </div>
+
+      ${fieldingHtml}
+    </article>
+  `;
+  overlay.hidden = false;
+}
+function closeGameOverview() {
+  const overlay = document.getElementById('gameOverviewOverlay');
   if (overlay) overlay.hidden = true;
 }
 
@@ -5762,7 +6011,8 @@ function bindScheduleUi() {
       e.stopPropagation();
       const g = getGameById(actionBtn.dataset.gameId);
       if (!g) return;
-      if (actionBtn.dataset.action === 'edit') openGameModal(g);
+      if (actionBtn.dataset.action === 'overview') openGameOverview(g);
+      else if (actionBtn.dataset.action === 'edit') openGameModal(g);
       else if (actionBtn.dataset.action === 'delete') {
         const label = g.opponent ? `vs ${g.opponent} on ${g.date}` : `game on ${g.date}`;
         if (confirm(`Delete ${label}? This can't be undone.`)) {
@@ -5787,6 +6037,10 @@ function bindScheduleUi() {
   document.getElementById('switchGameCloseBtn')?.addEventListener('click', closeSwitchGameModal);
   document.getElementById('switchGameOverlay')?.addEventListener('click', (e) => {
     if (e.target.id === 'switchGameOverlay') closeSwitchGameModal();
+  });
+  document.getElementById('gameOverviewCloseBtn')?.addEventListener('click', closeGameOverview);
+  document.getElementById('gameOverviewOverlay')?.addEventListener('click', (e) => {
+    if (e.target.id === 'gameOverviewOverlay') closeGameOverview();
   });
   // Color inputs: clicking unsets the "empty" state so the picked
   // value sticks; Clear puts both pickers back into empty mode.
@@ -6237,6 +6491,9 @@ function todayKey() {
 }
 function gameStatus(game) {
   if (!game) return null;
+  // Explicit overrides win over date logic, so a coach can force a game
+  // Active (e.g. reopen a past game they're still scoring) or Complete.
+  if (game.forcedActive) return 'active';
   if (game.completedAt) return 'complete';
   const today = todayKey();
   if (game.date < today) return 'complete';   // past dates auto-complete
